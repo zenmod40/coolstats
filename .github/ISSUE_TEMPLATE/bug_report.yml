@@ -1,12 +1,12 @@
-name: "🐛 Signaler un bug"
+name: "Signaler un bug"
 description: "Un comportement inattendu, une erreur ou un plantage"
 labels: ["bug"]
 body:
   - type: markdown
     attributes:
       value: |
-        Merci de prendre le temps de signaler un bug 🙏
-        *(Besoin d'aide à l'installation/config ou d'une adaptation ? Voir le lien « Aide » — c'est une prestation, pas un bug.)*
+        Merci de prendre le temps de signaler un bug.
+        (Besoin d'aide à l'installation/config ou d'une adaptation ? Voir le lien « Aide » — c'est une prestation, pas un bug.)
   - type: input
     id: ps_version
     attributes:

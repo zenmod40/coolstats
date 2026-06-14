@@ -1,4 +1,4 @@
-name: "💡 Idée / amélioration"
+name: "Idée / amélioration"
 description: "Proposer une fonctionnalité ou une amélioration"
 labels: ["enhancement"]
 body:
@@ -19,5 +19,5 @@ body:
   - type: markdown
     attributes:
       value: |
-        💡 Les **pull requests** sont les bienvenues — merci d'ouvrir cette issue avant les gros changements.
-        Pour un développement **sur-mesure prioritaire**, voir [zm40.com](https://zm40.com).
+        Les pull requests sont les bienvenues — merci d'ouvrir cette issue avant les gros changements.
+        Pour un développement sur-mesure prioritaire, voir [zm40.com](https://zm40.com).
