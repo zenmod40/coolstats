@@ -1,0 +1,342 @@
+/* CoolStats — Thème Cozy (papier pêche, friendly SaaS) */
+
+/* ============================================================
+ *  COZY — papier pêche, sage + coral, ombres douces
+ * ============================================================ */
+
+[data-cs-theme="cozy"],
+[data-cs-theme="cozy"][data-bs-theme="light"] {
+    --cs-bg:            #fbf4ec;
+    --cs-bg-card:       #ffffff;
+    --cs-bg-card-hover: #fdf8f1;
+    --cs-text:          #2a241e;
+    --cs-text-muted:    #8a7e6f;
+    --cs-border:        #efe6d8;
+    --cs-shadow:        0 1px 2px rgba(74,57,40,.04), 0 8px 24px -8px rgba(74,57,40,.08);
+    --cs-accent:        #d96a5a;
+    --cs-accent-rgb:    217, 106, 90;
+    --cs-accent-text:   #d96a5a;
+    --cs-accent-2:      #5f8a6e;
+    --cs-success:       #5f8a6e;
+    --cs-danger:        #d96a5a;
+    --cs-warning:       #f5c66c;
+    --cs-kpi-orders:    #5f8a6e; --cs-kpi-orders-rgb:   95, 138, 110;
+    --cs-kpi-revenue:   #d96a5a; --cs-kpi-revenue-rgb: 217, 106,  90;
+    --cs-kpi-items:     #6d9bc3; --cs-kpi-items-rgb:   109, 155, 195;
+    --cs-kpi-basket:    #8c6a9e; --cs-kpi-basket-rgb:  140, 106, 158;
+    --cs-map-empty:     #e6dccb;
+    --cs-font-sans:     'DM Sans', 'Inter', -apple-system, sans-serif;
+    /* Accent = terracotta → texte blanc */
+    --cs-accent-on:     #ffffff;
+    --cs-accent-2-on:   #ffffff;
+    --cs-accent-hover:  #c25949;
+}
+
+[data-cs-theme="cozy"][data-bs-theme="dark"] {
+    --cs-bg:            #1c1611;
+    --cs-bg-card:       #2a221b;
+    --cs-bg-card-hover: #332921;
+    --cs-text:          #f0e6d6;
+    --cs-text-muted:    #a89a85;
+    --cs-border:        #3d3025;
+    --cs-shadow:        0 1px 2px rgba(0,0,0,.25), 0 8px 24px -8px rgba(0,0,0,.5);
+    --cs-accent:        #e88574;
+    --cs-accent-rgb:    232, 133, 116;
+    --cs-accent-2:      #7fb090;
+    --cs-success:       #7fb090;
+    --cs-danger:        #e88574;
+    --cs-warning:       #f5c66c;
+    --cs-map-empty:     #3d3025;
+    --cs-accent-hover:  #f29888;
+}
+
+[data-cs-theme="cozy"] #cs-app { font-family: var(--cs-font-sans); }
+[data-cs-theme="cozy"] .cs-section,
+[data-cs-theme="cozy"] .cs-kpi-card,
+[data-cs-theme="cozy"] .cs-customer-stat,
+[data-cs-theme="cozy"] .cs-goal-card { border: none; border-radius: 22px; padding: 22px; }
+[data-cs-theme="cozy"] .cs-section { box-shadow: var(--cs-shadow); }
+
+/* Section headers en font plus chaude + emoji décoratif (cohérent avec le screen de réf) */
+[data-cs-theme="cozy"] .cs-section-header {
+    font-family: var(--cs-font-sans);
+    font-size: 16px;
+    font-weight: 700;
+    text-transform: none;
+    letter-spacing: 0;
+    color: var(--cs-text);
+}
+[data-cs-theme="cozy"] .cs-section-header .bi { color: var(--cs-accent); font-size: 18px; }
+
+/* Customers section FLAT — pas de cards individuelles, juste chiffres en row */
+[data-cs-theme="cozy"] .cs-customer-stat {
+    background: transparent;
+    box-shadow: none;
+    padding: 8px 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+}
+[data-cs-theme="cozy"] .cs-customer-stat-icon { display: none; }
+[data-cs-theme="cozy"] .cs-customer-stat-value { font-size: 22px; font-weight: 800; color: var(--cs-text); }
+[data-cs-theme="cozy"] .cs-customer-stat-label {
+    font-size: 11px;
+    color: var(--cs-text-muted);
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    font-weight: 600;
+}
+
+/* KPI cards Cozy : icon left bubble plus grosse, label haut, value+trend inline */
+[data-cs-theme="cozy"] .cs-cozy-kpi-row .cs-kpi-card {
+    padding: 18px 20px;
+    gap: 14px;
+    align-items: center;
+}
+[data-cs-theme="cozy"] .cs-kpi-icon {
+    width: 48px;
+    height: 48px;
+    background: #fdf8f1 !important;
+    border-radius: 14px;
+    box-shadow: inset 0 0 0 1px rgba(74,57,40,.06);
+    font-size: 20px;
+    flex-shrink: 0;
+}
+[data-cs-theme="cozy"][data-bs-theme="dark"] .cs-kpi-icon {
+    background: #3d3025 !important;
+    box-shadow: inset 0 0 0 1px rgba(245,230,214,.08);
+}
+/* Couleurs des icônes selon catégorie (palette cozy) */
+[data-cs-theme="cozy"] .cs-kpi-icon-orders  { color: #5f8a6e; }
+[data-cs-theme="cozy"] .cs-kpi-icon-revenue { color: #d96a5a; }
+[data-cs-theme="cozy"] .cs-kpi-icon-items   { color: #6d9bc3; }
+[data-cs-theme="cozy"] .cs-kpi-icon-basket  { color: #8c6a9e; }
+[data-cs-theme="cozy"] .cs-kpi-icon-returns { color: #d96a5a; }
+
+/* Layout body : label haut uppercase, value+trend inline en dessous */
+[data-cs-theme="cozy"] .cs-cozy-kpi-row .cs-kpi-body {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+    min-width: 0;
+}
+[data-cs-theme="cozy"] .cs-cozy-kpi-row .cs-kpi-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .8px;
+    color: var(--cs-text-muted);
+    margin-top: 0;
+    order: -1;
+}
+[data-cs-theme="cozy"] .cs-cozy-kpi-row .cs-kpi-value-row {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+[data-cs-theme="cozy"] .cs-cozy-kpi-row .cs-kpi-value {
+    font-size: 30px;
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -.02em;
+}
+
+/* Trend pills GLOBAUX en Cozy : toujours inline (statique), jamais absolute top-right */
+[data-cs-theme="cozy"] .cs-trend {
+    position: static !important;
+    top: auto !important;
+    right: auto !important;
+    font-size: 12px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-weight: 700;
+    line-height: 1.3;
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+}
+[data-cs-theme="cozy"] .cs-trend i { font-size: 13px; vertical-align: middle; }
+[data-cs-theme="cozy"] .cs-trend-up {
+    background: rgba(95,138,110,.18);
+    color: #5f8a6e;
+}
+[data-cs-theme="cozy"] .cs-trend-down {
+    background: rgba(217,106,90,.18);
+    color: #d96a5a;
+}
+[data-cs-theme="cozy"] .cs-trend-neutral,
+[data-cs-theme="cozy"] .cs-trend-static {
+    background: rgba(217,106,90,.18);
+    color: #d96a5a;
+}
+[data-cs-theme="cozy"] .cs-kpi-hero .cs-trend {
+    font-size: 14px;
+    padding: 5px 12px;
+}
+
+/* Top produits : bulles rondes pour les rangs + gradient bars sur la colonne unités */
+[data-cs-theme="cozy"] .cs-top-products tbody tr td:first-child {
+    width: 32px;
+}
+[data-cs-theme="cozy"] .cs-top-products tbody tr td:first-child::before {
+    content: attr(data-rank);
+}
+[data-cs-theme="cozy"] .cs-top-products .cs-top-rank,
+[data-cs-theme="cozy"] .cs-top-products tbody tr td:first-child {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+[data-cs-theme="cozy"] .cs-cozy-bar {
+    display: inline-block;
+    height: 4px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #d96a5a 0%, #f5c66c 100%);
+    vertical-align: middle;
+    margin-right: 8px;
+}
+
+/* Payment methods : barres cyclées par row */
+[data-cs-theme="cozy"] .cs-payment-row:nth-child(5n+1) .cs-payment-bar { background: #5f8a6e; }
+[data-cs-theme="cozy"] .cs-payment-row:nth-child(5n+2) .cs-payment-bar { background: #6d9bc3; }
+[data-cs-theme="cozy"] .cs-payment-row:nth-child(5n+3) .cs-payment-bar { background: #8c6a9e; }
+[data-cs-theme="cozy"] .cs-payment-row:nth-child(5n+4) .cs-payment-bar { background: #d96a5a; }
+[data-cs-theme="cozy"] .cs-payment-row:nth-child(5n+5) .cs-payment-bar { background: #f5c66c; }
+
+/* Header style cosy : logo plus grand, titre très bold, greeting au lieu de version */
+[data-cs-theme="cozy"] .cs-header { padding: 22px 36px 18px; gap: 18px; }
+[data-cs-theme="cozy"] .cs-header-brand { gap: 16px !important; }
+[data-cs-theme="cozy"] .cs-header .cs-logo { width: 48px; height: 48px; }
+[data-cs-theme="cozy"] .cs-header h1 {
+    font-family: var(--cs-font-sans);
+    font-weight: 800;
+    font-size: 26px;
+    letter-spacing: -.02em;
+    color: var(--cs-text);
+    line-height: 1.1;
+}
+/* Badge mode Cozy : ink bg + butter dot (signature warm) */
+[data-cs-theme="cozy"] .cs-header-mode { background: #2a241e; color: #f5c66c; border-color: #2a241e; }
+[data-cs-theme="cozy"] .cs-mode-dot { background: #f5c66c; }
+[data-cs-theme="cozy"][data-bs-theme="dark"] .cs-header-mode { background: #f5c66c; color: #2a241e; border-color: #f5c66c; }
+[data-cs-theme="cozy"][data-bs-theme="dark"] .cs-mode-dot { background: #2a241e; }
+
+[data-cs-theme="cozy"] .cs-header small,
+[data-cs-theme="cozy"] .cs-header .cs-greeting {
+    font-family: var(--cs-font-sans);
+    font-size: 13px;
+    color: var(--cs-text-muted);
+    font-weight: 500;
+}
+
+/* ─── Hero KPI Cozy : carte CA pleine largeur + sparkline ─── */
+[data-cs-theme="cozy"] .cs-kpi-hero {
+    background: linear-gradient(135deg, var(--cs-bg-card) 0%, #fbeed1 100%);
+    border: none;
+    border-radius: 22px;
+    padding: 28px 32px;
+    box-shadow: var(--cs-shadow);
+    display: grid;
+    grid-template-columns: 1fr minmax(280px, 40%);
+    align-items: center;
+    gap: 24px;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform .15s ease, box-shadow .15s ease;
+}
+[data-cs-theme="cozy"][data-bs-theme="dark"] .cs-kpi-hero {
+    background: linear-gradient(135deg, var(--cs-bg-card) 0%, #4a3a2a 100%);
+}
+[data-cs-theme="cozy"] .cs-kpi-hero:hover { transform: translateY(-2px); box-shadow: 0 12px 32px -10px rgba(74,57,40,.18); }
+[data-cs-theme="cozy"] .cs-kpi-hero-kicker {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--cs-text-muted);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+[data-cs-theme="cozy"] .cs-kpi-hero-value-row {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+[data-cs-theme="cozy"] .cs-kpi-hero-value {
+    font-family: var(--cs-font-sans);
+    font-size: 56px;
+    line-height: 1;
+    font-weight: 800;
+    color: var(--cs-text);
+    letter-spacing: -.02em;
+}
+[data-cs-theme="cozy"] .cs-kpi-hero-narrative {
+    font-size: 14px;
+    color: var(--cs-text-muted);
+    margin-top: 14px;
+    max-width: 540px;
+    line-height: 1.5;
+}
+[data-cs-theme="cozy"] .cs-kpi-hero-narrative strong {
+    color: var(--cs-text);
+    font-weight: 700;
+}
+[data-cs-theme="cozy"] .cs-kpi-hero-sparkline {
+    align-self: stretch;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+[data-cs-theme="cozy"] .cs-kpi-hero-sparkline svg {
+    width: 100%;
+    height: 100px;
+    max-width: 360px;
+}
+
+/* En mobile : empile hero vertical */
+@media (max-width: 900px) {
+    [data-cs-theme="cozy"] .cs-kpi-hero {
+        grid-template-columns: 1fr;
+    }
+    [data-cs-theme="cozy"] .cs-kpi-hero-value { font-size: 42px; }
+}
+
+/* Hero KPI — revenue prend toute la largeur, les autres en 4 colonnes en-dessous */
+[data-cs-theme="cozy"] .cs-kpi-row .row .col-xl:has(.cs-kpi-card[data-stat="revenue"]) {
+    flex: 0 0 100%;
+    max-width: 100%;
+}
+[data-cs-theme="cozy"] .cs-kpi-row .row .col-xl:has(.cs-kpi-card[data-stat="revenue"]) .cs-kpi-card {
+    background: linear-gradient(135deg, var(--cs-bg-card) 0%, #fbeed1 100%);
+    padding: 32px;
+}
+[data-cs-theme="cozy"] .cs-kpi-row .row .col-xl:has(.cs-kpi-card[data-stat="revenue"]) .cs-kpi-value {
+    font-size: 56px;
+    line-height: 1;
+    font-weight: 700;
+    letter-spacing: -.02em;
+}
+[data-cs-theme="cozy"] .cs-kpi-row .row .col-xl:has(.cs-kpi-card[data-stat="revenue"]) .cs-kpi-label {
+    font-size: 13px;
+}
+
+
+/* ─── Drill overlay : ink doux + texte butter (subtil, lisible) ─── */
+[data-cs-theme="cozy"][data-bs-theme="light"] .cs-drill-overlay {
+    background: rgba(42, 36, 30, 0.72);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+}
+[data-cs-theme="cozy"][data-bs-theme="light"] .cs-drill-overlay i,
+[data-cs-theme="cozy"][data-bs-theme="light"] .cs-drill-overlay span { color: #f5c66c !important; }
+[data-cs-theme="cozy"][data-bs-theme="dark"] .cs-drill-overlay {
+    background: rgba(245, 198, 108, 0.85);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+}
+[data-cs-theme="cozy"][data-bs-theme="dark"] .cs-drill-overlay i,
+[data-cs-theme="cozy"][data-bs-theme="dark"] .cs-drill-overlay span { color: #2a241e !important; }

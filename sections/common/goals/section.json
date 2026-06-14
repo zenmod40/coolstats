@@ -1,0 +1,8 @@
+{
+    "id": "goals",
+    "title": "Objectifs mensuels",
+    "order": 15,
+    "context": "always",
+    "enabled": true,
+    "required": false
+}

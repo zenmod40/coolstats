@@ -1,0 +1,66 @@
+/**
+ * CoolStats — Socle partagé des thèmes
+ *
+ * Contient :
+ *  - Variantes du logo (10 combinaisons thème × mode dark/light)
+ *  - Reset @media print pour neutraliser les effets visuels en export PDF
+ *
+ * Chargé en permanence côté dashboard.
+ */
+
+/* ============================================================
+ *  LOGO — 10 variantes (5 thèmes × 2 modes)
+ *  Référence : LOGO.md (Claude Design)
+ * ============================================================ */
+[data-cs-theme="cozy"][data-bs-theme="light"]     { --cs-logo-bg: #2a241e; --cs-logo-mark: #f5c66c; }
+[data-cs-theme="cozy"][data-bs-theme="dark"]      { --cs-logo-bg: #f5c66c; --cs-logo-mark: #2a241e; }
+[data-cs-theme="aurora"]                          { --cs-logo-bg: transparent; --cs-logo-mark: #ffffff; }
+[data-cs-theme="aurora"] .cs-logo-bg              { fill: url(#cs-aurora-grad); }
+[data-cs-theme="editorial"][data-bs-theme="light"]{ --cs-logo-bg: #1a1612; --cs-logo-mark: #c45a3e; }
+[data-cs-theme="editorial"][data-bs-theme="dark"] { --cs-logo-bg: #f3ede1; --cs-logo-mark: #d97757; }
+[data-cs-theme="brutalist"][data-bs-theme="light"]{ --cs-logo-bg: #ffffff; --cs-logo-mark: #000000; }
+[data-cs-theme="brutalist"][data-bs-theme="light"] .cs-logo { filter: drop-shadow(3px 3px 0 #000); }
+[data-cs-theme="brutalist"][data-bs-theme="light"] .cs-logo-bg { rx: 0; ry: 0; stroke: #000; stroke-width: 2; }
+[data-cs-theme="brutalist"][data-bs-theme="dark"] { --cs-logo-bg: #000000; --cs-logo-mark: #f7d600; }
+[data-cs-theme="brutalist"][data-bs-theme="dark"] .cs-logo { filter: drop-shadow(3px 3px 0 #f7d600); }
+[data-cs-theme="brutalist"][data-bs-theme="dark"] .cs-logo-bg { rx: 0; ry: 0; stroke: #f7d600; stroke-width: 2; }
+[data-cs-theme="terminal"][data-bs-theme="dark"]  { --cs-logo-bg: #0a0f0a; --cs-logo-mark: #3aff6e; }
+[data-cs-theme="terminal"][data-bs-theme="dark"] .cs-logo-mark { filter: drop-shadow(0 0 4px #3aff6e); }
+[data-cs-theme="terminal"][data-bs-theme="light"] { --cs-logo-bg: #f7f5e8; --cs-logo-mark: #1e5e2e; }
+[data-cs-theme="terminal"][data-bs-theme="light"] .cs-logo-bg { rx: 0; ry: 0; stroke: #1e5e2e; stroke-width: 1.5; }
+
+/* ============================================================
+ *  Reset thèmes en mode impression — le PDF doit rester sobre
+ *  quel que soit le thème visuel actif.
+ * ============================================================ */
+@media print {
+    /* Neutralise les blobs Aurora */
+    [data-cs-theme="aurora"] #cs-app::before,
+    [data-cs-theme="aurora"] #cs-app::after { display: none !important; }
+
+    /* Neutralise les ASCII bars Terminal (illisibles en PDF) */
+    [data-cs-theme="terminal"] .cs-ascii-bar { display: none !important; }
+
+    /* Force border + radius standard pour les cartes */
+    [data-cs-theme="cozy"] .cs-section,
+    [data-cs-theme="cozy"] .cs-kpi-card,
+    [data-cs-theme="editorial"] .cs-section,
+    [data-cs-theme="brutalist"] .cs-section,
+    [data-cs-theme="brutalist"] .cs-kpi-card {
+        box-shadow: none !important;
+        border: 1px solid #d4d8de !important;
+        border-radius: 8px !important;
+    }
+
+    /* Reset des rotations brutalist */
+    [data-cs-theme="brutalist"] .cs-trend { transform: none !important; }
+    [data-cs-theme="brutalist"] .cs-kpi-card { background: #fff !important; color: #0F172A !important; }
+    [data-cs-theme="brutalist"] .cs-kpi-value,
+    [data-cs-theme="brutalist"] .cs-kpi-label { color: #0F172A !important; }
+
+    /* Hero KPI : on garde la largeur pleine mais valeurs raisonnables */
+    [data-cs-theme="cozy"] .cs-kpi-row .row .col-xl:has(.cs-kpi-card[data-stat="revenue"]) .cs-kpi-value,
+    [data-cs-theme="editorial"] .cs-kpi-row .row .col-xl:has(.cs-kpi-card[data-stat="revenue"]) .cs-kpi-value {
+        font-size: 32px !important;
+    }
+}

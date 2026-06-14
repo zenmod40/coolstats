@@ -1,0 +1,11 @@
+{
+    "id": "orders_chart",
+    "title": "Courbe des commandes",
+    "order": 40,
+    "order_by_theme": {
+        "brutalist": 12.8,
+        "terminal": 11.7
+    },
+    "context": "always",
+    "enabled": true
+}

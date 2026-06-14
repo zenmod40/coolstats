@@ -1,0 +1,444 @@
+/* CoolStats — Thème Editorial (sérif, mode rapport trimestriel) */
+
+/* ============================================================
+ *  EDITORIAL — papier crème, sérif, filets, KPI hero immense
+ * ============================================================ */
+
+[data-cs-theme="editorial"],
+[data-cs-theme="editorial"][data-bs-theme="light"] {
+    --cs-bg:            #f5f0e6;
+    --cs-bg-card:       #fbf7ed;
+    --cs-bg-card-hover: #f5f0e6;
+    --cs-text:          #1a1612;
+    --cs-text-muted:    #7a6f5d;
+    --cs-border:        #c9bfa8;
+    --cs-shadow:        none;
+    --cs-accent:        #a8341e;
+    --cs-accent-rgb:    168, 52, 30;
+    --cs-accent-text:   #a8341e;
+    --cs-accent-2:      #1a4d2e;
+    --cs-success:       #1a4d2e;
+    --cs-danger:        #a8341e;
+    --cs-kpi-orders:    #1a4d2e; --cs-kpi-orders-rgb:   26,  77,  46;
+    --cs-kpi-revenue:   #1a4d2e; --cs-kpi-revenue-rgb:  26,  77,  46;
+    --cs-kpi-items:     #1a1612; --cs-kpi-items-rgb:    26,  22,  18;
+    --cs-kpi-basket:    #a8341e; --cs-kpi-basket-rgb:  168,  52,  30;
+    --cs-map-empty:     #d9cfb8;
+    --cs-font-display:  'Playfair Display', 'Tiempos Headline', Georgia, serif;
+    --cs-font-sans:     'Inter', -apple-system, sans-serif;
+    /* Accent = brick red → texte blanc cassé */
+    --cs-accent-on:     #f5efe0;
+    --cs-accent-2-on:   #f5efe0;
+    --cs-accent-hover:  #862a18;
+}
+
+[data-cs-theme="editorial"][data-bs-theme="dark"] {
+    --cs-bg:            #14110d;
+    --cs-bg-card:       #1d1814;
+    --cs-bg-card-hover: #251f19;
+    --cs-text:          #f0e8d5;
+    --cs-text-muted:    #a89c85;
+    --cs-border:        #3d3528;
+    --cs-shadow:        none;
+    --cs-accent:        #e8a87c;
+    --cs-accent-rgb:    232, 168, 124;
+    --cs-accent-2:      #7fb88f;
+    --cs-success:       #7fb88f;
+    --cs-danger:        #e8a87c;
+    --cs-map-empty:     #2a241c;
+    /* Accent = peach pâle → texte sombre */
+    --cs-accent-on:     #14110d;
+    --cs-accent-2-on:   #14110d;
+    --cs-accent-hover:  #f5be93;
+}
+
+[data-cs-theme="editorial"] #cs-app { font-family: var(--cs-font-sans); background: var(--cs-bg); }
+
+/* Pas de cards : sections en flux éditorial. Juste un filet haut pour séparer. */
+[data-cs-theme="editorial"] .cs-section,
+[data-cs-theme="editorial"] .cs-kpi-card,
+[data-cs-theme="editorial"] .cs-customer-stat,
+[data-cs-theme="editorial"] .cs-goal-card {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0;
+}
+[data-cs-theme="editorial"] .cs-section {
+    border-top: 2px solid var(--cs-text);
+    padding-top: 15px;
+}
+[data-cs-theme="editorial"] .cs-section:last-child { border-bottom: none; }
+
+/* Pas d'icônes décoratives sous Editorial — rapport imprimé pur typo */
+[data-cs-theme="editorial"] .cs-section-header > i,
+[data-cs-theme="editorial"] .cs-section-header > .bi,
+[data-cs-theme="editorial"] .cs-section-header span > i,
+[data-cs-theme="editorial"] .cs-section-header span > .bi,
+[data-cs-theme="editorial"] .cs-kpi-icon,
+[data-cs-theme="editorial"] .cs-customer-stat-icon,
+[data-cs-theme="editorial"] .cs-margin-stat i,
+[data-cs-theme="editorial"] .cs-abandon-kpi-icon,
+[data-cs-theme="editorial"] .cs-signups-meta-card > i,
+[data-cs-theme="editorial"] .cs-trend i,
+[data-cs-theme="editorial"] .cs-traffic-stat > i { display: none; }
+[data-cs-theme="editorial"] .cs-section-header {
+    font-family: var(--cs-font-display);
+    font-size: 22px;
+    font-weight: 500;
+    text-transform: none;
+    letter-spacing: 0;
+    color: var(--cs-text);
+    border-bottom: 3px double var(--cs-text);
+    padding-bottom: 8px;
+}
+[data-cs-theme="editorial"] .cs-kpi-value,
+[data-cs-theme="editorial"] .cs-customer-stat-value,
+[data-cs-theme="editorial"] .cs-goal-pct {
+    font-family: var(--cs-font-display);
+    font-weight: 500;
+}
+[data-cs-theme="editorial"] .cs-trend { font-style: italic; }
+[data-cs-theme="editorial"] .cs-header h1 {
+    font-family: var(--cs-font-display);
+    font-style: italic;
+    font-weight: 600;
+    font-size: 44px;
+    line-height: 1;
+    letter-spacing: -.01em;
+}
+
+/* Hero KPI Editorial — revenue immense en sérif */
+[data-cs-theme="editorial"] .cs-kpi-row .row .col-xl:has(.cs-kpi-card[data-stat="revenue"]) {
+    flex: 0 0 100%;
+    max-width: 100%;
+}
+[data-cs-theme="editorial"] .cs-kpi-row .row .col-xl:has(.cs-kpi-card[data-stat="revenue"]) .cs-kpi-card {
+    padding: 28px 32px;
+    border-top: 3px double var(--cs-text);
+    border-bottom: 3px double var(--cs-text);
+    border-left: none;
+    border-right: none;
+}
+[data-cs-theme="editorial"] .cs-kpi-row .row .col-xl:has(.cs-kpi-card[data-stat="revenue"]) .cs-kpi-value {
+    font-size: 76px;
+    line-height: 1;
+    font-weight: 500;
+    letter-spacing: -.01em;
+}
+[data-cs-theme="editorial"] .cs-kpi-row .row .col-xl:has(.cs-kpi-card[data-stat="revenue"]) .cs-kpi-label {
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 11px;
+    color: var(--cs-accent);
+    font-family: var(--cs-font-sans);
+}
+
+
+/* ============================================================
+ *  EDITORIAL — Hero KPI double colonne (CA + 4 mini-stats)
+ * ============================================================ */
+
+/* Le wrapper KPI sous Editorial : pas de border, padding 0 (la spécificité [data-cs-theme] suffit) */
+[data-cs-theme="editorial"] .cs-kpi-row {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    margin-top: 0;
+    margin-bottom: 36px;
+}
+
+/* Grille principale : CA gauche + side stats droite. La barre supérieure colle au header. */
+[data-cs-theme="editorial"] .cs-ed-kpi-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 64px;
+    border-top: 3px double var(--cs-text);
+    padding: 18px 0 24px;
+    align-items: start;
+}
+@media (max-width: 900px) {
+    [data-cs-theme="editorial"] .cs-ed-kpi-grid { grid-template-columns: 1fr; gap: 28px; }
+}
+
+/* Kicker uppercase rouge tracking large */
+[data-cs-theme="editorial"] .cs-ed-kicker {
+    font-family: var(--cs-font-sans);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2.2px;
+    color: var(--cs-accent);
+    margin-bottom: 14px;
+}
+
+/* Hero CA : valeur immense en sérif, € en couleur accent */
+[data-cs-theme="editorial"] .cs-ed-hero {
+    position: relative;
+    cursor: pointer;
+}
+[data-cs-theme="editorial"] .cs-ed-hero-value {
+    font-family: var(--cs-font-display);
+    font-size: 96px;
+    line-height: 1;
+    font-weight: 500;
+    letter-spacing: -.02em;
+    color: var(--cs-text);
+}
+[data-cs-theme="editorial"] .cs-ed-hero-currency {
+    color: var(--cs-accent);
+    font-weight: 500;
+}
+[data-cs-theme="editorial"] .cs-ed-narrative {
+    font-family: var(--cs-font-display);
+    font-style: italic;
+    font-size: 17px;
+    line-height: 1.5;
+    color: var(--cs-text-muted);
+    margin-top: 24px;
+    max-width: 540px;
+}
+[data-cs-theme="editorial"] .cs-ed-narrative strong {
+    font-style: normal;
+    font-weight: 700;
+    color: var(--cs-text);
+    font-family: var(--cs-font-sans);
+    font-size: 15px;
+}
+
+/* Colonne droite : 4 mini-KPI alignés verticalement avec filets */
+[data-cs-theme="editorial"] .cs-ed-kpi-side {
+    display: flex;
+    flex-direction: column;
+}
+[data-cs-theme="editorial"] .cs-ed-kpi-row-item {
+    position: relative;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--cs-border);
+    cursor: default;
+}
+[data-cs-theme="editorial"] .cs-ed-kpi-row-item:first-child { padding-top: 4px; }
+[data-cs-theme="editorial"] .cs-ed-kpi-row-item:last-child  { border-bottom: none; padding-bottom: 4px; }
+[data-cs-theme="editorial"] .cs-ed-kpi-row-item.cs-kpi-clickable { cursor: pointer; }
+[data-cs-theme="editorial"] .cs-ed-kpi-label {
+    font-family: var(--cs-font-sans);
+    font-size: 10.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.8px;
+    color: var(--cs-text-muted);
+    margin-bottom: 4px;
+}
+[data-cs-theme="editorial"] .cs-ed-kpi-line {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+}
+[data-cs-theme="editorial"] .cs-ed-kpi-val {
+    font-family: var(--cs-font-display);
+    font-size: 28px;
+    font-weight: 500;
+    line-height: 1.1;
+    color: var(--cs-text);
+}
+
+/* Trends éditoriaux : italique, pas de pill bg, juste couleur */
+[data-cs-theme="editorial"] .cs-ed-trend {
+    font-family: var(--cs-font-display);
+    font-style: italic;
+    font-size: 14px;
+    font-weight: 400;
+}
+[data-cs-theme="editorial"] .cs-ed-trend-up      { color: var(--cs-success); }
+[data-cs-theme="editorial"] .cs-ed-trend-down    { color: var(--cs-danger); }
+[data-cs-theme="editorial"] .cs-ed-trend-neutral { color: var(--cs-accent); font-style: italic; }
+
+/* Masthead header Editorial : aucun trait par défaut — l'esprit presse vient des sections.
+   Le filet apparaît UNIQUEMENT au scroll (sticky press style). */
+[data-cs-theme="editorial"] .cs-header {
+    background: var(--cs-bg);
+    border-bottom: 0;
+    padding: 26px 36px 18px;
+    margin-bottom: 12px;
+    align-items: flex-end;
+    transition: box-shadow 0.2s ease;
+}
+/* Au scroll : un fine line + une ombre discrète apparaissent sous le header */
+html.cs-scrolled[data-cs-theme="editorial"] .cs-header {
+    box-shadow: 0 1px 0 0 var(--cs-border), 0 8px 14px -10px rgba(0,0,0,0.12);
+}
+[data-cs-theme="editorial"] .cs-header h1 {
+	font-family: var(--cs-font-display);
+	font-style: italic;
+	font-weight: 600;
+	font-size: 44px;
+	line-height: 1;
+	letter-spacing: -.01em;
+	color: var(--cs-text);
+	margin: 0;
+}
+[data-cs-theme="editorial"] .cs-header-brand {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+}
+/* Logo SVG masqué — remplacé par le kicker textuel .cs-ed-masthead-kicker (HTML, traduisible) */
+[data-cs-theme="editorial"] .cs-header .cs-logo { display: none; }
+[data-cs-theme="editorial"] .cs-ed-masthead-kicker {
+    display: block;
+    font-family: var(--cs-font-sans);
+    font-size: 10.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2.5px;
+    color: var(--cs-text-muted);
+    margin-bottom: 6px;
+}
+[data-cs-theme="editorial"] .cs-header small,
+[data-cs-theme="editorial"] .cs-header .cs-greeting { display: none; }
+
+/* Date + badge mode Editorial : sérif italique + uppercase tracking */
+[data-cs-theme="editorial"] .cs-header-date {
+    font-family: var(--cs-font-display);
+    font-style: italic;
+    font-size: 13px;
+    color: var(--cs-text);
+}
+
+/* Section headers Editorial — 2 niveaux :
+   - Kicker rouge tracking "§ I · CLIENTÈLE" (via ::before + texte titre)
+   - Headline sérif gros "La base s'élargit..." (via ::after, content par section.id) */
+[data-cs-theme="editorial"] #cs-app { counter-reset: cs-ed-section; }
+[data-cs-theme="editorial"] .cs-section-header {
+    counter-increment: cs-ed-section;
+    justify-content: flex-start;
+    align-items: baseline;
+    gap: 0;
+    font-family: var(--cs-font-sans);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2.5px;
+    color: var(--cs-accent);
+    border-bottom: none;
+    padding-bottom: 0;
+    margin-bottom: 22px;
+}
+/* Kicker "§ III · " collé au titre */
+[data-cs-theme="editorial"] .cs-section-header::before {
+    content: "§ " counter(cs-ed-section, upper-roman) " · ";
+    color: var(--cs-accent);
+    margin-right: 0;
+}
+/* Premier span (titre) collé au kicker */
+[data-cs-theme="editorial"] .cs-section-header > span:first-of-type {
+    margin-right: 0;
+}
+/* Tout badge (couverture, "X pays", etc.) poussé à droite + style propre (pas d'héritage uppercase muté) */
+[data-cs-theme="editorial"] .cs-section-header > .badge,
+[data-cs-theme="editorial"] .cs-section-header > .cs-coverage-badge {
+    margin-left: auto;
+    text-transform: none;
+    letter-spacing: 0;
+    font-weight: 600;
+    font-size: 11px;
+}
+
+/* Sous-titre éditorial sérif gros — bloc HTML injecté par le contrôleur PHP (traduisible).
+   Vient se placer juste après .cs-section-header dans le DOM. */
+[data-cs-theme="editorial"] .cs-ed-section-headline {
+    display: block;
+    margin: -12px 0 18px;
+    font-family: var(--cs-font-display);
+    font-size: 28px;
+    font-weight: 500;
+    line-height: 1.2;
+    color: var(--cs-text);
+}
+
+[data-cs-theme="editorial"] .cs-section-header > .bi,
+[data-cs-theme="editorial"] .cs-section-header > i { display: none; }
+
+/* Customer stats Editorial — 2 rangées de 3 stats propres, sans card.
+   Filet horizontal UNIQUEMENT entre les 2 rangées. */
+[data-cs-theme="editorial"] .cs-customers-section .row.g-3 {
+    --bs-gutter-x: 0;
+    --bs-gutter-y: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0 40px;
+    margin: 0;
+}
+[data-cs-theme="editorial"] .cs-customers-section .row.g-3 > [class*="col-"] {
+    flex: none;
+    max-width: none;
+    width: auto;
+    padding: 0;
+}
+/* Reset complet du border par défaut, puis filet UNIQUEMENT sous les 3 premières (= entre rang 1 et 2) */
+[data-cs-theme="editorial"] .cs-customer-stat {
+    border: none !important;
+}
+[data-cs-theme="editorial"] .cs-customers-section .row.g-3 > :nth-child(-n+3) .cs-customer-stat {
+	border-bottom: 1px solid var(--cs-border) !important;
+	padding-bottom: 10px !important;
+	margin-bottom: 15px !important;
+	border-top: 1px solid var(--cs-border) !important;
+}
+[data-cs-theme="editorial"] .cs-customer-stat-value {
+    font-family: var(--cs-font-display);
+    font-size: 36px;
+    font-weight: 500;
+    line-height: 1.1;
+    color: var(--cs-text);
+    margin-bottom: 6px;
+}
+[data-cs-theme="editorial"] .cs-customer-stat-value small {
+    font-family: var(--cs-font-display);
+    font-style: italic;
+    font-size: 22px;
+    color: var(--cs-text);
+}
+[data-cs-theme="editorial"] .cs-customer-stat-label {
+    font-family: var(--cs-font-sans);
+    font-size: 10.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--cs-text-muted);
+}
+/* Mobile : 1 colonne, chaque stat avec filet bas (sauf la dernière) */
+@media (max-width: 700px) {
+    [data-cs-theme="editorial"] .cs-customers-section .row.g-3 { grid-template-columns: 1fr; }
+    [data-cs-theme="editorial"] .cs-customers-section .row.g-3 > [class*="col-"]:not(:last-child) .cs-customer-stat {
+        border-bottom: 1px solid var(--cs-border);
+        padding-bottom: 16px !important;
+    }
+}
+
+/* ─── Drill overlay : encre doux (light) / rust (dark), peu opaque ─── */
+[data-cs-theme="editorial"][data-bs-theme="light"] .cs-drill-overlay {
+    background: rgba(26, 22, 18, 0.65);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+}
+[data-cs-theme="editorial"][data-bs-theme="dark"] .cs-drill-overlay {
+    background: rgba(217, 119, 87, 0.70);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+}
+
+/* ─── Badge mode header : encre rouge style press ─── */
+[data-cs-theme="editorial"] .cs-header-mode {
+    background: transparent;
+    border: 1px solid var(--cs-text);
+    color: var(--cs-text);
+    border-radius: 0;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-size: 10.5px;
+}
+[data-cs-theme="editorial"] .cs-mode-dot { background: var(--cs-accent); }

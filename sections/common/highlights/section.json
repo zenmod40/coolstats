@@ -1,0 +1,10 @@
+{
+    "id": "highlights",
+    "title": "Produits remarquables",
+    "order": 25,
+    "order_by_theme": {
+        "brutalist": 13.4
+    },
+    "context": "always",
+    "enabled": true
+}

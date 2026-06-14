@@ -1,0 +1,1723 @@
+/**
+ * CoolStats — styles globaux (thème dark/light + sections + KPI).
+ */
+
+/* ── Variables thème stables ── */
+[data-bs-theme="dark"] {
+    --cs-bg: #0f1117;
+    --cs-bg-card: #1a1d28;
+    --cs-bg-card-hover: #212431;
+    --cs-text: #e8eaf0;
+    --cs-text-muted: #9498a8;
+    --cs-border: #2a2d3a;
+    --cs-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    /* Couleur d'un texte sur fond accent transparent — doit rester lisible. */
+    --cs-accent-text: #c4b5fd;
+}
+[data-bs-theme="light"] {
+    --cs-bg: #f0f2f5;
+    --cs-bg-card: #ffffff;
+    --cs-bg-card-hover: #f7f8fa;
+    --cs-text: #0F172A;
+    --cs-text-muted: #64748b;
+    --cs-border: #dfe1e6;
+    --cs-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    --cs-accent-text: #5b21b6;
+}
+:root {
+    /* Default theme : Sapphire — bleu sobre business (différencié d'Aurora qui est violet/cyan) */
+    --cs-accent: #2563EB;
+    --cs-accent-rgb: 37, 99, 235;
+    --cs-accent-2: #0EA5E9;
+    --cs-accent-on: #ffffff;    /* texte qui contraste avec --cs-accent (à overrider par thème) */
+    --cs-accent-2-on: #ffffff;  /* idem pour --cs-accent-2 */
+    --cs-accent-hover: #1d4ed8; /* version foncée de l'accent pour le hover (à overrider) */
+    --cs-success: #10b981;
+    --cs-danger: #ef4444;
+    --cs-warning: #f59e0b;
+    --cs-kpi-orders:      #2563EB;
+    --cs-kpi-orders-rgb:  37, 99, 235;
+    --cs-kpi-revenue:     #10b981;
+    --cs-kpi-revenue-rgb: 16, 185, 129;
+    --cs-kpi-items:       #0EA5E9;
+    --cs-kpi-items-rgb:   14, 165, 233;
+    --cs-kpi-basket:      #6366F1;
+    --cs-kpi-basket-rgb:  99, 102, 241;
+}
+
+/* ── Layout ── */
+#cs-app {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--cs-bg);
+    color: var(--cs-text);
+    padding: 0 36px 28px;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* ── Header sticky ── */
+.cs-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--cs-bg);
+    margin: 0 -36px 24px;
+    padding: 18px 36px 14px;
+    border-bottom: 1px solid var(--cs-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+.cs-header-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.cs-header h1 {
+    font-size: 24px;
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -.02em;
+    margin: 0;
+    color: var(--cs-text);
+}
+/* Kicker masthead "Le rapport trimestriel" — caché par défaut, affiché uniquement sous Editorial */
+.cs-ed-masthead-kicker { display: none; }
+
+.cs-header .form-control,
+.cs-header .form-select {
+    background: var(--cs-bg-card);
+    border-color: var(--cs-border);
+    color: var(--cs-text);
+}
+#cs-theme-toggle {
+    border-color: var(--cs-border);
+    color: var(--cs-text);
+}
+
+/* ── Sections ── */
+.cs-section {
+    background: var(--cs-bg-card);
+    border: 1px solid var(--cs-border);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 24px;
+    box-shadow: var(--cs-shadow);
+    transition: opacity 0.2s ease;
+}
+.cs-section-header {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--cs-text);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+/* Le 1er span (le titre) garde sa taille naturelle, gap interne pour l'icône */
+.cs-section-header > span:first-child {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+/* Tout ce qui n'est pas le titre est poussé à droite (badge, dropdown wrapper, etc.) */
+.cs-section-header > *:not(:first-child) {
+    margin-left: auto;
+}
+/* Si plusieurs éléments à droite, seul le 1er prend margin-left auto pour les coller entre eux */
+.cs-section-header > *:not(:first-child) ~ * {
+    margin-left: 0;
+}
+
+/* ── Date courte + badge mode (header) ── */
+.cs-header-date {
+    font-size: 13px;
+    color: var(--cs-text-muted);
+    font-variant-numeric: tabular-nums;
+}
+.cs-header-mode {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 5px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 999px;
+    background: var(--cs-bg-card-hover);
+    color: var(--cs-text);
+    border: 1px solid var(--cs-border);
+}
+.cs-mode-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--cs-accent);
+    flex-shrink: 0;
+}
+.cs-mode-mkp .cs-mode-dot { background: var(--cs-warning); }
+
+/* ── Logo CoolStats (SVG inline, coloration par thème via vars --cs-logo-*) ── */
+.cs-logo {
+    height: 36px;
+    width: 36px;
+    display: block;
+    flex-shrink: 0;
+}
+.cs-logo-sm { height: 28px; width: 28px; }
+.cs-logo-bg   { fill: var(--cs-logo-bg, #0F172A); }
+.cs-logo-mark { stroke: var(--cs-logo-mark, #ffffff); }
+
+/* ── KPI cards ── */
+.cs-kpi-row { padding: 0; background: transparent; border: none; box-shadow: none; }
+.cs-kpi-card {
+    background: var(--cs-bg-card);
+    border: 1px solid var(--cs-border);
+    border-radius: 12px;
+    padding: 16px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: relative;
+    transition: border-color 0.15s ease, transform 0.15s ease;
+}
+.cs-kpi-card:hover { transform: translateY(-2px); }
+.cs-kpi-card[data-stat="returns"] { cursor: pointer; }
+.cs-kpi-card[data-stat="returns"]:hover { border-color: var(--cs-danger); }
+.cs-kpi-clickable { cursor: pointer; }
+.cs-kpi-clickable:hover { border-color: var(--cs-accent-2); }
+.cs-kpi-link-icon {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    font-size: 12px;
+    color: var(--cs-text-muted);
+    opacity: 0;
+    transition: opacity .15s ease;
+    pointer-events: none;
+}
+.cs-kpi-clickable:hover .cs-kpi-link-icon,
+.cs-customer-stat.cs-kpi-clickable:hover .cs-kpi-link-icon { opacity: .6; }
+
+/* ─── Overlay au survol pour les cartes drill-down ─── */
+.cs-kpi-card, .cs-customer-stat, .cs-goal-card { overflow: hidden; }
+.cs-kpi-clickable { position: relative; }
+.cs-drill-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: rgba(var(--cs-accent-rgb), 0.92);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    color: #fff;
+    opacity: 0;
+    transform: scale(.96);
+    transition: opacity .18s ease, transform .18s ease;
+    pointer-events: none;
+    border-radius: inherit;
+    z-index: 2;
+    padding: 10px;
+    text-align: center;
+}
+.cs-drill-overlay i { font-size: 32px; line-height: 1; color: #fff !important; }
+.cs-drill-overlay span { font-size: 12px; font-weight: 600; letter-spacing: .2px; color: #fff !important; }
+.cs-kpi-clickable:hover .cs-drill-overlay { opacity: 1; transform: scale(1); }
+
+.cs-kpi-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+/* Couleurs catégorielles KPI — pilotées par la palette BO via vars --cs-kpi-* */
+.cs-kpi-icon-orders  { background: rgba(var(--cs-kpi-orders-rgb),  .15); color: var(--cs-kpi-orders); }
+.cs-kpi-icon-revenue { background: rgba(var(--cs-kpi-revenue-rgb), .15); color: var(--cs-kpi-revenue); }
+.cs-kpi-icon-items   { background: rgba(var(--cs-kpi-items-rgb),   .15); color: var(--cs-kpi-items); }
+.cs-kpi-icon-basket  { background: rgba(var(--cs-kpi-basket-rgb),  .15); color: var(--cs-kpi-basket); }
+.cs-kpi-icon-returns { background: rgba(239,68,68,.15); color: var(--cs-danger); }
+.cs-kpi-body { flex-grow: 1; min-width: 0; }
+.cs-kpi-value {
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--cs-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.cs-kpi-label {
+    font-size: 11px;
+    color: var(--cs-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    margin-top: 2px;
+}
+
+/* ── Section Performance (cliquable → modal carriers) ── */
+.cs-perf-section { cursor: pointer; transition: border-color 0.15s ease; }
+.cs-perf-section:hover { border-color: var(--cs-accent-2); }
+.cs-perf-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.cs-perf-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 4px;
+    border-top: 1px solid var(--cs-border);
+    font-size: 15px;
+}
+.cs-perf-list li:first-child { border-top: none; }
+
+/* ── Mode présentation / TV ── */
+.cs-fullscreen-mode #cs-app { padding: 0 36px 28px; }
+.cs-fullscreen-mode .cs-header { padding-top: 18px; }
+/* Le contenu s'adapte automatiquement : on n'altère pas trop. */
+
+/* ── Mode personnalisation des sections ── */
+#cs-customize-btn { border-color: var(--cs-border); color: var(--cs-text); }
+.cs-edit-mode #cs-customize-btn { background: var(--cs-accent-2); border-color: var(--cs-accent-2); color: var(--cs-accent-2-on); }
+
+/* Bouton btn-accent générique — couleurs pilotées par les variables de thème */
+.cs-btn-accent {
+    background: var(--cs-accent);
+    color: var(--cs-accent-on);
+    border: 1px solid var(--cs-accent);
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-weight: 500;
+}
+.cs-btn-accent:hover {
+    background: var(--cs-accent-hover);
+    border-color: var(--cs-accent-hover);
+    color: var(--cs-accent-on);
+}
+
+/* Toggle injecté dans chaque section en mode édition */
+.cs-edit-toggle-wrap {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    background: var(--cs-bg-card);
+    border: 2px dashed var(--cs-border);
+    border-radius: 10px;
+    padding: 10px 14px;
+    margin-bottom: 10px;
+    font-size: 13px;
+    user-select: none;
+    transition: all 0.15s ease;
+}
+
+/* Handle drag */
+.cs-edit-handle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    color: var(--cs-text-muted);
+    cursor: grab;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+.cs-edit-handle:hover { background: var(--cs-bg-card-hover); color: var(--cs-accent-2); }
+.cs-edit-handle:active { cursor: grabbing; }
+.cs-edit-handle-locked { cursor: not-allowed; opacity: 0.5; }
+.cs-edit-handle-locked:hover { background: transparent; color: var(--cs-text-muted); }
+
+/* Sortable visual feedback */
+.cs-sortable-ghost {
+    opacity: 0.4;
+    background: var(--cs-bg-card-hover) !important;
+}
+.cs-sortable-chosen { box-shadow: 0 8px 24px rgba(0,0,0,0.25); }
+.cs-sortable-drag { transform: rotate(0.5deg); }
+.cs-edit-toggle-wrap:hover { border-color: var(--cs-accent-2); }
+.cs-edit-toggle-wrap input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--cs-accent-2);
+    cursor: pointer;
+}
+.cs-edit-toggle-wrap .cs-edit-section-title {
+    font-weight: 600;
+    color: var(--cs-text);
+}
+.cs-edit-toggle-wrap .cs-edit-section-required {
+    margin-left: auto;
+    font-size: 11px;
+    text-transform: uppercase;
+    color: var(--cs-text-muted);
+    background: var(--cs-bg-card-hover);
+    padding: 2px 8px;
+    border-radius: 6px;
+}
+
+.cs-edit-mode .cs-edit-toggle-wrap { display: flex; }
+.cs-edit-mode [data-cs-section] { position: relative; transition: opacity 0.2s ease; }
+.cs-edit-mode [data-cs-section].cs-section-disabled {
+    opacity: 0.45;
+    pointer-events: none;
+}
+.cs-edit-mode [data-cs-section].cs-section-disabled .cs-edit-toggle-wrap {
+    pointer-events: auto;
+    opacity: 1;
+}
+
+/* Sections désactivées (absentes du DOM en mode normal) — placeholders affichés uniquement en mode édition. */
+.cs-section-placeholder { display: none; }
+.cs-edit-mode .cs-section-placeholder {
+    display: block;
+    border: 2px dashed var(--cs-border);
+    background: transparent;
+    padding: 8px 16px;
+}
+.cs-placeholder-tag {
+    background: var(--cs-bg-card-hover);
+    color: var(--cs-text-muted);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-left: 4px;
+}
+
+/* Action bar sticky en bas */
+#cs-edit-bar {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    background: var(--cs-bg-card);
+    border-top: 1px solid var(--cs-border);
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.2);
+    padding: 12px 24px;
+    z-index: 1000;
+    transform: translateY(100%);
+    transition: transform 0.25s ease;
+}
+.cs-edit-mode #cs-edit-bar { transform: translateY(0); }
+.cs-edit-bar-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+.cs-edit-bar-info { font-size: 13px; color: var(--cs-text); }
+.cs-edit-bar-actions { display: flex; gap: 12px; align-items: center; }
+.cs-edit-saved-status { transition: color 0.2s ease; }
+.cs-edit-saved-status.cs-saved { color: var(--cs-success) !important; }
+.cs-edit-bar-actions kbd {
+    background: var(--cs-bg-card-hover);
+    border: 1px solid var(--cs-border);
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-size: 10px;
+    color: var(--cs-text-muted);
+    margin-left: 4px;
+}
+
+/* Pendant l'édition, ajouter de l'espace en bas pour ne pas que la action bar masque le contenu */
+.cs-edit-mode #cs-app { padding-bottom: 100px; }
+
+/* ── Section Clients (KPI customers) ── */
+.cs-customer-stat {
+    background: var(--cs-bg-card-hover);
+    border: 1px solid var(--cs-border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.cs-customer-stat-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+}
+.cs-customer-stat-body { flex-grow: 1; min-width: 0; }
+.cs-customer-stat-value {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--cs-text);
+    line-height: 1.1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.cs-customer-stat-label {
+    font-size: 11px;
+    color: var(--cs-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    margin-top: 2px;
+}
+
+/* ── Activité récente ── */
+.cs-activity-list {
+    max-height: 360px;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+.cs-activity-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 4px;
+    border-bottom: 1px solid var(--cs-border);
+    font-size: 13px;
+    min-width: 0;
+}
+.cs-activity-item:last-child { border-bottom: none; }
+.cs-activity-hidden { display: none; }
+.cs-activity-section.cs-activity-expanded .cs-activity-hidden { display: flex; }
+.cs-activity-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+.cs-activity-ref {
+    font-weight: 600;
+    color: var(--cs-text);
+    text-decoration: none;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+.cs-activity-ref:hover { color: var(--cs-accent-2); text-decoration: none; }
+.cs-activity-id { flex-shrink: 0; }
+.cs-activity-customer {
+    color: var(--cs-text);
+    flex-grow: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.cs-activity-state {
+    display: inline-block;
+    padding: 1px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+.cs-activity-time { flex-shrink: 0; }
+
+/* ── Section Trafic & visiteurs ── */
+.cs-traffic-empty {
+    text-align: center;
+    padding: 32px 20px;
+    color: var(--cs-text-muted);
+}
+.cs-traffic-empty > i { font-size: 36px; opacity: 0.5; }
+.cs-traffic-empty h4 { font-size: 15px; font-weight: 600; color: var(--cs-text); }
+.cs-traffic-empty code { background: var(--cs-bg-card-hover); padding: 1px 6px; border-radius: 4px; }
+
+.cs-traffic-providers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+    max-width: 720px;
+    margin: 20px auto;
+}
+.cs-traffic-provider {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 18px 14px 14px;
+    background: var(--cs-bg-card-hover);
+    border: 1px solid var(--cs-border);
+    border-radius: 10px;
+    color: var(--cs-text);
+}
+.cs-traffic-provider i { font-size: 26px; color: var(--cs-accent); opacity: .85; margin-bottom: 4px; }
+.cs-traffic-provider strong { font-size: 14px; font-weight: 600; }
+.cs-traffic-provider small { font-size: 11.5px; color: var(--cs-text-muted); text-align: center; }
+.cs-soon-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 7px;
+    background: rgba(var(--cs-accent-rgb), .15);
+    color: var(--cs-accent-text);
+    border-radius: 999px;
+    text-transform: uppercase;
+    letter-spacing: .3px;
+}
+.cs-traffic-provider-soon { opacity: .85; }
+
+.cs-traffic-stat {
+    background: var(--cs-bg-card-hover);
+    border: 1px solid var(--cs-border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    height: 100%;
+}
+.cs-traffic-stat i { font-size: 18px; }
+.cs-traffic-stat-value {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--cs-text);
+    margin-top: 4px;
+    line-height: 1.1;
+}
+.cs-traffic-stat-label {
+    font-size: 11px;
+    color: var(--cs-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    margin-top: 2px;
+}
+
+.cs-traffic-subblock {
+    background: var(--cs-bg-card-hover);
+    border: 1px solid var(--cs-border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    height: 100%;
+}
+.cs-traffic-subblock-title {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: var(--cs-text);
+    margin-bottom: 10px;
+}
+.cs-traffic-list { list-style: none; padding: 0; margin: 0; }
+.cs-traffic-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--cs-border);
+    font-size: 13px;
+}
+.cs-traffic-list li:last-child { border-bottom: none; }
+.cs-traffic-list-label {
+    color: var(--cs-text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-right: 12px;
+}
+.cs-traffic-list-value {
+    font-weight: 700;
+    color: var(--cs-text);
+    font-variant-numeric: tabular-nums;
+}
+.cs-device-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    margin-bottom: 4px;
+    color: var(--cs-text);
+}
+.cs-device-bars .progress {
+    background: var(--cs-bg-card);
+    border-radius: 999px;
+}
+
+/* ── Charts ── */
+.cs-charts-section { padding-bottom: 18px; }
+.cs-chart-wrap { padding: 8px 4px 0; }
+.cs-line-mode-label,
+.cs-bar-mode-label { transition: color 0.15s ease, font-weight 0.15s ease; }
+.cs-line-mode-label.cs-active,
+.cs-bar-mode-label.cs-active { color: var(--cs-text); font-weight: 700; }
+
+/* ── Sections collapsibles ── */
+.cs-collapsible.cs-collapsed .cs-collapsible-body { display: none; }
+.cs-collapse-toggle { cursor: pointer; }
+/* Hover hint uniquement sur le titre + chevron, pas sur les contrôles (dropdowns, inputs) */
+.cs-collapse-toggle > span:first-child,
+.cs-collapse-toggle > .cs-collapse-chevron { transition: opacity 0.15s ease; }
+.cs-collapse-toggle:hover > span:first-child,
+.cs-collapse-toggle:hover > .cs-collapse-chevron { opacity: 0.75; }
+.cs-collapse-chevron { transition: transform 0.2s ease; font-size: 14px; color: var(--cs-text-muted); }
+.cs-collapsible.cs-collapsed .cs-collapse-chevron { transform: rotate(-90deg); }
+
+/* ── Modals (Bootstrap override pour thème dashboard) ── */
+.cs-modal .modal-content {
+    background: var(--cs-bg-card);
+    color: var(--cs-text);
+    border: 1px solid var(--cs-border);
+}
+.cs-modal .modal-header { border-color: var(--cs-border); padding: 16px 22px; }
+.cs-modal .modal-title { color: var(--cs-text); }
+.cs-modal .modal-body { padding: 16px 22px; color: var(--cs-text); }
+.cs-modal .modal-footer { border-color: var(--cs-border); padding: 12px 22px; }
+[data-bs-theme="dark"] .cs-modal .btn-close { filter: invert(1) opacity(0.8); }
+
+.cs-modal-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+}
+.cs-modal-toolbar .form-control,
+.cs-modal-toolbar .form-select {
+    background: var(--cs-bg);
+    border-color: var(--cs-border);
+    color: var(--cs-text);
+}
+
+/* ── Orders : filtres + pagination ── */
+.cs-orders-filter-btn,
+.cs-page-btn {
+    background: var(--cs-bg-card);
+    border: 1px solid var(--cs-border);
+    color: var(--cs-text);
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+.cs-orders-filter-btn:hover,
+.cs-page-btn:hover { border-color: var(--cs-accent-2); }
+.cs-orders-filter-btn.cs-active {
+    background: var(--cs-accent-2);
+    border-color: var(--cs-accent-2);
+    color: #fff;
+    font-weight: 600;
+}
+.cs-page-btn { padding: 4px 10px; }
+.cs-orders-pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 12px;
+    margin-top: 6px;
+    /* border-top: 1px solid var(--cs-border); */
+}
+.cs-status-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+}
+.cs-ref {
+    background: var(--cs-bg-card-hover);
+    color: var(--cs-text);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 11px;
+}
+
+/* ── Highlights (cards star / watch / pairs) ── */
+.cs-highlights-row { margin-bottom: 24px; }
+.cs-highlight-card {
+    background: var(--cs-bg-card);
+    border: 1px solid var(--cs-border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    height: 100%;
+    overflow: hidden;
+    transition: border-color 0.15s ease, transform 0.15s ease;
+}
+.cs-highlight-card .min-width-0,
+.cs-highlight-card .flex-grow-1 { min-width: 0; }
+.cs-highlight-card:hover { transform: translateY(-2px); }
+.cs-highlight-star:hover  { border-color: #fbbf24; }
+.cs-highlight-watch:hover { border-color: var(--cs-warning); }
+.cs-highlight-pairs:hover { border-color: var(--cs-accent-2); }
+.cs-highlight-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+.cs-highlight-icon {
+    width: 28px; height: 28px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+}
+.cs-highlight-star  .cs-highlight-icon { background: rgba(251,191,36,0.15); color: #fbbf24; }
+.cs-highlight-watch .cs-highlight-icon { background: rgba(245,158,11,0.15); color: var(--cs-warning); }
+.cs-highlight-pairs .cs-highlight-icon { background: rgba(6,182,212,0.15);  color: var(--cs-accent-2); }
+.cs-highlight-title {
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 11px;
+    color: var(--cs-text);
+}
+.cs-highlight-prod { color: var(--cs-text); }
+.cs-highlight-prod:hover { color: var(--cs-accent-2); }
+
+/* ── Tableaux ── */
+.cs-table {
+    color: var(--cs-text);
+    margin-bottom: 0;
+}
+.cs-table thead th {
+    color: var(--cs-text-muted);
+    background: transparent;
+    border-color: var(--cs-border);
+    text-transform: uppercase;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    padding: 10px 8px;
+}
+.cs-table tbody td {
+    font-size: 13px;
+    color: var(--cs-text);
+    background: transparent;
+    border-color: var(--cs-border);
+    padding: 8px;
+    vertical-align: middle;
+}
+.cs-table tbody tr:hover td {
+    background: var(--cs-bg-card-hover);
+}
+.cs-rank-number {
+    display: inline-flex;
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    background: var(--cs-bg-card-hover);
+    color: var(--cs-text-muted);
+    font-size: 11px;
+    font-weight: 700;
+    align-items: center;
+    justify-content: center;
+}
+.cs-link { color: var(--cs-text); }
+.cs-link:hover { color: var(--cs-accent); }
+
+/* ── Top 100 — ligne de totaux ── */
+.cs-top-totals-row td {
+    background: var(--cs-bg-card-hover) !important;
+    border-bottom: 1px solid var(--cs-border);
+    padding: 8px 10px !important;
+    color: var(--cs-text);
+}
+.cs-top-products .form-check-input { cursor: pointer; }
+
+/* ── Carte Europe + classement pays ── */
+.cs-map-container { width: 100%; }
+.cs-map-container svg {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+.cs-map-path {
+    fill: var(--cs-map-empty);
+    stroke: var(--cs-border);
+    stroke-width: 0.5;
+    transition: fill 0.2s ease, stroke-width 0.15s ease;
+    cursor: pointer;
+}
+[data-bs-theme="dark"]  { --cs-map-empty: #2a2d3a; }
+[data-bs-theme="light"] { --cs-map-empty: #d6dae3; }
+.cs-map-path:hover {
+    stroke-width: 1.5;
+    stroke: var(--cs-text);
+    filter: brightness(1.15);
+}
+.cs-map-path.cs-map-no-data {
+    fill: var(--cs-map-empty);
+    cursor: default;
+}
+.cs-map-path.cs-map-highlight {
+    stroke-width: 2;
+    stroke: #fff;
+    filter: brightness(1.3);
+}
+.cs-map-path.cs-map-selected {
+    stroke-width: 2.5;
+    stroke: var(--cs-accent);
+    filter: brightness(1.4);
+}
+.cs-map-tooltip {
+    position: absolute;
+    pointer-events: none;
+    background: var(--cs-bg-card);
+    border: 1px solid var(--cs-border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 12px;
+    color: var(--cs-text);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    min-width: 180px;
+    z-index: 10;
+}
+.cs-tt-country { font-weight: 700; margin-bottom: 6px; }
+.cs-tt-row { display: flex; justify-content: space-between; gap: 12px; padding: 2px 0; }
+.cs-tt-val { font-weight: 600; }
+
+.cs-country-rank-list {
+    max-height: 380px;
+    overflow-y: auto;
+}
+.cs-country-rank-item {
+    cursor: pointer;
+    border-color: var(--cs-border) !important;
+    transition: background 0.15s ease;
+}
+.cs-country-rank-item:hover,
+.cs-country-rank-item.cs-rank-highlight {
+    background: var(--cs-bg-card-hover);
+}
+.cs-country-rank-item.cs-country-selected {
+    background: var(--cs-bg-card-hover);
+    border-left: 3px solid var(--cs-accent);
+}
+
+/* Badge filtre pays actif dans le header */
+.cs-country-filter-badge {
+    cursor: pointer;
+    border: 1px solid var(--cs-accent);
+    background: rgba(var(--cs-accent-rgb), 0.15);
+    color: var(--cs-accent);
+    padding: 4px 10px;
+    transition: filter 0.15s ease;
+}
+.cs-country-filter-badge:hover { filter: brightness(1.2); }
+
+.cs-badge-accent {
+    background: rgba(var(--cs-accent-rgb), 0.18);
+    color: var(--cs-accent-text);
+    border: 1px solid rgba(var(--cs-accent-rgb), 0.35);
+}
+
+/* ── Input texte dashboard (suit le thème, remplace form-control Bootstrap) ── */
+.cs-search-input {
+    background: var(--cs-bg-card);
+    color: var(--cs-text);
+    border: 1px solid var(--cs-border);
+    border-radius: 8px;
+    padding: 6px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    width: 220px;
+    max-width: 100%;
+    transition: all 0.2s ease;
+}
+.cs-search-input::placeholder { color: var(--cs-text-muted); opacity: 0.8; }
+.cs-search-input:hover { border-color: var(--cs-text-muted); }
+.cs-search-input:focus {
+    border-color: var(--cs-accent);
+    background: var(--cs-bg-card-hover);
+    box-shadow: 0 0 0 3px rgba(var(--cs-accent-rgb), 0.15);
+    outline: none;
+}
+
+/* ── Pill dropdown générique : look identique au date range picker ──
+   Composé d'un .cs-pill-btn (déclencheur) + .cs-pill-menu (liste d'options).
+   Utilisé pour compare_with, orders_sort, top_limit. */
+.cs-pill-btn {
+    border: 1px solid var(--cs-border);
+    color: var(--cs-text);
+    font-weight: 600;
+    font-size: 13px;
+    padding: 6px 14px;
+    background: var(--cs-bg-card);
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+.cs-pill-btn:hover,
+.cs-pill-btn.show,
+.cs-pill-btn[aria-expanded="true"] {
+    border-color: var(--cs-accent);
+    background: var(--cs-bg-card-hover);
+    box-shadow: 0 0 0 3px rgba(var(--cs-accent-rgb), 0.15);
+    color: var(--cs-text);
+    outline: none;
+}
+.cs-pill-btn::after {
+    margin-left: 6px;
+    border-top-color: currentColor;
+    opacity: 0.6;
+}
+
+.cs-pill-menu {
+    background: var(--cs-bg-card);
+    border: 1px solid var(--cs-border);
+    border-radius: 12px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+    padding: 6px;
+    min-width: 220px;
+    margin-top: 4px;
+}
+.cs-pill-menu li { list-style: none; }
+.cs-pill-option {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 8px 12px;
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    color: var(--cs-text);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+.cs-pill-option:hover {
+    background: var(--cs-bg-card-hover);
+    color: var(--cs-accent);
+}
+.cs-pill-option.cs-active {
+    background: rgba(var(--cs-accent-rgb), 0.12);
+    color: var(--cs-accent);
+    font-weight: 700;
+}
+
+/* ── Date Range Picker ── */
+.cs-daterange-btn {
+    border: 1px solid var(--cs-border);
+    color: var(--cs-text);
+    font-weight: 600;
+    font-size: 13px;
+    padding: 6px 14px;
+    background: var(--cs-bg-card);
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+.cs-daterange-btn:hover,
+.cs-daterange-btn.show {
+    border-color: var(--cs-accent);
+    background: var(--cs-bg-card-hover);
+    box-shadow: 0 0 0 3px rgba(var(--cs-accent-rgb), 0.15);
+    color: var(--cs-text);
+}
+/* Le wrapper doit créer son propre stacking context avec z-index suffisamment haut
+ * pour que le menu déroulant échappe au stacking context du header sticky (z 100)
+ * et passe au-dessus des sections KPI/CA/articles qui suivent dans le DOM. */
+#cs-daterange-wrapper {
+    position: relative;
+    z-index: 1080;
+}
+.cs-daterange-menu.dropdown-menu {
+    z-index: 1080;
+}
+.cs-daterange-menu {
+    background: var(--cs-bg-card);
+    border: 1px solid var(--cs-border);
+    border-radius: 12px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.35);
+    min-width: 420px;
+    overflow: hidden;
+}
+.cs-daterange-presets {
+    width: 200px;
+    padding: 14px;
+    border-right: 1px solid var(--cs-border);
+    max-height: 380px;
+    overflow-y: auto;
+}
+.cs-daterange-custom {
+    flex: 1;
+    padding: 14px;
+}
+.cs-daterange-group-title {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--cs-text-muted);
+    padding: 4px 0;
+}
+.cs-daterange-preset {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    color: var(--cs-text-muted);
+    font-size: 13px;
+    font-weight: 500;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+.cs-daterange-preset:hover {
+    background: rgba(var(--cs-accent-rgb), 0.1);
+    color: var(--cs-accent);
+}
+.cs-daterange-preset.active {
+    background: var(--cs-accent);
+    color: #fff;
+    font-weight: 600;
+}
+.cs-date-input {
+    background: var(--cs-bg) !important;
+    border-color: var(--cs-border) !important;
+    color: var(--cs-text) !important;
+    font-size: 13px;
+    border-radius: 8px !important;
+}
+.cs-date-input:focus {
+    border-color: var(--cs-accent) !important;
+    box-shadow: 0 0 0 3px rgba(var(--cs-accent-rgb), 0.15) !important;
+}
+[data-bs-theme="dark"] .cs-date-input::-webkit-calendar-picker-indicator {
+    filter: invert(1) opacity(0.7);
+    cursor: pointer;
+}
+/* (doublon supprimé : .cs-btn-accent défini plus haut avec --cs-accent-on/-hover) */
+
+/* ── Trend badges ── */
+.cs-trend {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 6px;
+    line-height: 1.2;
+}
+.cs-trend i { font-size: 13px; vertical-align: middle; }
+.cs-trend-up      { background: rgba(16,185,129,.15); color: var(--cs-success); }
+.cs-trend-down    { background: rgba(239,68,68,.15);  color: var(--cs-danger); }
+.cs-trend-neutral { background: rgba(148,152,168,.12); color: var(--cs-text-muted); }
+
+/* ─────────────────── Goals (objectifs mensuels) ─────────────────── */
+.cs-goals-section { padding: 16px 18px; background: var(--cs-card-bg); border: 1px solid var(--cs-border); border-radius: 12px; }
+.cs-goals-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; gap: 12px; flex-wrap: wrap; }
+.cs-goals-title { font-size: 15px; font-weight: 700; color: var(--cs-text); display: flex; align-items: center; gap: 8px; }
+.cs-goals-title i { color: var(--cs-accent); }
+.cs-goals-meta { font-size: 12px; color: var(--cs-text-muted); }
+
+.cs-goals-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 800px) { .cs-goals-grid { grid-template-columns: 1fr; } }
+
+.cs-goal-card { padding: 14px 16px; background: var(--cs-bg); border: 1px solid var(--cs-border); border-radius: 10px; transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease; }
+.cs-goal-card.cs-kpi-clickable { cursor: pointer; }
+.cs-goal-card.cs-kpi-clickable:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,.06); border-color: var(--cs-accent); }
+
+.cs-goal-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 4px; }
+.cs-goal-label { font-size: 13px; font-weight: 600; color: var(--cs-text); display: inline-flex; align-items: center; gap: 6px; }
+.cs-goal-label i { color: var(--cs-text-muted); }
+.cs-goal-pct { font-size: 22px; font-weight: 800; color: var(--cs-text); letter-spacing: -.02em; }
+
+.cs-goal-values { font-size: 12px; color: var(--cs-text-muted); margin-bottom: 10px; }
+.cs-goal-current { font-weight: 700; color: var(--cs-text); }
+.cs-goal-sep { margin: 0 4px; opacity: .5; }
+
+.cs-goal-bar { position: relative; height: 10px; background: var(--cs-border); border-radius: 999px; overflow: visible; margin-bottom: 10px; }
+.cs-goal-bar-fill { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 999px; transition: width .4s ease; }
+.cs-goal-bar-marker { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--cs-text-muted); opacity: .55; border-radius: 2px; transform: translateX(-1px); }
+
+.cs-goal-ahead .cs-goal-bar-fill    { background: linear-gradient(90deg, #10b981, #059669); }
+.cs-goal-on_track .cs-goal-bar-fill { background: linear-gradient(90deg, #f59e0b, #d97706); }
+.cs-goal-behind .cs-goal-bar-fill   { background: linear-gradient(90deg, #ef4444, #dc2626); }
+
+.cs-goal-ahead .cs-goal-pct    { color: #059669; }
+.cs-goal-on_track .cs-goal-pct { color: #d97706; }
+.cs-goal-behind .cs-goal-pct   { color: #dc2626; }
+
+.cs-goal-footer { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; font-size: 11.5px; color: var(--cs-text-muted); }
+.cs-goal-status { font-weight: 600; display: inline-flex; align-items: center; gap: 5px; }
+.cs-goal-ahead .cs-goal-status    { color: #059669; }
+.cs-goal-on_track .cs-goal-status { color: #d97706; }
+.cs-goal-behind .cs-goal-status   { color: #dc2626; }
+.cs-goal-projection strong { color: var(--cs-text); font-weight: 700; }
+
+/* ─── Drill chip (filtres tri / nouveaux clients dans recent_orders) ─── */
+.cs-drill-chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 8px 4px 10px; font-size: 12px; font-weight: 600; color: var(--cs-accent-text); background: rgba(var(--cs-accent-rgb),.10); border: 1px solid rgba(var(--cs-accent-rgb),.30); border-radius: 999px; }
+.cs-drill-chip i { font-size: 13px; }
+.cs-drill-chip-clear { background: transparent; border: 0; color: inherit; font-size: 16px; line-height: 1; padding: 0 2px; cursor: pointer; opacity: .7; }
+.cs-drill-chip-clear:hover { opacity: 1; }
+
+/* Header print-only — caché à l'écran */
+.cs-print-header { display: none; }
+
+/* ─────────────────── Export PDF (@media print) ─────────────────── */
+@media print {
+    /* Page format paysage par défaut + marges raisonnables */
+    @page { size: A4 landscape; margin: 12mm; }
+
+    /* Forcer le thème clair pour l'impression (override les vars dark) */
+    html, html[data-bs-theme="dark"], html[data-bs-theme="light"] {
+        --cs-bg: #ffffff !important;
+        --cs-bg-card: #ffffff !important;
+        --cs-bg-card-hover: #ffffff !important;
+        --cs-text: #0F172A !important;
+        --cs-text-muted: #555 !important;
+        --cs-border: #d4d8de !important;
+        --cs-shadow: none !important;
+        --cs-accent-text: #5b21b6 !important;
+    }
+
+    body, html { background: #fff !important; color: #0F172A !important; }
+    body, #cs-app, .cs-section { box-shadow: none !important; }
+    #cs-app { padding: 0 !important; }
+
+    /* Titres / labels / valeurs principales en sombre — sans casser les couleurs sémantiques */
+    h1, h2, h3, h4, h5, h6,
+    .cs-section-header,
+    .cs-kpi-value, .cs-kpi-label,
+    .cs-customer-stat-value, .cs-customer-stat-label,
+    .cs-goal-label, .cs-goal-current, .cs-goal-target,
+    .cs-table th, .cs-table td,
+    p, label, span { color: #0F172A !important; }
+    .text-muted, .text-secondary, small, .cs-panel-desc { color: #555 !important; }
+    /* Garder les couleurs sémantiques (trends, status, paid/shipped badges) explicites */
+
+    /* Masque le vrai header dashboard et tous les contrôles */
+    .cs-header,
+    #cs-filters,
+    .cs-customize-bar,
+    .cs-customize-bar-edit,
+    .cs-section-drag-handle,
+    .cs-export-csv-btn,
+    .cs-perf-badge,
+    .cs-perf-recap,
+    .cs-orders-search,
+    .cs-orders-filter-btn,
+    .cs-collapse-chevron,
+    .cs-kpi-link-icon,
+    .cs-drill-chip-clear,
+    .modal,
+    .cs-pdf-hidden { display: none !important; }
+
+    /* Affiche le header print */
+    .cs-print-header {
+        display: flex !important;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding: 0 0 10px;
+        margin-bottom: 14px;
+        border-bottom: 2px solid #041233;
+    }
+    .cs-print-brand { display: flex; align-items: center; gap: 12px; }
+    .cs-print-brand img { width: 44px; height: 44px; object-fit: contain; }
+    .cs-print-title { font-size: 18px; font-weight: 800; color: #041233 !important; }
+    .cs-print-ver { font-size: 11px; font-weight: 500; color: #777 !important; margin-left: 4px; }
+    .cs-print-shop { font-size: 12px; color: #555 !important; }
+    .cs-print-meta { text-align: right; font-size: 11.5px; line-height: 1.5; }
+    .cs-print-meta strong { font-weight: 700; color: #041233 !important; }
+    .cs-print-generated { font-size: 10px; color: #888 !important; margin-top: 2px; }
+
+    /* Rétablit les sections collapsibles dépliées pour l'impression */
+    .cs-collapsed .cs-collapsible-body { display: block !important; }
+
+    /* Force fond clair des cartes */
+    .cs-kpi-card, .cs-customer-stat, .cs-goal-card, .cs-section {
+        background: #fff !important;
+        border: 1px solid #d4d8de !important;
+        page-break-inside: avoid;
+    }
+    .cs-section { margin-bottom: 14px; }
+
+    /* Tableaux : meilleure lisibilité */
+    .cs-table { color: #0F172A !important; }
+    .cs-table th, .cs-table td { border-color: #d4d8de !important; background: #fff !important; }
+
+    /* Pas de footer dashboard sur le PDF (info déjà dans print-header) */
+    #cs-app > footer { display: none !important; }
+}
+
+/* ─── Bouton PDF dans le header dashboard ─── */
+#cs-pdf-btn { color: var(--cs-text-muted); }
+#cs-pdf-btn:hover { color: var(--cs-accent); }
+
+/* Flash visuel quand un drill affecte la section déjà visible */
+.cs-flash { animation: cs-flash-anim .8s ease; }
+@keyframes cs-flash-anim {
+    0%   { box-shadow: 0 0 0 0 rgba(var(--cs-accent-rgb),.45); }
+    40%  { box-shadow: 0 0 0 6px rgba(var(--cs-accent-rgb),.15); }
+    100% { box-shadow: 0 0 0 0 rgba(var(--cs-accent-rgb),0); }
+}
+
+/* ─── Toggle "Nouveaux clients" dans le header recent_orders ─── */
+.cs-orders-newcust-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--cs-text-muted);
+    background: var(--cs-bg-card);
+    border: 1px solid var(--cs-border);
+    border-radius: 999px;
+    cursor: pointer;
+    user-select: none;
+    transition: all .15s ease;
+    margin: 0;
+}
+.cs-orders-newcust-toggle:hover { border-color: var(--cs-accent); color: var(--cs-text); }
+.cs-orders-newcust-toggle input { display: none; }
+.cs-orders-newcust-toggle.cs-active {
+    background: rgba(var(--cs-accent-rgb),.10);
+    border-color: var(--cs-accent);
+    color: var(--cs-accent-text);
+}
+.cs-orders-newcust-toggle i { font-size: 13px; }
+
+/* ─────────────────── Perf debug (timing badges + recap footer) ─────────────────── */
+.cs-perf-badge {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    z-index: 3;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 999px;
+    line-height: 1;
+    letter-spacing: .2px;
+    font-family: 'SF Mono', Menlo, Consolas, monospace;
+    pointer-events: auto;
+    cursor: help;
+}
+.cs-perf-ok   { background: rgba(16,185,129,.15); color: #059669; }
+.cs-perf-warn { background: rgba(245,158,11,.18); color: #b45309; }
+.cs-perf-bad  { background: rgba(239,68,68,.18);  color: #b91c1c; }
+[data-cs-section] { position: relative; }
+
+.cs-perf-recap {
+    background: var(--cs-bg-card);
+    border: 1px solid var(--cs-border);
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin: 16px 0;
+}
+.cs-perf-recap-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    font-size: 14px;
+    color: var(--cs-text);
+}
+.cs-perf-total { font-family: monospace; font-weight: 700; color: var(--cs-accent); }
+.cs-perf-table {
+    width: 100%;
+    font-size: 12px;
+    border-collapse: collapse;
+}
+.cs-perf-table th {
+    text-align: left;
+    padding: 6px 10px;
+    border-bottom: 1px solid var(--cs-border);
+    color: var(--cs-text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .4px;
+}
+.cs-perf-table td { padding: 6px 10px; border-bottom: 1px solid var(--cs-border); font-family: monospace; }
+.cs-perf-table tr.cs-perf-ok td   { color: #059669; }
+.cs-perf-table tr.cs-perf-warn td { color: #b45309; }
+.cs-perf-table tr.cs-perf-bad td  { color: #b91c1c; }
+
+/* ── Section Marges brutes ── */
+.cs-margin-stat {
+    background: var(--cs-bg-card-hover);
+    border: 1px solid var(--cs-border);
+    border-radius: 12px;
+    padding: 18px 20px;
+    height: 100%;
+}
+.cs-margin-stat-main {
+    background: linear-gradient(135deg, rgba(var(--cs-kpi-revenue-rgb), .12), rgba(var(--cs-kpi-revenue-rgb), .04));
+    border-color: rgba(var(--cs-kpi-revenue-rgb), .35);
+}
+.cs-margin-stat-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    color: var(--cs-text-muted);
+    margin-bottom: 6px;
+}
+.cs-margin-stat-value {
+    font-size: 28px;
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -.02em;
+    color: var(--cs-text);
+}
+.cs-margin-stat-secondary { font-size: 22px; color: var(--cs-text-muted); font-weight: 700; }
+.cs-margin-stat-pct {
+    font-size: 12px;
+    margin-top: 6px;
+    font-weight: 600;
+}
+.cs-margin-good { color: var(--cs-success); }
+.cs-margin-mid  { color: var(--cs-warning); }
+.cs-margin-low  { color: var(--cs-danger); }
+
+.cs-coverage-badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+.cs-coverage-high { background: rgba(16,185,129,.15); color: var(--cs-success); }
+.cs-coverage-mid  { background: rgba(245,158,11,.18); color: var(--cs-warning); }
+.cs-coverage-low  { background: rgba(239,68,68,.18);  color: var(--cs-danger); }
+
+.cs-margin-top-title {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    color: var(--cs-text-muted);
+    margin-bottom: 8px;
+}
+.cs-margin-rank {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    background: var(--cs-bg-card-hover);
+    border-radius: 50%;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--cs-text-muted);
+}
+.cs-margin-prod-name {
+    max-width: 360px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* ── Section Tunnel conversion compte → 1re commande ── */
+.cs-signups-funnel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 8px 0;
+}
+.cs-signups-stage {
+    flex: 1;
+    max-width: 280px;
+    text-align: center;
+    background: var(--cs-bg-card-hover);
+    border: 1px solid var(--cs-border);
+    border-radius: 12px;
+    padding: 18px;
+}
+.cs-signups-stage-1 { background: rgba(var(--cs-accent-rgb), .08); border-color: rgba(var(--cs-accent-rgb), .25); }
+.cs-signups-stage-2 { background: rgba(16,185,129,.08); border-color: rgba(16,185,129,.25); }
+.cs-signups-stage-value { font-size: 30px; font-weight: 800; line-height: 1.1; color: var(--cs-text); }
+.cs-signups-stage-label { font-size: 12px; color: var(--cs-text-muted); text-transform: uppercase; letter-spacing: .5px; margin-top: 4px; font-weight: 600; }
+.cs-signups-arrow { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--cs-text-muted); }
+.cs-signups-arrow i { font-size: 22px; }
+.cs-signups-rate { font-size: 13px; font-weight: 800; padding: 3px 10px; border-radius: 999px; }
+.cs-signups-good { background: rgba(16,185,129,.18); color: var(--cs-success); }
+.cs-signups-mid  { background: rgba(245,158,11,.18); color: var(--cs-warning); }
+.cs-signups-low  { background: rgba(239,68,68,.18);  color: var(--cs-danger); }
+
+.cs-signups-meta-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--cs-bg-card-hover);
+    border: 1px solid var(--cs-border);
+    border-radius: 10px;
+    padding: 12px 14px;
+}
+.cs-signups-meta-card i { font-size: 22px; color: var(--cs-text-muted); }
+.cs-signups-meta-value { font-size: 18px; font-weight: 700; color: var(--cs-text); }
+.cs-signups-meta-label { font-size: 12px; color: var(--cs-text-muted); line-height: 1.3; }
+
+/* ── Section Paniers abandonnés ── */
+.cs-abandon-kpi {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--cs-bg-card-hover);
+    border: 1px solid var(--cs-border);
+    border-radius: 12px;
+    padding: 14px 18px;
+    height: 100%;
+}
+.cs-abandon-kpi-icon { font-size: 26px; color: var(--cs-text-muted); flex-shrink: 0; }
+.cs-abandon-kpi-value { font-size: 22px; font-weight: 800; line-height: 1.1; color: var(--cs-text); }
+.cs-abandon-kpi-label { font-size: 11px; color: var(--cs-text-muted); text-transform: uppercase; letter-spacing: .4px; margin-top: 2px; font-weight: 600; }
+.cs-abandon-loss { color: var(--cs-danger); }
+.cs-abandon-loss.cs-abandon-kpi-icon { color: var(--cs-danger); }
+
+.cs-abandon-rate-badge {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 999px;
+}
+.cs-abandon-ok   { background: rgba(16,185,129,.15); color: var(--cs-success); }
+.cs-abandon-warn { background: rgba(245,158,11,.18); color: var(--cs-warning); }
+.cs-abandon-bad  { background: rgba(239,68,68,.18);  color: var(--cs-danger); }
+.cs-abandon-action {
+    color: var(--cs-text-muted);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    transition: all .15s ease;
+}
+.cs-abandon-action:hover { background: var(--cs-bg-card-hover); color: var(--cs-accent); }
+
+/* Bouton supprimer (trash) : par défaut neutre comme le voir, mais variante danger au hover. */
+button.cs-abandon-action {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin-left: 4px;
+}
+button.cs-abandon-action.cs-abandon-delete:hover {
+    background: rgba(239, 68, 68, 0.12);
+    color: var(--cs-danger, #ef4444);
+}
+
+/* ══════════════════════════════════════════════════════════
+   Recherche produit (autocomplete) + filtre global
+   ══════════════════════════════════════════════════════════ */
+.cs-product-search {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+.cs-product-search-icon {
+    position: absolute;
+    left: 10px;
+    font-size: 13px;
+    color: var(--cs-text-muted);
+    pointer-events: none;
+}
+.cs-product-search-input {
+    width: 220px;
+    max-width: 42vw;
+    height: 31px;
+    padding: 0 28px 0 30px;
+    font-size: 13px;
+    color: var(--cs-text);
+    background: var(--cs-bg-card);
+    border: 1px solid var(--cs-border);
+    border-radius: 8px;
+    outline: none;
+    transition: width .18s ease, border-color .18s ease, box-shadow .18s ease;
+}
+.cs-product-search-input::placeholder { color: var(--cs-text-muted); }
+.cs-product-search-input:focus {
+    width: 280px;
+    border-color: var(--cs-accent);
+    box-shadow: 0 0 0 3px rgba(var(--cs-accent-rgb), 0.15);
+}
+.cs-product-search-clear {
+    position: absolute;
+    right: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    font-size: 11px;
+    color: var(--cs-text-muted);
+    background: transparent;
+    border: 0;
+    border-radius: 50%;
+    cursor: pointer;
+}
+.cs-product-search-clear:hover {
+    color: var(--cs-text);
+    background: rgba(var(--cs-accent-rgb), 0.12);
+}
+
+.cs-suggest {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    z-index: 1060;
+    width: 320px;
+    max-width: 80vw;
+    max-height: 360px;
+    overflow-y: auto;
+    background: var(--cs-bg-card);
+    border: 1px solid var(--cs-border);
+    border-radius: 10px;
+    box-shadow: 0 8px 28px rgba(0,0,0,0.18);
+    padding: 4px;
+}
+.cs-suggest-msg {
+    padding: 12px;
+    font-size: 12.5px;
+    color: var(--cs-text-muted);
+    text-align: center;
+}
+.cs-suggest-item {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    width: 100%;
+    padding: 6px 8px;
+    text-align: left;
+    background: transparent;
+    border: 0;
+    border-radius: 7px;
+    cursor: pointer;
+}
+.cs-suggest-item:hover,
+.cs-suggest-item.cs-active {
+    background: rgba(var(--cs-accent-rgb), 0.12);
+}
+.cs-suggest-img {
+    flex: 0 0 auto;
+    width: 34px;
+    height: 34px;
+    object-fit: cover;
+    border-radius: 6px;
+    background: rgba(var(--cs-accent-rgb), 0.06);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--cs-text-muted);
+}
+.cs-suggest-text { display: flex; flex-direction: column; min-width: 0; }
+.cs-suggest-name {
+    font-size: 12.8px;
+    font-weight: 600;
+    color: var(--cs-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.cs-suggest-ids {
+    font-size: 11px;
+    color: var(--cs-text-muted);
+}
+
+/* ══════════════════════════════════════════════════════════
+   Onglets Top produits / Top catégories
+   ══════════════════════════════════════════════════════════ */
+.cs-top-tabs { display: inline-flex; gap: 4px; }
+.cs-top-tab {
+    padding: 4px 11px;
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--cs-text-muted);
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 7px;
+    cursor: pointer;
+}
+.cs-top-tab:hover { color: var(--cs-text); }
+.cs-top-tab.cs-active {
+    color: var(--cs-accent-text, var(--cs-accent));
+    background: rgba(var(--cs-accent-rgb), 0.12);
+    border-color: rgba(var(--cs-accent-rgb), 0.35);
+}
+.cs-hidden { display: none !important; }
+
+/* ══════════════════════════════════════════════════════════
+   Modal retours — toggle + cartes par commande
+   ══════════════════════════════════════════════════════════ */
+.cs-returns-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+}
+.cs-returns-mode-label {
+    font-size: 12.5px;
+    color: var(--cs-text-muted);
+    cursor: pointer;
+    user-select: none;
+}
+.cs-returns-mode-label.cs-active {
+    color: var(--cs-text);
+    font-weight: 700;
+}
+.cs-return-order {
+    border: 1px solid var(--cs-border);
+    border-radius: 10px;
+    margin-bottom: 12px;
+    overflow: hidden;
+}
+.cs-return-order-head {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 8px 12px;
+    background: rgba(var(--cs-accent-rgb), 0.05);
+    border-bottom: 1px solid var(--cs-border);
+}
+.cs-return-order-ref { color: var(--cs-accent-text, var(--cs-accent)); font-size: 13px; }
+.cs-return-state {
+    background: rgba(239, 68, 68, 0.15);
+    color: var(--cs-danger, #ef4444);
+    font-size: 10px;
+    font-weight: 600;
+}
+
+/* ══════════════════════════════════════════════════════════
+   Toast (fallback session expirée)
+   ══════════════════════════════════════════════════════════ */
+.cs-toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(12px);
+    z-index: 2000;
+    max-width: 90vw;
+    padding: 11px 18px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #fff;
+    background: #1f2430;
+    border-radius: 9px;
+    box-shadow: 0 8px 28px rgba(0,0,0,0.28);
+    opacity: 0;
+    transition: opacity .25s ease, transform .25s ease;
+}
+.cs-toast-show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.cs-toast-warning { background: var(--cs-warning, #f59e0b); color: #1f1300; }
+.cs-toast-error { background: var(--cs-danger, #ef4444); }

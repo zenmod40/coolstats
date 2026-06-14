@@ -1,0 +1,11 @@
+{
+    "id": "top_products",
+    "title": "Tes meilleures ventes",
+    "order": 20,
+    "order_by_theme": {
+        "brutalist": 12.5,
+        "terminal": 11
+    },
+    "context": "always",
+    "enabled": true
+}

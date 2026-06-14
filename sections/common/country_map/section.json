@@ -1,0 +1,11 @@
+{
+    "id": "country_map",
+    "title": "Répartition géographique",
+    "order": 30,
+    "order_by_theme": {
+        "brutalist": 12.6,
+        "terminal": 11.5
+    },
+    "context": "always",
+    "enabled": true
+}

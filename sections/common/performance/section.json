@@ -1,0 +1,10 @@
+{
+    "id": "performance",
+    "title": "Infos Transporteurs / Expéditions",
+    "order": 35,
+    "order_by_theme": {
+        "brutalist": 13.5
+    },
+    "context": "always",
+    "enabled": true
+}

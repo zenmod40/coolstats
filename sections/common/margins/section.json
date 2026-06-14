@@ -1,0 +1,10 @@
+{
+    "id": "margins",
+    "title": "Marges brutes",
+    "order": 14,
+    "order_by_theme": {
+        "brutalist": 13.1
+    },
+    "context": "always",
+    "enabled": true
+}

@@ -1,0 +1,7 @@
+{
+    "id": "marketplace_breakdown",
+    "title": "Répartition par marketplace",
+    "order": 11,
+    "context": "marketplace_only",
+    "enabled": true
+}

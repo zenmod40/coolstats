@@ -1,0 +1,10 @@
+{
+    "id": "traffic",
+    "title": "Trafic & visiteurs",
+    "order": 15,
+    "order_by_theme": {
+        "brutalist": 13.2
+    },
+    "context": "always",
+    "enabled": true
+}

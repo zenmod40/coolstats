@@ -1,0 +1,10 @@
+{
+    "id": "recent_orders",
+    "title": "Dernières commandes",
+    "order": 50,
+    "order_by_theme": {
+        "brutalist": 13.7
+    },
+    "context": "always",
+    "enabled": true
+}

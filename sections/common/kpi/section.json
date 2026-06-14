@@ -1,0 +1,8 @@
+{
+    "id": "kpi",
+    "title": "Indicateurs clés",
+    "order": 10,
+    "context": "always",
+    "enabled": true,
+    "required": true
+}

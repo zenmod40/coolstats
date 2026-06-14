@@ -1,0 +1,10 @@
+{
+    "id": "customers",
+    "title": "Clients sur la période",
+    "order": 12,
+    "order_by_theme": {
+        "terminal": 10.5
+    },
+    "context": "always",
+    "enabled": true
+}

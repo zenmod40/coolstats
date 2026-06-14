@@ -1,0 +1,10 @@
+{
+    "id": "abandoned_carts",
+    "title": "Paniers abandonnés",
+    "order": 16,
+    "order_by_theme": {
+        "brutalist": 13.3
+    },
+    "context": "always",
+    "enabled": true
+}

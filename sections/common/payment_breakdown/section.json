@@ -1,0 +1,11 @@
+{
+    "id": "payment_breakdown",
+    "title": "Répartition par moyen de paiement",
+    "order": 42,
+    "order_by_theme": {
+        "brutalist": 12.7,
+        "terminal": 11.6
+    },
+    "context": "always",
+    "enabled": true
+}

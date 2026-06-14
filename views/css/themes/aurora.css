@@ -1,0 +1,189 @@
+/* CoolStats — Thème Aurora glass (sobre + glass cards + blobs subtils) */
+
+/* ============================================================
+ *  AURORA — glass cards + glow rim + 3 blobs dégradés
+ * ============================================================ */
+
+[data-cs-theme="aurora"],
+[data-cs-theme="aurora"][data-bs-theme="dark"] {
+    --cs-bg:            #0a0e1f;
+    --cs-bg-card:       rgba(255,255,255,0.035);
+    --cs-bg-card-hover: rgba(255,255,255,0.06);
+    --cs-text:          #e6e9f5;
+    --cs-text-muted:    #7d85a6;
+    --cs-border:        rgba(255,255,255,0.08);
+    --cs-shadow:        inset 0 1px 0 rgba(255,255,255,0.05);
+    --cs-accent:        #7c5cff;
+    --cs-accent-rgb:    124, 92, 255;
+    --cs-accent-text:   #b3a3ff;
+    --cs-accent-2:      #3ad9ff;
+    --cs-kpi-orders:    #7c5cff; --cs-kpi-orders-rgb:  124,  92, 255;
+    --cs-kpi-revenue:   #3ee5a1; --cs-kpi-revenue-rgb:  62, 229, 161;
+    --cs-kpi-items:     #3ad9ff; --cs-kpi-items-rgb:    58, 217, 255;
+    --cs-kpi-basket:    #ff6ec4; --cs-kpi-basket-rgb:  255, 110, 196;
+    --cs-aurora-grad:   linear-gradient(135deg, #7c5cff 0%, #3ad9ff 100%);
+    --cs-aurora-grad-3: linear-gradient(90deg, #7c5cff, #3ad9ff, #ff6ec4);
+    --cs-map-empty:     rgba(255,255,255,0.05);
+    --cs-font-sans:     'Geist', 'Inter', -apple-system, sans-serif;
+    /* Accent = indigo violet → texte blanc */
+    --cs-accent-on:     #ffffff;
+    --cs-accent-2-on:   #ffffff;
+    --cs-accent-hover:  #6a48f0;
+}
+
+[data-cs-theme="aurora"][data-bs-theme="light"] {
+    --cs-bg:            #f5f3ff;
+    --cs-bg-card:       rgba(255,255,255,0.65);
+    --cs-bg-card-hover: rgba(255,255,255,0.85);
+    --cs-text:          #1a1535;
+    --cs-text-muted:    #5b5878;
+    --cs-border:        rgba(124,92,255,0.15);
+    --cs-shadow:        0 1px 2px rgba(124,92,255,.06), 0 8px 24px -8px rgba(124,92,255,.18);
+    --cs-accent:        #6a48f0;
+    --cs-accent-rgb:    106, 72, 240;
+    --cs-accent-2:      #1ba0d4;
+    --cs-aurora-grad:   linear-gradient(135deg, #6a48f0 0%, #1ba0d4 100%);
+    --cs-aurora-grad-3: linear-gradient(90deg, #6a48f0, #1ba0d4, #e0479e);
+    --cs-map-empty:     rgba(106,72,240,0.06);
+    --cs-accent-hover:  #5638d0;
+}
+
+[data-cs-theme="aurora"] #cs-app {
+    font-family: var(--cs-font-sans);
+    position: relative;
+    overflow: hidden;
+}
+/* 2 blobs subtils — version calmée, plus proche du mockup original.
+ * z-index NÉGATIF : les blobs passent SOUS le contenu sans qu'on ait besoin de
+ * forcer un stacking context sur chaque section (cf. note plus bas sur le bug
+ * dropdown coincé derrière les KPI cards). */
+[data-cs-theme="aurora"] #cs-app::before,
+[data-cs-theme="aurora"] #cs-app::after {
+    content: '';
+    position: absolute;
+    pointer-events: none;
+    border-radius: 50%;
+    filter: blur(90px);
+    z-index: -1;
+}
+[data-cs-theme="aurora"] #cs-app::before {
+    width: 520px; height: 520px;
+    top: -180px; left: -140px;
+    background: radial-gradient(circle, rgba(124,92,255,0.22) 0%, transparent 70%);
+}
+[data-cs-theme="aurora"] #cs-app::after {
+    width: 560px; height: 560px;
+    bottom: -200px; right: -140px;
+    background: radial-gradient(circle, rgba(58,217,255,0.16) 0%, transparent 70%);
+}
+[data-cs-theme="aurora"][data-bs-theme="light"] #cs-app::before {
+    background: radial-gradient(circle, rgba(106,72,240,0.12) 0%, transparent 70%);
+}
+[data-cs-theme="aurora"][data-bs-theme="light"] #cs-app::after {
+    background: radial-gradient(circle, rgba(27,160,212,0.10) 0%, transparent 70%);
+}
+/* Les blobs sont maintenant en z-index -1 (cf. plus haut) → plus besoin de
+ * forcer position:relative + z-index:1 sur tous les enfants de #cs-app.
+ *
+ * Pourquoi c'est important : cette règle créait un stacking context à z=1 sur
+ * CHAQUE section direct-enfant de #cs-app. Combiné aux backdrop-filter des
+ * cards, ça verrouillait la pile et le dropdown du header ne pouvait JAMAIS
+ * s'en échapper, peu importe la valeur du z-index ou la stratégie Popper.
+ * Le header garde son z-index 100 défini dans coolstats.css (sticky). */
+/* z-index du menu déroulant date-range = défini une fois pour toutes dans coolstats.css
+ * (theme-agnostic — pas la peine de dupliquer ici, ni de varier par thème). */
+
+/* Glass cards translucides — léger blur (pas trop) */
+[data-cs-theme="aurora"] .cs-section:not(.cs-kpi-row),
+[data-cs-theme="aurora"] .cs-kpi-card,
+[data-cs-theme="aurora"] .cs-customer-stat,
+[data-cs-theme="aurora"] .cs-goal-card {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 16px;
+    position: relative;
+}
+
+/* ─── Surfaces flottantes (dropdowns + modals + popovers) ───
+ *
+ * Le `--cs-bg-card` d'Aurora est volontairement très transparent (0.035 dark,
+ * 0.65 light) parce que les cards inline ont un `backdrop-filter: blur(12px)`
+ * qui floute ce qu'il y a derrière — visuellement c'est du verre dépoli.
+ *
+ * MAIS pour les surfaces flottantes (dropdowns, modals, popovers), ce n'est
+ * pas appliqué par défaut → on voit cru à travers, illisible. On force ici
+ * un fond opaque + blur pour la cohérence visuelle Aurora.
+ *
+ * Si un nouveau composant flottant est ajouté qui ne tombe pas dans ces
+ * sélecteurs, il faudra l'ajouter manuellement à la liste. */
+[data-cs-theme="aurora"] .cs-daterange-menu,
+[data-cs-theme="aurora"] .cs-pill-menu,
+[data-cs-theme="aurora"] .cs-suggest,
+[data-cs-theme="aurora"] .dropdown-menu,
+[data-cs-theme="aurora"] .modal-content,
+[data-cs-theme="aurora"] .popover {
+    background: rgba(15, 19, 38, 0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+}
+[data-cs-theme="aurora"][data-bs-theme="light"] .cs-daterange-menu,
+[data-cs-theme="aurora"][data-bs-theme="light"] .cs-pill-menu,
+[data-cs-theme="aurora"][data-bs-theme="light"] .cs-suggest,
+[data-cs-theme="aurora"][data-bs-theme="light"] .dropdown-menu,
+[data-cs-theme="aurora"][data-bs-theme="light"] .modal-content,
+[data-cs-theme="aurora"][data-bs-theme="light"] .popover {
+    background: rgba(252, 251, 255, 0.96);
+    border: 1px solid rgba(124, 92, 255, 0.18);
+}
+
+/* Edit bar : background opaque + blur */
+[data-cs-theme="aurora"] #cs-edit-bar {
+    background: rgba(10, 14, 31, 0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(255,255,255,0.10);
+}
+[data-cs-theme="aurora"][data-bs-theme="light"] #cs-edit-bar {
+    background: rgba(245, 243, 255, 0.94);
+    border-top: 1px solid rgba(124,92,255,0.15);
+}
+
+/* Header : pas de gradient (était glossy). Juste un fond opaque cohérent. */
+[data-cs-theme="aurora"] .cs-header {
+    background: var(--cs-bg);
+}
+
+/* Boutons : gradient signature gardé (c'est ce qui identifie Aurora) */
+[data-cs-theme="aurora"] .cs-btn-accent {
+    background: var(--cs-aurora-grad);
+    border: none;
+    box-shadow: 0 6px 18px -6px rgba(124, 92, 255, .5);
+}
+/* Trends : couleurs unies, plus sobres */
+[data-cs-theme="aurora"] .cs-trend-up {
+    background: rgba(62, 229, 161, 0.15);
+    color: #3ee5a1;
+}
+[data-cs-theme="aurora"] .cs-trend-down {
+    background: rgba(255, 110, 196, 0.18);
+    color: #ff6ec4;
+}
+[data-cs-theme="aurora"] .cs-badge-accent {
+    background: var(--cs-aurora-grad);
+    color: #fff;
+}
+
+
+/* ─── Drill overlay : gradient signature violet → cyan ─── */
+[data-cs-theme="aurora"] .cs-drill-overlay {
+    background: linear-gradient(135deg, rgba(124,92,255,0.94) 0%, rgba(58,217,255,0.92) 100%);
+}
+
+/* ─── Badge mode header : gradient signature ─── */
+[data-cs-theme="aurora"] .cs-header-mode {
+    background: linear-gradient(135deg, rgba(124,92,255,.22), rgba(58,217,255,.18));
+    border-color: rgba(124,92,255,.35);
+    color: var(--cs-text);
+}
+[data-cs-theme="aurora"] .cs-mode-dot { background: #3ad9ff; box-shadow: 0 0 6px #3ad9ff; }

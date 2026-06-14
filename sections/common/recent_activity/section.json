@@ -1,0 +1,10 @@
+{
+    "id": "recent_activity",
+    "title": "Activité récente",
+    "order": 45,
+    "order_by_theme": {
+        "brutalist": 13.6
+    },
+    "context": "always",
+    "enabled": true
+}

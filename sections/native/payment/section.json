@@ -1,0 +1,7 @@
+{
+    "id": "native_payment",
+    "title": "Répartition par moyen de paiement",
+    "order": 30,
+    "context": "native_only",
+    "enabled": true
+}

@@ -1,0 +1,1900 @@
+/* CoolStats — Thème Neo-brutalist (blocs francs, hard shadow, Archivo Black) */
+
+/* ============================================================
+ *  BRUTALIST — blocs francs + hard shadow + Archivo Black
+ * ============================================================ */
+
+[data-cs-theme="brutalist"],
+[data-cs-theme="brutalist"][data-bs-theme="light"] {
+    --cs-bg:            #f3eed8;
+    --cs-bg-card:       #ffffff;
+    --cs-bg-card-hover: #fffcf0;
+    --cs-text:          #0d0d0d;
+    --cs-text-muted:    #555555;
+    --cs-border:        #0d0d0d;
+    --cs-shadow:        6px 6px 0 0 #0d0d0d;
+    --cs-accent:        #2a5cff;
+    --cs-accent-rgb:    42, 92, 255;
+    --cs-accent-text:   #2a5cff;
+    --cs-accent-2:      #1fb866;
+    --cs-success:       #1fb866;
+    --cs-danger:        #ff3b30;
+    --cs-warning:       #ffd23f;
+    --cs-kpi-orders:    #ffd23f; --cs-kpi-orders-rgb:  255, 210,  63;
+    --cs-kpi-revenue:   #1fb866; --cs-kpi-revenue-rgb:  31, 184, 102;
+    --cs-kpi-items:     #ff5fa2; --cs-kpi-items-rgb:  255,  95, 162;
+    --cs-kpi-basket:    #2a5cff; --cs-kpi-basket-rgb:   42,  92, 255;
+    --cs-map-empty:     #0d2a8a;
+    --cs-font-display:  'Archivo Black', Impact, sans-serif;
+    --cs-font-sans:     'Space Grotesk', 'Inter', sans-serif;
+    --cs-brutal-pink:   #ff3ea5;
+    --cs-brutal-blue:   #1c4ef4;
+    --cs-brutal-yellow: #ffd23f;
+    --cs-brutal-green:  #1fb866;
+    --cs-brutal-red:    #ff3b30;
+    /* Accent = bleu cobalt → texte blanc */
+    --cs-accent-on:     #ffffff;
+    --cs-accent-2-on:   #0d0d0d;
+    --cs-accent-hover:  #1c4ef4;
+}
+
+[data-cs-theme="brutalist"][data-bs-theme="dark"] {
+    --cs-bg:            #0d0d0d;
+    --cs-bg-card:       #1a1a1a;
+    --cs-bg-card-hover: #242424;
+    --cs-text:          #f3eed8;
+    --cs-text-muted:    #888888;
+    --cs-border:        #f3eed8;
+    --cs-shadow:        6px 6px 0 0 #ffd23f;
+    --cs-accent:        #6e8aff;
+    --cs-accent-rgb:    110, 138, 255;
+    --cs-accent-2:      #4fd494;
+    --cs-success:       #4fd494;
+    --cs-danger:        #ff6e5f;
+    --cs-warning:       #ffd23f;
+    --cs-map-empty:     #1a1a1a;
+}
+
+[data-cs-theme="brutalist"] #cs-app { font-family: var(--cs-font-sans); }
+
+/* ─── Courbe des commandes (variante brutalist) ─── */
+[data-cs-theme="brutalist"] .cs-orders-chart-brutal {
+    background: var(--cs-brutal-pink);
+    border: 2.5px solid var(--cs-border);
+    box-shadow: var(--cs-shadow);
+    padding: 18px;
+    margin-bottom: 24px;
+}
+[data-cs-theme="brutalist"] .cs-orders-chart-brutal > .cs-section-header { display: none; }
+
+[data-cs-theme="brutalist"] .cs-orders-brutal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+[data-cs-theme="brutalist"] .cs-orders-brutal-title {
+    font-family: 'Archivo Black', 'Anton', Impact, sans-serif;
+    font-size: 18px;
+    text-transform: uppercase;
+    color: #0d0d0d;
+}
+[data-cs-theme="brutalist"] .cs-orders-brutal-right {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+/* Toggle CMD / CA € : style mockup (deux pills dans une boîte blanche bordée) */
+[data-cs-theme="brutalist"] .cs-orders-brutal-switch {
+    display: inline-flex;
+    gap: 4px;
+    background: #ffffff;
+    border: 2px solid #0d0d0d;
+    padding: 2px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    color: #0d0d0d;
+    align-items: stretch;
+}
+[data-cs-theme="brutalist"] .cs-orders-brutal-switch .cs-line-mode-label {
+    cursor: pointer;
+    padding: 3px 8px;
+    line-height: 1.1;
+    color: #0d0d0d;
+}
+[data-cs-theme="brutalist"] .cs-orders-brutal-switch .cs-line-mode-label.cs-active {
+    background: #0d0d0d;
+    color: #ffd23f;
+    font-weight: 700;
+}
+[data-cs-theme="brutalist"] .cs-orders-brutal-switch .cs-line-mode-label.text-muted {
+    color: rgba(13,13,13,.5) !important;
+}
+/* Masquer le switch bootstrap : on garde l'input pour le binding JS */
+[data-cs-theme="brutalist"] .cs-orders-brutal-switch .form-check {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+    width: 0;
+    height: 0;
+    margin: 0;
+}
+[data-cs-theme="brutalist"] .cs-orders-brutal-badge {
+    display: inline-block;
+    background: #0d0d0d;
+    color: var(--cs-kpi-orders);
+    border: 2px solid var(--cs-border);
+    padding: 2px 8px;
+    font-family: 'Archivo Black', 'Anton', Impact, sans-serif;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+[data-cs-theme="brutalist"] .cs-orders-brutal-chart-wrap {
+    background: #ffffff;
+    border: 2px solid var(--cs-border);
+    padding: 8px;
+}
+[data-cs-theme="brutalist"] .cs-orders-brutal-chart-wrap canvas {
+    background: transparent;
+}
+
+/* ─── Section PAYS + PAIEMENTS côte à côte (variantes brutalist) ─── */
+/* Wrapper créé par JS : grid 2 colonnes pour hauteurs égales */
+[data-cs-theme="brutalist"] .cs-brutal-pair {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 18px;
+    margin-bottom: 24px;
+    align-items: stretch;
+}
+[data-cs-theme="brutalist"] .cs-brutal-pair > .cs-section { margin-bottom: 0; height: 100%; }
+
+[data-cs-theme="brutalist"] .cs-country-brutal,
+[data-cs-theme="brutalist"] .cs-payment-brutal {
+    box-sizing: border-box;
+    border: 2.5px solid var(--cs-border);
+    box-shadow: var(--cs-shadow);
+    padding: 18px;
+}
+[data-cs-theme="brutalist"] .cs-country-brutal {
+    background: var(--cs-brutal-blue);
+    color: #ffffff;
+}
+[data-cs-theme="brutalist"] .cs-payment-brutal {
+    background: var(--cs-kpi-orders);
+    color: #0d0d0d;
+}
+[data-cs-theme="brutalist"] .cs-country-brutal > .cs-section-header,
+[data-cs-theme="brutalist"] .cs-payment-brutal > .cs-section-header { display: none; }
+
+@media (max-width: 1100px) {
+    [data-cs-theme="brutalist"] .cs-brutal-pair {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* PAYS — header */
+[data-cs-theme="brutalist"] .cs-country-brutal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+}
+[data-cs-theme="brutalist"] .cs-country-brutal-title {
+    font-family: 'Archivo Black', 'Anton', Impact, sans-serif;
+    font-size: 18px;
+    text-transform: uppercase;
+    color: #ffffff;
+}
+[data-cs-theme="brutalist"] .cs-country-brutal-badge {
+    display: inline-block;
+    background: var(--cs-kpi-orders);
+    color: #0d0d0d;
+    border: 2px solid var(--cs-border);
+    padding: 2px 8px;
+    font-family: 'Archivo Black', 'Anton', Impact, sans-serif;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* PAYS — body : grid map + liste */
+[data-cs-theme="brutalist"] .cs-country-brutal-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+[data-cs-theme="brutalist"] .cs-country-brutal-map {
+    background: #0d2a8a;
+    border: 2px solid #ffffff;
+    padding: 8px;
+}
+[data-cs-theme="brutalist"] .cs-country-brutal-map .cs-map-path { fill: #0d2a8a; stroke: #fff; stroke-width: .8; }
+[data-cs-theme="brutalist"] .cs-country-brutal-map .cs-map-path.cs-map-active,
+[data-cs-theme="brutalist"] .cs-country-brutal-map .cs-map-path:hover { fill: var(--cs-kpi-orders); }
+
+/* PAYS — liste */
+[data-cs-theme="brutalist"] .cs-country-brutal-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 6px 0;
+    border-bottom: 1.5px solid rgba(255,255,255,.25);
+    cursor: pointer;
+}
+[data-cs-theme="brutalist"] .cs-country-brutal-row:last-child { border-bottom: none; }
+[data-cs-theme="brutalist"] .cs-country-brutal-row-l { display: inline-block; }
+[data-cs-theme="brutalist"] .cs-country-brutal-rank {
+    font-family: 'Archivo Black', 'Anton', Impact, sans-serif;
+    font-size: 13px;
+    color: var(--cs-kpi-orders);
+    margin-right: 6px;
+}
+[data-cs-theme="brutalist"] .cs-country-brutal-name {
+    font-weight: 600;
+    font-size: 13px;
+    color: #ffffff;
+}
+[data-cs-theme="brutalist"] .cs-country-brutal-right {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+[data-cs-theme="brutalist"] .cs-country-brutal-amount {
+    font-family: 'Archivo Black', 'Anton', Impact, sans-serif;
+    font-size: 14px;
+    color: #ffffff;
+}
+[data-cs-theme="brutalist"] .cs-country-brutal-pct {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: #ffffff;
+    background: rgba(255,255,255,.15);
+    border: 1px solid rgba(255,255,255,.3);
+    padding: 1px 6px;
+    min-width: 50px;
+    text-align: center;
+}
+[data-cs-theme="brutalist"] .cs-country-brutal-row.cs-country-selected {
+    background: rgba(255,255,255,.08);
+}
+
+/* Survol carte → soulignement noir du nom du pays */
+[data-cs-theme="brutalist"] .cs-country-brutal .cs-country-rank-item.cs-rank-highlight {
+    background: transparent;
+}
+[data-cs-theme="brutalist"] .cs-country-brutal .cs-country-rank-item.cs-rank-highlight .cs-country-brutal-name {
+    text-decoration: underline;
+    text-decoration-color: #0d0d0d;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 3px;
+}
+
+/* PAIEMENTS — titre + barres */
+[data-cs-theme="brutalist"] .cs-payment-brutal-title {
+    font-family: 'Archivo Black', 'Anton', Impact, sans-serif;
+    font-size: 18px;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    color: #0d0d0d;
+}
+[data-cs-theme="brutalist"] .cs-payment-brutal-row { margin-bottom: 8px; }
+[data-cs-theme="brutalist"] .cs-payment-brutal-line {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    font-weight: 600;
+    color: #0d0d0d;
+}
+[data-cs-theme="brutalist"] .cs-payment-brutal-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 200px;
+}
+[data-cs-theme="brutalist"] .cs-payment-brutal-right {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 10px;
+}
+[data-cs-theme="brutalist"] .cs-payment-brutal-amt {
+    font-family: 'Archivo Black', 'Anton', Impact, sans-serif;
+    font-size: 13px;
+    color: #0d0d0d;
+}
+[data-cs-theme="brutalist"] .cs-payment-brutal-pct {
+    font-family: 'JetBrains Mono', monospace;
+    opacity: .75;
+}
+[data-cs-theme="brutalist"] .cs-payment-brutal-bar {
+    height: 10px;
+    background: #ffffff;
+    border: 1.5px solid var(--cs-border);
+    margin-top: 2px;
+}
+[data-cs-theme="brutalist"] .cs-payment-brutal-bar-fill {
+    height: 100%;
+    background: var(--cs-border);
+}
+
+/* ─── Section CLIENTS (variante brutalist) ─── */
+[data-cs-theme="brutalist"] .cs-customers-brutal {
+    background: var(--cs-bg-card);
+    border: 2.5px solid var(--cs-border);
+    box-shadow: var(--cs-shadow);
+    padding: 18px;
+    margin-bottom: 24px;
+    overflow: visible;
+}
+/* Désactive le header noir global sur cette variante */
+[data-cs-theme="brutalist"] .cs-customers-brutal > .cs-section-header { display: none; }
+
+[data-cs-theme="brutalist"] .cs-customers-brutal-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+[data-cs-theme="brutalist"] .cs-customers-brutal-badge {
+    display: inline-block;
+    background: var(--cs-accent);
+    color: #ffffff;
+    border: 2px solid var(--cs-border);
+    padding: 2px 8px;
+    font-family: 'Archivo Black', 'Anton', Impact, sans-serif;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+[data-cs-theme="brutalist"] .cs-customers-brutal-rule {
+    flex: 1 1 0%;
+    height: 2px;
+    background: var(--cs-border);
+}
+
+[data-cs-theme="brutalist"] .cs-customers-brutal-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 14px;
+}
+[data-cs-theme="brutalist"] .cs-customers-brutal-stat {
+    position: relative;
+    border-left: 4px solid var(--cs-border);
+    padding-left: 10px;
+    overflow: hidden;
+}
+[data-cs-theme="brutalist"] .cs-customers-brutal-stat .cs-drill-overlay {
+    position: absolute;
+    inset: 0 0 0 4px;
+    background: var(--cs-kpi-orders);
+    color: #0d0d0d;
+    border: none;
+    border-radius: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    font-family: 'Archivo Black', 'Anton', Impact, sans-serif;
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: .5px;
+    opacity: 0;
+    transition: opacity .12s ease;
+    pointer-events: none;
+    backdrop-filter: none;
+}
+[data-cs-theme="brutalist"] .cs-customers-brutal-stat .cs-drill-overlay i { color: #0d0d0d; font-size: 22px; text-shadow: none; }
+[data-cs-theme="brutalist"] .cs-customers-brutal-stat .cs-drill-overlay span { display: none; }
+[data-cs-theme="brutalist"] .cs-customers-brutal-stat:hover .cs-drill-overlay { opacity: 1; }
+[data-cs-theme="brutalist"] .cs-customers-brutal-value {
+    font-family: 'Archivo Black', 'Anton', Impact, sans-serif;
+    font-size: 26px;
+    line-height: 1;
+    letter-spacing: -.5px;
+    color: var(--cs-text);
+}
+[data-cs-theme="brutalist"] .cs-customers-brutal-pct {
+    font-size: 13px;
+    color: var(--cs-brutal-green);
+    letter-spacing: 0;
+}
+[data-cs-theme="brutalist"] .cs-customers-brutal-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    margin-top: 6px;
+    text-transform: uppercase;
+    opacity: .7;
+    color: var(--cs-text);
+    line-height: 1.35;
+    max-width: 14ch;
+    white-space: normal;
+}
+@media (max-width: 1100px) {
+    [data-cs-theme="brutalist"] .cs-customers-brutal-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 600px) {
+    [data-cs-theme="brutalist"] .cs-customers-brutal-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ─── Doublons masqués sous brutaliste ─── */
+/* native_payment fait doublon avec payment_breakdown (qui est paire avec la carte) */
+[data-cs-theme="brutalist"] [data-cs-section="native_payment"] { display: none; }
+
+/* ─── Note "Comparaison vs …" : style commentaire mono ─── */
+[data-cs-theme="brutalist"] .cs-kpi-compare-note {
+    display: block;
+    background: transparent;
+    color: #0d0d0d;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    opacity: .8;
+    margin-top: 10px;
+    padding: 0;
+    border: none;
+    text-transform: none;
+    letter-spacing: 0;
+}
+[data-cs-theme="brutalist"] .cs-kpi-compare-note::before {
+    content: "// ";
+}
+
+/* ─── Logo brutalist : carré jaune avec étoile ★ ─── */
+[data-cs-theme="brutalist"] .cs-header-brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+[data-cs-theme="brutalist"] .cs-logo-brutal {
+    width: 36px;
+    height: 36px;
+    background: var(--cs-kpi-orders);
+    border: 2.5px solid var(--cs-kpi-orders);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #0d0d0d;
+    font-family: 'Archivo Black', 'Anton', Impact, sans-serif;
+    font-size: 22px;
+    flex-shrink: 0;
+}
+[data-cs-theme="brutalist"] .cs-header h1 {
+    font-family: 'Archivo Black', 'Anton', Impact, sans-serif;
+    font-size: 28px;
+    letter-spacing: -1px;
+    text-transform: uppercase;
+    line-height: 1;
+    margin: 0;
+}
+[data-cs-theme="brutalist"] .cs-header-version {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    opacity: .7;
+    margin-left: 4px;
+    color: var(--cs-brutal-yellow);
+}
+
+/* ─── Header global : bandeau NOIR avec texte clair ─── */
+[data-cs-theme="brutalist"] .cs-header {
+    background: #0d0d0d;
+    color: #f3eed8;
+    border: none;
+    border-bottom: 3px solid #0d0d0d;
+    box-shadow: 0 6px 0 0 #0d0d0d;
+    border-radius: 0;
+    padding: 14px 22px;
+}
+[data-cs-theme="brutalist"] .cs-header h1,
+[data-cs-theme="brutalist"] .cs-header .cs-header-date,
+[data-cs-theme="brutalist"] .cs-header-brand,
+[data-cs-theme="brutalist"] .cs-header a {
+    color: var(--cs-brutal-yellow);
+}
+[data-cs-theme="brutalist"] .cs-header .cs-header-date {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: #ffffff;
+    letter-spacing: 0;
+    text-transform: none;
+}
+[data-cs-theme="brutalist"] .cs-header .cs-btn-accent,
+[data-cs-theme="brutalist"] .cs-header .cs-btn-primary {
+    background: var(--cs-brutal-yellow);
+    color: #0d0d0d;
+    border: 2px solid var(--cs-brutal-yellow);
+    box-shadow: 3px 3px 0 0 var(--cs-brutal-green);
+}
+
+/* Boutons utilitaires (customize, fullscreen, pdf, theme) lisibles sur fond noir */
+[data-cs-theme="brutalist"] .cs-header .btn-outline-secondary {
+    background: transparent;
+    color: var(--cs-brutal-yellow);
+    border: 2px solid var(--cs-brutal-yellow);
+    border-radius: 0;
+}
+[data-cs-theme="brutalist"] .cs-header .btn-outline-secondary i { color: var(--cs-brutal-yellow); }
+[data-cs-theme="brutalist"] .cs-header .btn-outline-secondary:hover,
+[data-cs-theme="brutalist"] .cs-header .btn-outline-secondary:focus {
+    background: var(--cs-brutal-yellow);
+    color: #0d0d0d;
+    border-color: var(--cs-brutal-yellow);
+}
+[data-cs-theme="brutalist"] .cs-header .btn-outline-secondary:hover i,
+[data-cs-theme="brutalist"] .cs-header .btn-outline-secondary:focus i { color: #0d0d0d; }
+
+/* ─── Date range button : rose (mockup) ─── */
+[data-cs-theme="brutalist"] .cs-header .cs-daterange-btn {
+    background: var(--cs-brutal-pink);
+    color: #0d0d0d;
+    border-radius: 0;
+    font-family: var(--cs-font-display);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+[data-cs-theme="brutalist"] .cs-header .cs-daterange-btn::after,
+[data-cs-theme="brutalist"] .cs-header .cs-daterange-btn i { color: #0d0d0d; }
+
+/* ─── Pill dropdown "compare_with" : bouton bleu (panier moyen) ─── */
+[data-cs-theme="brutalist"] .cs-header .cs-pill-dropdown[data-filter="compare_with"] .cs-pill-btn {
+    background: var(--cs-brutal-blue);
+    color: #ffffff;
+    border-radius: 0;
+    font-family: var(--cs-font-display);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+[data-cs-theme="brutalist"] .cs-header .cs-pill-dropdown[data-filter="compare_with"] .cs-pill-btn::after {
+    border-top-color: #ffffff;
+}
+
+/* Menu dropdown : items en blocs durs */
+[data-cs-theme="brutalist"] .cs-pill-dropdown[data-filter="compare_with"] .cs-pill-menu {
+    border-radius: 0;
+    border: 2.5px solid var(--cs-border);
+    box-shadow: 4px 4px 0 0 var(--cs-border);
+    padding: 4px;
+    background: var(--cs-bg-card);
+}
+[data-cs-theme="brutalist"] .cs-pill-dropdown[data-filter="compare_with"] .cs-pill-option {
+    border-radius: 0;
+    font-family: var(--cs-font-sans);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    font-size: 12px;
+    margin: 2px;
+}
+
+/* Option "vs n-1 année" : rose (articles/panier) */
+[data-cs-theme="brutalist"] .cs-pill-dropdown[data-filter="compare_with"] .cs-pill-option[data-value="yoy"] {
+    background: var(--cs-brutal-pink);
+    color: #0d0d0d;
+    border: 2px solid var(--cs-border);
+}
+[data-cs-theme="brutalist"] .cs-pill-dropdown[data-filter="compare_with"] .cs-pill-option[data-value="yoy"]:hover,
+[data-cs-theme="brutalist"] .cs-pill-dropdown[data-filter="compare_with"] .cs-pill-option[data-value="yoy"].cs-active {
+    background: var(--cs-brutal-pink);
+    color: #0d0d0d;
+    box-shadow: 2px 2px 0 0 var(--cs-border);
+}
+
+/* Option "prev" : bleu (rappel du bouton actif par défaut) */
+[data-cs-theme="brutalist"] .cs-pill-dropdown[data-filter="compare_with"] .cs-pill-option[data-value="prev"].cs-active {
+    background: var(--cs-brutal-blue);
+    color: #ffffff;
+    border: 2px solid var(--cs-border);
+    box-shadow: 2px 2px 0 0 var(--cs-border);
+}
+
+/* ─── Sections : cadre + ombre dure ─── */
+[data-cs-theme="brutalist"] .cs-section,
+[data-cs-theme="brutalist"] .cs-customer-stat,
+[data-cs-theme="brutalist"] .cs-goal-card {
+    border-radius: 0;
+    border: 2.5px solid var(--cs-border);
+    box-shadow: var(--cs-shadow);
+}
+
+/* KPI cards : pas de border, ce sont les cartes elles-mêmes qui sont brutalistes */
+[data-cs-theme="brutalist"] .cs-kpi-card {
+    border-radius: 0;
+    border: 2.5px solid var(--cs-border);
+    box-shadow: var(--cs-shadow);
+    position: relative;
+    overflow: visible;
+    padding: 10px 16px 16px;
+}
+
+[data-cs-theme="brutalist"] .cs-kpi-value,
+[data-cs-theme="brutalist"] .cs-customer-stat-value {
+    font-family: var(--cs-font-display);
+    font-weight: 900;
+    text-transform: uppercase;
+}
+[data-cs-theme="brutalist"] .cs-btn-accent,
+[data-cs-theme="brutalist"] .cs-btn-primary {
+    border-radius: 0;
+    border: 2px solid var(--cs-border);
+    box-shadow: 4px 4px 0 0 var(--cs-border);
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+/* ─── KPI : label EN HAUT, valeur dessous, pas d'icône ─── */
+[data-cs-theme="brutalist"] .cs-kpi-card .cs-kpi-icon { display: none; }
+[data-cs-theme="brutalist"] .cs-kpi-card .cs-kpi-body { display: block; }
+[data-cs-theme="brutalist"] .cs-kpi-card .cs-kpi-label {
+    font-family: 'Archivo Black', 'Anton', Impact, sans-serif;
+    font-weight: 400;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--cs-text);
+    margin-bottom: 8px;
+}
+[data-cs-theme="brutalist"] .cs-kpi-card .cs-kpi-value {
+    font-size: 50px;
+    line-height: 1;
+    letter-spacing: -.02em;
+}
+
+/* ─── Badge POSITIF / NÉGATIF / STABLE en top-right ─── */
+[data-cs-theme="brutalist"] .cs-trend {
+    border-radius: 0;
+    border: 2px solid var(--cs-border);
+    padding: 3px 8px;
+    font-weight: 800;
+}
+[data-cs-theme="brutalist"] .cs-kpi-card .cs-trend {
+    position: absolute;
+    top: -12px;
+    right: -12px;
+    border: 2px solid #0d0d0d;
+    padding: 3px 8px;
+    font-family: 'Archivo Black', 'Anton', Impact, sans-serif;
+    font-weight: 400;
+    font-size: 11px;
+    letter-spacing: .5px;
+    text-transform: none;
+    z-index: 3;
+    box-shadow: 3px 3px 0 0 #0d0d0d;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+}
+[data-cs-theme="brutalist"] .cs-kpi-card .cs-trend i {
+    font-size: 13px;
+    margin-left: -3px;
+}
+[data-cs-theme="brutalist"] .cs-kpi-card .cs-trend-up      { background: var(--cs-brutal-green);  color: #0d0d0d; }
+[data-cs-theme="brutalist"] .cs-kpi-card .cs-trend-down    { background: var(--cs-brutal-red);    color: #ffffff; }
+[data-cs-theme="brutalist"] .cs-kpi-card .cs-trend-neutral { background: var(--cs-brutal-yellow); color: #0d0d0d; }
+
+/* Badges : tous à droite, rotation alternée (1,3,5 = +4° / 2,4 = -4°) */
+[data-cs-theme="brutalist"] .cs-kpi-row .cs-kpi-card .cs-trend { transform: rotate(4deg); transform-origin: center; }
+[data-cs-theme="brutalist"] .cs-kpi-row .col-xl:nth-child(2) .cs-kpi-card .cs-trend,
+[data-cs-theme="brutalist"] .cs-kpi-row .col-xl:nth-child(4) .cs-kpi-card .cs-trend {
+    transform: rotate(-4deg);
+}
+/* Badge "retour" (5e carte) : seules la couleur rouge et le texte "Retour" changent — la rotation suit l'alternance commune */
+[data-cs-theme="brutalist"] .cs-kpi-row .cs-kpi-card .cs-trend-returns {
+    background: var(--cs-brutal-red);
+    color: #ffffff;
+    border-color: #0d0d0d;
+}
+
+/* Couleurs de fond cyclées sur les KPI cards (jaune / blanc / rose / cobalt+blanc / blanc) */
+[data-cs-theme="brutalist"] .cs-kpi-row .col-xl:nth-child(1) .cs-kpi-card { background: var(--cs-brutal-yellow); }
+[data-cs-theme="brutalist"] .cs-kpi-row .col-xl:nth-child(3) .cs-kpi-card { background: var(--cs-brutal-pink); color: #0d0d0d; }
+[data-cs-theme="brutalist"] .cs-kpi-row .col-xl:nth-child(4) .cs-kpi-card { background: var(--cs-brutal-blue); color: #ffffff; }
+[data-cs-theme="brutalist"] .cs-kpi-row .col-xl:nth-child(4) .cs-kpi-value,
+[data-cs-theme="brutalist"] .cs-kpi-row .col-xl:nth-child(4) .cs-kpi-label { color: #ffffff !important; }
+
+/* La rangée KPI n'a pas de header — pas de cadre/ombre, overflow visible pour les badges */
+[data-cs-theme="brutalist"] .cs-kpi-row {
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    overflow: visible !important;
+    padding: 0 !important;
+    margin-top: 18px;
+}
+[data-cs-theme="brutalist"] .cs-kpi-row > .cs-section-header { display: none; }
+[data-cs-theme="brutalist"] .cs-kpi-row .row { overflow: visible; }
+[data-cs-theme="brutalist"] .cs-kpi-row [class*="col-"] { overflow: visible; }
+
+/* ─── Section headers : bandeau noir flush-top, texte jaune Space Grotesk ─── */
+[data-cs-theme="brutalist"] .cs-section {overflow: hidden; }
+[data-cs-theme="brutalist"] .cs-section-header {
+    background: #0d0d0d;
+    color: var(--cs-brutal-yellow);
+    border: none;
+    border-bottom: 2.5px solid var(--cs-border);
+    padding: 9px 14px;
+    margin: 0 0 0 0;
+    font-family: var(--cs-font-sans);
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+/* Padding interne géré au niveau du body de section */
+[data-cs-theme="brutalist"] .cs-section > .cs-collapsible-body { padding: 14px; }
+[data-cs-theme="brutalist"] .cs-section > .cs-section-header ~ * { padding-left: 14px; padding-right: 14px; }
+[data-cs-theme="brutalist"] .cs-section > .cs-section-header ~ *:last-child { padding-bottom: 14px; }
+[data-cs-theme="brutalist"] .cs-section > .cs-section-header + .table-responsive,
+[data-cs-theme="brutalist"] .cs-section > .cs-section-header + .row { margin-top: 14px; }
+[data-cs-theme="brutalist"] .cs-section-header .badge,
+[data-cs-theme="brutalist"] .cs-section-header .cs-badge-accent {
+    background: var(--cs-brutal-yellow);
+    color: #0d0d0d;
+    border: 2px solid var(--cs-brutal-yellow);
+    border-radius: 0;
+}
+
+/* ─── Barres de progression : style brutaliste (carré, pas de gradient) ─── */
+[data-cs-theme="brutalist"] .cs-goal-bar {
+    height: 14px;
+    border-radius: 0;
+    border: 2px solid var(--cs-border);
+    background: var(--cs-bg-card);
+    overflow: hidden;
+    padding: 0;
+}
+[data-cs-theme="brutalist"] .cs-goal-bar-fill {
+    border-radius: 0 !important;
+    background: var(--cs-text) !important;
+}
+[data-cs-theme="brutalist"] .cs-goal-ahead .cs-goal-bar-fill    { background: var(--cs-brutal-green)  !important; }
+[data-cs-theme="brutalist"] .cs-goal-on_track .cs-goal-bar-fill { background: var(--cs-brutal-yellow) !important; }
+[data-cs-theme="brutalist"] .cs-goal-behind .cs-goal-bar-fill   { background: var(--cs-brutal-red)    !important; }
+[data-cs-theme="brutalist"] .cs-goal-bar-marker {
+    background: var(--cs-border);
+    opacity: 1;
+    width: 3px;
+    border-radius: 0;
+}
+
+/* Progress bar pays (country_map) : barres pleines colorées */
+[data-cs-theme="brutalist"] .cs-country-rank-list .progress {
+    height: 6px !important;
+    border-radius: 0 !important;
+    border: 1.5px solid var(--cs-border);
+    background: var(--cs-bg-card) !important;
+}
+[data-cs-theme="brutalist"] .cs-country-rank-list .progress-bar {
+    border-radius: 0 !important;
+    background: var(--cs-brutal-yellow) !important;
+}
+
+/* ─── Badges accent en bloc dur ─── */
+[data-cs-theme="brutalist"] .cs-badge-accent {
+    border-radius: 0;
+    border: 2px solid var(--cs-border);
+    box-shadow: 2px 2px 0 0 var(--cs-border);
+    background: var(--cs-brutal-yellow);
+    color: #0d0d0d;
+    font-family: var(--cs-font-display);
+    font-weight: 900;
+    text-transform: uppercase;
+    padding: 4px 10px;
+}
+
+/* Rank number top_products en bloc franc coloré */
+[data-cs-theme="brutalist"] .cs-rank-number {
+    border-radius: 0;
+    border: 2px solid var(--cs-border);
+    background: var(--cs-brutal-yellow);
+    color: #0d0d0d;
+    font-family: var(--cs-font-display);
+    font-weight: 900;
+    box-shadow: 2px 2px 0 0 var(--cs-border);
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+[data-cs-theme="brutalist"] [data-cs-section="top_products"] .cs-product-row:nth-child(odd) .cs-rank-number { background: var(--cs-brutal-blue); color: #ffffff; }
+[data-cs-theme="brutalist"] [data-cs-section="top_products"] .cs-product-row:nth-child(even) .cs-rank-number { background: var(--cs-brutal-pink); color: #ffffff; }
+
+/* ─── TOP PRODUITS (variante brutalist) ─── */
+[data-cs-theme="brutalist"] .cs-top-products-brutal {
+    background: var(--cs-bg-card);
+    border: 2.5px solid var(--cs-border);
+    box-shadow: var(--cs-shadow);
+    padding: 18px;
+    margin-bottom: 24px;
+    overflow: visible;
+}
+[data-cs-theme="brutalist"] .cs-top-products-brutal > .cs-section-header { display: none; }
+
+[data-cs-theme="brutalist"] .cs-top-brutal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+[data-cs-theme="brutalist"] .cs-top-brutal-badge {
+    display: inline-block;
+    background: var(--cs-warning);
+    color: #0d0d0d;
+    border: 2px solid var(--cs-border);
+    padding: 2px 8px;
+    font-family: 'Archivo Black', 'Anton', Impact, sans-serif;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+[data-cs-theme="brutalist"] .cs-top-brutal-controls {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+/* Toggle Volume / CA € sur Top produits : même style que CMD/CA */
+[data-cs-theme="brutalist"] .cs-top-brutal-sort {
+    display: inline-flex;
+    gap: 4px;
+    background: #ffffff;
+    border: 2px solid #0d0d0d;
+    padding: 2px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    color: #0d0d0d;
+    align-items: stretch;
+}
+[data-cs-theme="brutalist"] .cs-top-brutal-sort > span {
+    cursor: pointer;
+    padding: 3px 8px;
+    line-height: 1.1;
+    color: #0d0d0d;
+}
+[data-cs-theme="brutalist"] .cs-top-brutal-sort > span.fw-bold,
+[data-cs-theme="brutalist"] .cs-top-brutal-sort > span.cs-active {
+    background: #0d0d0d;
+    color: #ffd23f;
+}
+[data-cs-theme="brutalist"] .cs-top-brutal-sort .form-check {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+    width: 0;
+    height: 0;
+    margin: 0;
+}
+[data-cs-theme="brutalist"] .cs-top-brutal-limit .cs-pill-btn {
+    background: var(--cs-warning);
+    color: #0d0d0d;
+    border: 2px solid var(--cs-border);
+    border-radius: 0;
+    box-shadow: 2px 2px 0 0 var(--cs-border);
+    font-family: 'Archivo Black', 'Anton', Impact, sans-serif;
+    font-weight: 900;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 2px 10px;
+}
+[data-cs-theme="brutalist"] .cs-top-brutal-limit .cs-pill-menu {
+    border: 2.5px solid var(--cs-border);
+    border-radius: 0;
+    box-shadow: 4px 4px 0 0 var(--cs-border);
+    background: var(--cs-bg-card);
+    padding: 4px;
+}
+[data-cs-theme="brutalist"] .cs-top-brutal-limit .cs-pill-option {
+    border-radius: 0;
+    font-family: var(--cs-font-sans);
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 12px;
+    margin: 2px;
+}
+[data-cs-theme="brutalist"] .cs-top-brutal-limit .cs-pill-option.cs-active {
+    background: var(--cs-warning);
+    color: #0d0d0d;
+    border: 2px solid var(--cs-border);
+}
+[data-cs-theme="brutalist"] .cs-top-brutal-totals {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--cs-text);
+}
+[data-cs-theme="brutalist"] .cs-top-brutal-totals-amount {
+    background: var(--cs-warning);
+    padding: 2px 6px;
+    border: 2px solid var(--cs-border);
+    margin-left: 4px;
+}
+
+/* Multi-colonnes : 1→col1 top, 2→col1, … , puis remplit col2 (column-flow) */
+[data-cs-theme="brutalist"] .cs-top-brutal-grid {
+    column-count: 2;
+    column-gap: 14px;
+}
+@media (min-width: 1400px) {
+    [data-cs-theme="brutalist"] .cs-top-brutal-grid { column-count: 3; }
+}
+@media (max-width: 768px) {
+    [data-cs-theme="brutalist"] .cs-top-brutal-grid { column-count: 1; }
+}
+[data-cs-theme="brutalist"] .cs-top-brutal-row {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    -webkit-column-break-inside: avoid;
+}
+
+/* Lignes produits */
+[data-cs-theme="brutalist"] .cs-top-brutal-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 2px solid var(--cs-border);
+    padding: 8px 12px;
+    margin-bottom: 8px;
+    background: var(--cs-bg-card);
+    color: var(--cs-text);
+    text-decoration: none;
+    transition: transform .08s ease;
+    min-width: 0;
+    overflow: hidden;
+}
+[data-cs-theme="brutalist"] .cs-top-brutal-row:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 3px 3px 0 0 var(--cs-border);
+    color: var(--cs-text);
+}
+
+/* Rang : carré noir 36×36, chiffre jaune Archivo Black 22px */
+[data-cs-theme="brutalist"] .cs-top-brutal-rank {
+    font-family: 'Archivo Black', 'Anton', Impact, sans-serif;
+    font-size: 22px;
+    background: var(--cs-border);
+    color: var(--cs-kpi-orders);
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+/* Body central : nom + barre */
+[data-cs-theme="brutalist"] .cs-top-brutal-body {
+    flex: 1 1 0%;
+    min-width: 0;
+}
+[data-cs-theme="brutalist"] .cs-top-brutal-name {
+    font-size: 13px;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+[data-cs-theme="brutalist"] .cs-top-brutal-bar {
+    height: 8px;
+    background: var(--cs-bg);
+    border: 1.5px solid var(--cs-border);
+    margin-top: 4px;
+    position: relative;
+}
+[data-cs-theme="brutalist"] .cs-top-brutal-bar-fill {
+    height: 100%;
+    background: var(--cs-kpi-items);
+}
+/* Cycle de couleurs sur le remplissage : rose → vert → jaune → bleu */
+[data-cs-theme="brutalist"] .cs-top-brutal-row:nth-child(4n+1) .cs-top-brutal-bar-fill { background: var(--cs-kpi-items);   }
+[data-cs-theme="brutalist"] .cs-top-brutal-row:nth-child(4n+2) .cs-top-brutal-bar-fill { background: var(--cs-kpi-revenue); }
+[data-cs-theme="brutalist"] .cs-top-brutal-row:nth-child(4n+3) .cs-top-brutal-bar-fill { background: var(--cs-kpi-orders);  }
+[data-cs-theme="brutalist"] .cs-top-brutal-row:nth-child(4n+4) .cs-top-brutal-bar-fill { background: var(--cs-kpi-basket);  }
+
+/* Bloc droit : prix + quantité */
+[data-cs-theme="brutalist"] .cs-top-brutal-right {
+    text-align: right;
+    flex-shrink: 0;
+}
+[data-cs-theme="brutalist"] .cs-top-brutal-price {
+    font-family: 'Archivo Black', 'Anton', Impact, sans-serif;
+    font-size: 17px;
+    color: var(--cs-text);
+}
+[data-cs-theme="brutalist"] .cs-top-brutal-qty {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    opacity: .6;
+    color: var(--cs-text);
+}
+
+
+/* ============================================================
+ *  CLASSES UTILITAIRES BRUTALIST (partagées par toutes les sections)
+ * ============================================================ */
+
+[data-cs-theme="brutalist"] .cs-brutal-card {
+    background: var(--cs-bg-card);
+    border: 2.5px solid var(--cs-border);
+    box-shadow: var(--cs-shadow);
+    padding: 18px;
+    margin-bottom: 24px;
+}
+[data-cs-theme="brutalist"] .cs-brutal-card > .cs-section-header { display: none; }
+
+[data-cs-theme="brutalist"] .cs-brutal-card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+}
+[data-cs-theme="brutalist"] .cs-brutal-card-rule {
+    flex: 1 1 0%;
+    height: 2px;
+    background: var(--cs-border);
+}
+[data-cs-theme="brutalist"] .cs-brutal-badge {
+    display: inline-block;
+    background: var(--cs-kpi-orders);
+    color: #0d0d0d;
+    border: 2px solid var(--cs-border);
+    padding: 2px 8px;
+    font-family: 'Archivo Black', 'Anton', Impact, sans-serif;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+[data-cs-theme="brutalist"] .cs-brutal-badge-pink  { background: var(--cs-brutal-pink); color: #0d0d0d; }
+[data-cs-theme="brutalist"] .cs-brutal-badge-blue  { background: var(--cs-brutal-blue); color: #ffffff; }
+[data-cs-theme="brutalist"] .cs-brutal-badge-green { background: var(--cs-brutal-green); color: #0d0d0d; }
+[data-cs-theme="brutalist"] .cs-brutal-badge-red   { background: var(--cs-brutal-red); color: #ffffff; }
+[data-cs-theme="brutalist"] .cs-brutal-badge-dark  { background: #0d0d0d; color: var(--cs-kpi-orders); }
+
+[data-cs-theme="brutalist"] .cs-brutal-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    opacity: .7;
+}
+
+/* Variantes carte colorée */
+[data-cs-theme="brutalist"] .cs-brutal-card--pink  { background: var(--cs-brutal-pink); color: #0d0d0d; }
+[data-cs-theme="brutalist"] .cs-brutal-card--green { background: var(--cs-brutal-green); color: #0d0d0d; }
+[data-cs-theme="brutalist"] .cs-brutal-card--blue  { background: var(--cs-brutal-blue); color: #ffffff; }
+[data-cs-theme="brutalist"] .cs-brutal-card--yellow { background: var(--cs-kpi-orders); color: #0d0d0d; }
+
+/* ============================================================
+ *  GRAMMAIRE BRUTAL v2 (Design)
+ *  - carte blanche → pill colorée + filet noir (titlebar + rule)
+ *  - carte colorée → titre simple gros texte + tag/stamp à droite
+ *  - border 2.5px ink + hard shadow 6px 6px 0 ink, radius 0
+ * ============================================================ */
+
+/* Carte blanche (par défaut) */
+[data-cs-theme="brutalist"] .cs-signups-brutal,
+[data-cs-theme="brutalist"] .cs-brutal-card-colored {
+    background: #ffffff;
+    border: 2.5px solid #0d0d0d;
+    box-shadow: 6px 6px 0 0 #0d0d0d;
+    padding: 18px;
+    margin-bottom: 0;
+    overflow: visible;
+}
+[data-cs-theme="brutalist"] .cs-signups-brutal > .cs-section-header,
+[data-cs-theme="brutalist"] .cs-brutal-card-colored > .cs-section-header { display: none; }
+
+/* Cartes colorées */
+[data-cs-theme="brutalist"] .cs-brutal-card-green  { background: #1fb866; color: #0d0d0d; }
+[data-cs-theme="brutalist"] .cs-brutal-card-cobalt { background: #2a5cff; color: #ffffff; }
+[data-cs-theme="brutalist"] .cs-brutal-card-pink   { background: #ff5fa2; color: #0d0d0d; }
+[data-cs-theme="brutalist"] .cs-brutal-card-yellow { background: #ffd23f; color: #0d0d0d; }
+
+/* Titlebar (carte blanche) : pill + filet noir */
+[data-cs-theme="brutalist"] .cs-brutal-titlebar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+[data-cs-theme="brutalist"] .cs-brutal-rule {
+    flex: 1 1 0%;
+    height: 2px;
+    background: #0d0d0d;
+}
+[data-cs-theme="brutalist"] .cs-brutal-tag {
+    display: inline-block;
+    background: #ffd23f;
+    color: #0d0d0d;
+    border: 2px solid #0d0d0d;
+    padding: 2px 8px;
+    font-family: 'Archivo Black', 'Anton', Impact, sans-serif;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+[data-cs-theme="brutalist"] .cs-brutal-tag-cobalt { background: #2a5cff; color: #ffffff; }
+[data-cs-theme="brutalist"] .cs-brutal-tag-pink   { background: #ff5fa2; color: #0d0d0d; }
+[data-cs-theme="brutalist"] .cs-brutal-tag-green  { background: #1fb866; color: #0d0d0d; }
+[data-cs-theme="brutalist"] .cs-brutal-tag-red    { background: #ff3b30; color: #ffffff; }
+[data-cs-theme="brutalist"] .cs-brutal-tag-dark   { background: #0d0d0d; color: #ffd23f; }
+[data-cs-theme="brutalist"] .cs-brutal-tag-yellow { background: #ffd23f; color: #0d0d0d; }
+
+/* Colored title (carte colorée) : titre simple + tag à droite */
+[data-cs-theme="brutalist"] .cs-brutal-colored-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+[data-cs-theme="brutalist"] .cs-brutal-colored-t {
+    font-family: 'Archivo Black', 'Anton', Impact, sans-serif;
+    font-size: 18px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+}
+
+/* Stamp (rotaté avec ombre) — utilisé sur les cartes colorées */
+[data-cs-theme="brutalist"] .cs-brutal-stamp {
+    display: inline-block;
+    background: #0d0d0d;
+    color: #ffd23f;
+    border: 2px solid #0d0d0d;
+    padding: 3px 8px;
+    font-family: 'Archivo Black', 'Anton', Impact, sans-serif;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    transform: rotate(-2deg);
+    box-shadow: 3px 3px 0 0 #ffd23f;
+}
+
+/* Empty state générique */
+[data-cs-theme="brutalist"] .cs-brutal-empty {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    opacity: .7;
+    text-align: center;
+    padding: 18px;
+}
+
+/* ─── Tunnel de conversion (signups) ─── */
+[data-cs-theme="brutalist"] .cs-funnel-brutal {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+}
+[data-cs-theme="brutalist"] .cs-funnel-brutal-step {
+    position: relative;
+    text-align: center;
+    padding: 12px 8px;
+    border: 2px solid #0d0d0d;
+    background: #ffffff;
+}
+[data-cs-theme="brutalist"] .cs-funnel-brutal-v {
+    font-family: 'Archivo Black', 'Anton', Impact, sans-serif;
+    font-size: 26px;
+    line-height: 1;
+    letter-spacing: -.5px;
+}
+[data-cs-theme="brutalist"] .cs-funnel-brutal-l {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    margin: 6px auto 0;
+    text-transform: uppercase;
+    opacity: .7;
+    line-height: 1.35;
+    max-width: 12ch;
+    white-space: normal;
+}
+[data-cs-theme="brutalist"] .cs-funnel-brutal-pct {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: #ffd23f;
+    color: #0d0d0d;
+    border: 2px solid #0d0d0d;
+    box-shadow: 3px 3px 0 0 #0d0d0d;
+    padding: 2px 6px;
+    font-family: 'Archivo Black', 'Anton', Impact, sans-serif;
+    font-size: 11px;
+    transform: rotate(-3deg);
+}
+[data-cs-theme="brutalist"] .cs-funnel-brutal-pct-bad { background: #ff3b30; color: #ffffff; }
+
+/* Permet aux badges de dépasser le cadre du tunnel */
+[data-cs-theme="brutalist"] .cs-funnel-brutal { overflow: visible; }
+[data-cs-theme="brutalist"] .cs-funnel-brutal-step { overflow: visible; }
+[data-cs-theme="brutalist"] .cs-signups-brutal { overflow: visible; }
+
+/* ─── Marges brutes (margins) ─── */
+[data-cs-theme="brutalist"] .cs-margins-brutal-empty {
+    padding: 14px 0;
+}
+[data-cs-theme="brutalist"] .cs-margins-brutal-h {
+    font-family: 'Archivo Black', 'Anton', Impact, sans-serif;
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+[data-cs-theme="brutalist"] .cs-margins-brutal-path {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: #0d0d0d;
+    opacity: .85;
+}
+[data-cs-theme="brutalist"] .cs-margins-brutal-path strong {
+    background: #0d0d0d;
+    color: #ffd23f;
+    padding: 1px 5px;
+}
+[data-cs-theme="brutalist"] .cs-margins-brutal-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+[data-cs-theme="brutalist"] .cs-margins-brutal-stat {
+    border-left: 4px solid #0d0d0d;
+    padding-left: 10px;
+}
+[data-cs-theme="brutalist"] .cs-margins-brutal-stat-main .cs-margins-brutal-v { font-size: 32px; }
+[data-cs-theme="brutalist"] .cs-margins-brutal-l {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    opacity: .75;
+    margin-bottom: 4px;
+}
+[data-cs-theme="brutalist"] .cs-margins-brutal-v {
+    font-family: 'Archivo Black', 'Anton', Impact, sans-serif;
+    font-size: 22px;
+    line-height: 1;
+}
+[data-cs-theme="brutalist"] .cs-margins-brutal-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    opacity: .7;
+    margin-top: 4px;
+}
+[data-cs-theme="brutalist"] .cs-margins-brutal-top {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1.5px solid rgba(13,13,13,.4);
+}
+[data-cs-theme="brutalist"] .cs-margins-brutal-top-h {
+    font-family: 'Archivo Black', 'Anton', Impact, sans-serif;
+    font-size: 12px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+}
+[data-cs-theme="brutalist"] .cs-margins-brutal-row {
+    display: grid;
+    grid-template-columns: 28px 1fr auto;
+    gap: 8px;
+    align-items: baseline;
+    padding: 4px 0;
+    border-bottom: 1px solid rgba(13,13,13,.15);
+}
+[data-cs-theme="brutalist"] .cs-margins-brutal-row-r {
+    font-family: 'Archivo Black', 'Anton', Impact, sans-serif;
+    font-size: 12px;
+}
+[data-cs-theme="brutalist"] .cs-margins-brutal-row-v {
+    font-family: 'Archivo Black', 'Anton', Impact, sans-serif;
+    font-size: 13px;
+}
+
+/* ─── Trafic & visiteurs ─── */
+[data-cs-theme="brutalist"] .cs-traffic-brutal-empty { padding: 8px 0; }
+[data-cs-theme="brutalist"] .cs-traffic-brutal-h {
+    font-family: 'Archivo Black', 'Anton', Impact, sans-serif;
+    font-size: 14px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+[data-cs-theme="brutalist"] .cs-traffic-brutal-s {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    opacity: .85;
+    margin-bottom: 12px;
+}
+[data-cs-theme="brutalist"] .cs-traffic-brutal-providers {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+[data-cs-theme="brutalist"] .cs-traffic-brutal-provider {
+    background: rgba(255,255,255,.15);
+    border: 2px solid rgba(255,255,255,.5);
+    padding: 10px 12px;
+}
+[data-cs-theme="brutalist"] .cs-traffic-brutal-provider-n {
+    font-family: 'Archivo Black', 'Anton', Impact, sans-serif;
+    font-size: 13px;
+    text-transform: uppercase;
+}
+[data-cs-theme="brutalist"] .cs-traffic-brutal-provider-d {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    opacity: .75;
+}
+[data-cs-theme="brutalist"] .cs-traffic-brutal-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+}
+[data-cs-theme="brutalist"] .cs-traffic-brutal-stat {
+    border-left: 4px solid #ffffff;
+    padding-left: 10px;
+}
+[data-cs-theme="brutalist"] .cs-traffic-brutal-v {
+    font-family: 'Archivo Black', 'Anton', Impact, sans-serif;
+    font-size: 22px;
+    line-height: 1;
+}
+[data-cs-theme="brutalist"] .cs-traffic-brutal-l {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    opacity: .85;
+    margin-top: 4px;
+}
+
+/* ─── Paniers abandonnés (abandoned_carts) ─── */
+[data-cs-theme="brutalist"] .cs-abandoned-brutal-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 14px;
+}
+[data-cs-theme="brutalist"] .cs-abandoned-brutal-stat {
+    background: #ffffff;
+    border: 2px solid #0d0d0d;
+    padding: 10px 12px;
+}
+[data-cs-theme="brutalist"] .cs-abandoned-brutal-v {
+    font-family: 'Archivo Black', 'Anton', Impact, sans-serif;
+    font-size: 24px;
+    line-height: 1;
+}
+[data-cs-theme="brutalist"] .cs-abandoned-brutal-l {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    opacity: .75;
+    margin: 4px auto 0;
+    line-height: 1.35;
+    max-width: 14ch;
+}
+[data-cs-theme="brutalist"] .cs-abandoned-brutal-top {
+    background: #ffffff;
+    border: 2px solid #0d0d0d;
+    padding: 12px;
+}
+[data-cs-theme="brutalist"] .cs-abandoned-brutal-top-h {
+    font-family: 'Archivo Black', 'Anton', Impact, sans-serif;
+    font-size: 12px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+}
+[data-cs-theme="brutalist"] .cs-abandoned-brutal-cart {
+    display: grid;
+    grid-template-columns: 28px 1fr auto;
+    gap: 8px;
+    align-items: baseline;
+    padding: 4px 0;
+    border-bottom: 1px solid rgba(13,13,13,.15);
+    font-size: 12px;
+    color: #0d0d0d;
+    text-decoration: none;
+}
+[data-cs-theme="brutalist"] a.cs-abandoned-brutal-cart:hover {
+    background: rgba(13,13,13,.06);
+    color: #0d0d0d;
+}
+[data-cs-theme="brutalist"] .cs-abandoned-brutal-cart:last-child { border-bottom: none; }
+[data-cs-theme="brutalist"] .cs-abandoned-brutal-r {
+    font-family: 'Archivo Black', 'Anton', Impact, sans-serif;
+    font-size: 12px;
+}
+[data-cs-theme="brutalist"] .cs-abandoned-brutal-v {
+    font-family: 'Archivo Black', 'Anton', Impact, sans-serif;
+    font-size: 13px;
+}
+
+/* ─── Highlights : 3 cartes colorées en grille ─── */
+[data-cs-theme="brutalist"] .cs-highlights-brutal {
+    margin-bottom: 24px;
+}
+[data-cs-theme="brutalist"] .cs-hl-brutal-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+}
+@media (max-width: 1100px) {
+    [data-cs-theme="brutalist"] .cs-hl-brutal-grid { grid-template-columns: 1fr; }
+}
+[data-cs-theme="brutalist"] .cs-hl-brutal-card {
+    border: 2.5px solid #0d0d0d;
+    box-shadow: 6px 6px 0 0 #0d0d0d;
+    padding: 18px;
+    margin-bottom: 0;
+}
+[data-cs-theme="brutalist"] .cs-hl-brutal-card > .cs-section-header { display: none; }
+
+/* Titre : icône en bloc noir 28x28 + label uppercase */
+[data-cs-theme="brutalist"] .cs-hl-brutal-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+[data-cs-theme="brutalist"] .cs-hl-brutal-icon {
+    width: 28px;
+    height: 28px;
+    background: #0d0d0d;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Archivo Black', 'Anton', Impact, sans-serif;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+[data-cs-theme="brutalist"] .cs-hl-brutal-label {
+    font-family: 'Archivo Black', 'Anton', Impact, sans-serif;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    color: #0d0d0d;
+}
+
+/* Prod card : boîte blanche bordée à l'intérieur de la card colorée */
+[data-cs-theme="brutalist"] .cs-hl-brutal-prod {
+    background: #ffffff;
+    border: 2px solid #0d0d0d;
+    padding: 10px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+[data-cs-theme="brutalist"] .cs-hl-brutal-prod-img {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    background: #f3eed8;
+    border: 1.5px solid #0d0d0d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Archivo Black', 'Anton', Impact, sans-serif;
+    font-size: 18px;
+}
+[data-cs-theme="brutalist"] .cs-hl-brutal-prod-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+[data-cs-theme="brutalist"] .cs-hl-brutal-prod-body { flex: 1; min-width: 0; }
+[data-cs-theme="brutalist"] .cs-hl-brutal-prod-name {
+    font-size: 12.5px;
+    font-weight: 600;
+    line-height: 1.3;
+    color: #0d0d0d;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+[data-cs-theme="brutalist"] .cs-hl-brutal-prod-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: #555;
+    margin-top: 4px;
+    text-transform: uppercase;
+}
+[data-cs-theme="brutalist"] .cs-hl-brutal-prod-meta strong { color: #0d0d0d; }
+
+/* Tag % vs N-1 */
+[data-cs-theme="brutalist"] .cs-hl-brutal-growth     { background: #1fb866; color: #0d0d0d; padding: 0 4px; }
+[data-cs-theme="brutalist"] .cs-hl-brutal-growth-bad { background: #ff3b30; color: #ffffff; padding: 0 4px; }
+
+/* Empty state : pointillé sur fond blanc semi-transparent */
+[data-cs-theme="brutalist"] .cs-hl-brutal-empty {
+    background: rgba(255,255,255,.5);
+    border: 2px dashed #0d0d0d;
+    padding: 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    text-align: center;
+    line-height: 1.5;
+    color: #0d0d0d;
+}
+
+/* ─── Transporteurs (performance) ─── */
+[data-cs-theme="brutalist"] .cs-performance-brutal { margin-bottom: 24px; }
+[data-cs-theme="brutalist"] .cs-carriers-brutal-detail {
+    color: #0d0d0d;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    text-decoration: underline;
+}
+[data-cs-theme="brutalist"] .cs-carriers-brutal-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+}
+@media (max-width: 900px) {
+    [data-cs-theme="brutalist"] .cs-carriers-brutal-grid { grid-template-columns: 1fr; }
+}
+[data-cs-theme="brutalist"] .cs-carriers-brutal-stat {
+    background: #ffffff;
+    border: 2px solid #0d0d0d;
+    padding: 12px;
+}
+[data-cs-theme="brutalist"] .cs-carriers-brutal-v {
+    font-family: 'Archivo Black', 'Anton', Impact, sans-serif;
+    font-size: 24px;
+    line-height: 1;
+}
+[data-cs-theme="brutalist"] .cs-carriers-brutal-l {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    margin-top: 6px;
+    opacity: .7;
+    line-height: 1.3;
+}
+[data-cs-theme="brutalist"] .cs-carriers-brutal-sub {
+    font-size: 11.5px;
+    margin-top: 8px;
+    opacity: .8;
+    line-height: 1.3;
+}
+
+/* Pair wrapper créé par JS : 2 colonnes égales */
+[data-cs-theme="brutalist"] .cs-brutal-pair-r2 {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 18px;
+    margin-bottom: 24px;
+    align-items: stretch;
+}
+[data-cs-theme="brutalist"] .cs-brutal-pair-r2 > .cs-section {
+    margin-bottom: 0;
+    height: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+@media (max-width: 1100px) {
+    [data-cs-theme="brutalist"] .cs-brutal-pair-r2 { grid-template-columns: 1fr; }
+}
+
+/* ============================================================
+ *  AUTRES SECTIONS — design fourni par Design
+ *  Signature : border 2.5px ink + shadow 6px 6px 0 ink, radius 0,
+ *  header bandeau noir/jaune, fond coloré selon le sens de la donnée.
+ * ============================================================ */
+
+/* ─── Dernières commandes (variante brutalist) ─── */
+[data-cs-theme="brutalist"] .cs-orders-brutal {
+    background: #ffffff;
+    border: 2.5px solid #0d0d0d;
+    box-shadow: 6px 6px 0 0 #0d0d0d;
+    padding: 18px;
+    margin-bottom: 24px;
+}
+[data-cs-theme="brutalist"] .cs-orders-brutal > .cs-section-header { display: none; }
+
+[data-cs-theme="brutalist"] .cs-orders-brutal-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+[data-cs-theme="brutalist"] .cs-orders-brutal-newcust {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    color: #0d0d0d;
+    cursor: pointer;
+    padding: 2px 6px;
+    border: 2px solid #0d0d0d;
+    background: #ffffff;
+}
+[data-cs-theme="brutalist"] .cs-orders-brutal-newcust.cs-active {
+    background: #ffd23f;
+}
+[data-cs-theme="brutalist"] .cs-orders-brutal-newcust input { display: none; }
+
+[data-cs-theme="brutalist"] .cs-orders-brutal-search {
+    border: 2px solid #0d0d0d;
+    background: #ffffff;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 0;
+    width: 180px;
+}
+[data-cs-theme="brutalist"] .cs-brutal-tag-white {
+    background: #ffffff;
+    color: #0d0d0d;
+}
+
+[data-cs-theme="brutalist"] .cs-orders-brutal-sortbtn {
+    border-radius: 0;
+}
+[data-cs-theme="brutalist"] .cs-orders-brutal-sortbtn::after { display: none; }
+
+/* Filtres status */
+[data-cs-theme="brutalist"] .cs-orders-brutal-filters {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin: 14px 0;
+}
+[data-cs-theme="brutalist"] .cs-orders-brutal-status-btn {
+    background: #ffffff;
+    color: #0d0d0d;
+    border: 2px solid #0d0d0d;
+    font-family: 'Archivo Black', 'Anton', Impact, sans-serif;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    padding: 3px 8px;
+    cursor: pointer;
+}
+[data-cs-theme="brutalist"] .cs-orders-brutal-status-btn.cs-active {
+    background: #ffd23f;
+    box-shadow: 2px 2px 0 0 #0d0d0d;
+}
+
+/* Table */
+[data-cs-theme="brutalist"] .cs-orders-brutal-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+[data-cs-theme="brutalist"] .cs-orders-brutal-table th {
+    background: #f3eed8;
+    border-top: 2px solid #0d0d0d;
+    border-bottom: 2px solid #0d0d0d;
+    font-family: 'Archivo Black', 'Anton', Impact, sans-serif;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    padding: 8px 4px;
+    text-align: left;
+    color: #0d0d0d;
+}
+[data-cs-theme="brutalist"] .cs-orders-brutal-table td {
+    padding: 5px 4px;
+    border-bottom: 1.5px solid #0d0d0d;
+    font-size: 12.5px;
+    color: #0d0d0d;
+}
+[data-cs-theme="brutalist"] .cs-orders-brutal-table th:last-child,
+[data-cs-theme="brutalist"] .cs-orders-brutal-table td:last-child {
+    text-align: right;
+    white-space: nowrap;
+    padding-right: 10px;
+}
+[data-cs-theme="brutalist"] .cs-orders-brutal-table tbody tr:hover td { background: #ffd23f; }
+[data-cs-theme="brutalist"] .cs-orders-brutal-table tbody tr:last-child td { border-bottom: none; }
+[data-cs-theme="brutalist"] .cs-orders-brutal-ref {
+    font-family: 'Archivo Black', 'Anton', Impact, sans-serif;
+    color: #2a5cff;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+[data-cs-theme="brutalist"] .cs-orders-brutal-date {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+}
+[data-cs-theme="brutalist"] .cs-orders-brutal-country {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+}
+[data-cs-theme="brutalist"] .cs-orders-brutal-total {
+    font-family: 'Archivo Black', 'Anton', Impact, sans-serif;
+    font-size: 14px;
+}
+
+/* Pagination */
+[data-cs-theme="brutalist"] .cs-orders-brutal-pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 14px;
+    padding-top: 10px;
+    border-top: 1.5px solid #0d0d0d;
+}
+[data-cs-theme="brutalist"] .cs-orders-brutal-pages {
+    display: flex;
+    gap: 6px;
+}
+[data-cs-theme="brutalist"] .cs-orders-brutal-page {
+    background: #ffd23f;
+    color: #0d0d0d;
+    border: 2px solid #0d0d0d;
+    box-shadow: 2px 2px 0 0 #0d0d0d;
+    font-family: 'Archivo Black', 'Anton', Impact, sans-serif;
+    padding: 2px 10px;
+    cursor: pointer;
+}
+
+/* ─── Activité récente (variante brutalist) ─── */
+[data-cs-theme="brutalist"] .cs-activity-brutal {
+    background: #ffffff;
+    border: 2.5px solid #0d0d0d;
+    box-shadow: 6px 6px 0 0 #0d0d0d;
+    padding: 18px;
+    margin-bottom: 24px;
+}
+[data-cs-theme="brutalist"] .cs-activity-brutal > .cs-section-header { display: none; }
+[data-cs-theme="brutalist"] .cs-activity-brutal-item {
+    display: grid;
+    grid-template-columns: auto auto 1fr auto auto;
+    gap: 12px;
+    align-items: center;
+    padding: 8px 4px;
+    border-bottom: 1.5px solid #0d0d0d;
+    font-size: 12.5px;
+    color: #0d0d0d;
+    text-decoration: none;
+    transition: background .08s ease;
+}
+[data-cs-theme="brutalist"] .cs-activity-brutal-item:last-of-type { border-bottom: none; }
+[data-cs-theme="brutalist"] .cs-activity-brutal-item:hover {
+    background: #ffd23f;
+    color: #0d0d0d;
+}
+[data-cs-theme="brutalist"] .cs-activity-brutal-ref {
+    font-family: 'Archivo Black', 'Anton', Impact, sans-serif;
+    font-size: 12.5px;
+    color: #2a5cff;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+[data-cs-theme="brutalist"] .cs-activity-brutal-id {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    opacity: .75;
+}
+[data-cs-theme="brutalist"] .cs-activity-brutal-customer {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+[data-cs-theme="brutalist"] .cs-activity-brutal-state {
+    border: 1.5px solid #0d0d0d;
+    padding: 1px 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .3px;
+}
+/* Couleurs sémantiques des badges status (jaune/vert/cobalt/rouge) */
+[data-cs-theme="brutalist"] .cs-activity-brutal-state-pending,
+[data-cs-theme="brutalist"] .cs-orders-brutal-status-pending { background: #ffd23f; color: #0d0d0d; }
+[data-cs-theme="brutalist"] .cs-activity-brutal-state-shipped,
+[data-cs-theme="brutalist"] .cs-orders-brutal-status-shipped { background: #1fb866; color: #0d0d0d; }
+[data-cs-theme="brutalist"] .cs-activity-brutal-state-paid,
+[data-cs-theme="brutalist"] .cs-orders-brutal-status-paid    { background: #2a5cff; color: #ffffff; }
+[data-cs-theme="brutalist"] .cs-activity-brutal-state-cancel,
+[data-cs-theme="brutalist"] .cs-orders-brutal-status-cancel  { background: #ff3b30; color: #ffffff; }
+[data-cs-theme="brutalist"] .cs-activity-brutal-time {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: #777;
+}
+[data-cs-theme="brutalist"] .cs-activity-brutal .cs-activity-hidden { display: none; }
+[data-cs-theme="brutalist"] .cs-activity-expanded .cs-activity-hidden { display: grid; }
+[data-cs-theme="brutalist"] .cs-activity-brutal-more {
+    display: block;
+    margin: 14px auto 0;
+    background: #ffd23f;
+    color: #0d0d0d;
+    border: 2px solid #0d0d0d;
+    box-shadow: 3px 3px 0 0 #0d0d0d;
+    padding: 6px 14px;
+    font-family: 'Archivo Black', 'Anton', Impact, sans-serif;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    cursor: pointer;
+}
+[data-cs-theme="brutalist"] .cs-activity-brutal-more:hover { background: #ff5fa2; }
+
+
+/* ─── Stickers/trends uniformisés (toutes sections brutalist) ─── */
+[data-cs-theme="brutalist"] .cs-trend,
+[data-cs-theme="brutalist"] .cs-perf-badge {
+    border-radius: 0;
+    border: 2px solid #0d0d0d;
+    font-family: 'Archivo Black', 'Anton', Impact, sans-serif;
+    letter-spacing: .5px;
+    box-shadow: 2px 2px 0 0 #0d0d0d;
+}
+[data-cs-theme="brutalist"] .cs-trend-up      { background: #1fb866; color: #0d0d0d; }
+[data-cs-theme="brutalist"] .cs-trend-down    { background: #ff3b30; color: #ffffff; }
+[data-cs-theme="brutalist"] .cs-trend-neutral { background: #ffffff; color: #0d0d0d; }
+
+/* ─── Bouton "Voir plus" activité ─── */
+[data-cs-theme="brutalist"] .cs-activity-toggle {
+    background: #ffd23f;
+    color: #0d0d0d;
+    border: 2px solid #0d0d0d;
+    border-radius: 0;
+    box-shadow: 3px 3px 0 0 #0d0d0d;
+    font-family: 'Archivo Black', 'Anton', Impact, sans-serif;
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 1px;
+    padding: 4px 12px;
+    cursor: pointer;
+}
+
+/* ─── Bandeau "Mode personnalisation" ─── */
+[data-cs-theme="brutalist"] .cs-customize-banner,
+[data-cs-theme="brutalist"] #cs-customize-banner {
+    background: #0d0d0d;
+    color: #ffd23f;
+    border: 2.5px solid #0d0d0d;
+    border-radius: 0;
+    box-shadow: 6px 6px 0 0 #0d0d0d;
+    font-family: 'Archivo Black', 'Anton', Impact, sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+[data-cs-theme="brutalist"] .cs-customize-banner .btn,
+[data-cs-theme="brutalist"] .cs-customize-banner button,
+[data-cs-theme="brutalist"] #cs-customize-banner .btn,
+[data-cs-theme="brutalist"] #cs-customize-banner button {
+    background: #1fb866;
+    color: #0d0d0d;
+    border: 2px solid #0d0d0d;
+    border-radius: 0;
+    box-shadow: 3px 3px 0 0 #ffd23f;
+    font-family: 'Archivo Black', 'Anton', Impact, sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* ─── Drill overlay : jaune OPAQUE + texte noir (signature) ─── */
+[data-cs-theme="brutalist"] .cs-drill-overlay {
+    background: var(--cs-brutal-yellow);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
+[data-cs-theme="brutalist"] .cs-drill-overlay i,
+[data-cs-theme="brutalist"] .cs-drill-overlay span {
+    color: #0d0d0d !important;
+    text-shadow: none;
+}
+
+/* ─── Badge mode header : block jaune + bord ink + hard shadow ─── */
+[data-cs-theme="brutalist"] .cs-header-mode {
+    background: var(--cs-brutal-green);
+    font-family: "Archivo Black", "Anton", Impact, sans-serif;
+    font-size: 13px;
+    border-radius: 0;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+[data-cs-theme="brutalist"] .cs-mode-dot { background: #0d0d0d; }
+[data-cs-theme="brutalist"][data-bs-theme="dark"] .cs-header-mode {
+    background: var(--cs-brutal-yellow); color: #0d0d0d; border-color: #0d0d0d;
+    box-shadow: 3px 3px 0 0 var(--cs-brutal-green);
+}

@@ -1,0 +1,1865 @@
+/* CoolStats — Thème Terminal (phosphor green, near-black, monospace)
+ *
+ * Palette : Bloomberg/hacker. Pas de radius, pas d'ombre, JetBrains Mono.
+ */
+
+/* ============================================================
+ *  VARIABLES — dark par défaut, light pour la variante claire
+ * ============================================================ */
+
+[data-cs-theme="terminal"],
+[data-cs-theme="terminal"][data-bs-theme="dark"] {
+    --cs-bg:            #0a0d0a;
+    --cs-bg-card:       #0f1410;
+    --cs-bg-card-hover: #141a14;
+    --cs-text:          #c8d4c8;
+    --cs-text-muted:    #5a6b5a;
+    --cs-border:        #1f2a1f;
+    --cs-shadow:        none;
+    --cs-accent:        #a8ff60;
+    --cs-accent-rgb:    168, 255, 96;
+    --cs-accent-text:   #a8ff60;
+    --cs-accent-2:      #7ab8ff;
+    --cs-success:       #a8ff60;
+    --cs-danger:        #ff5f5f;
+    --cs-warning:       #ffb86b;
+    --cs-kpi-orders:    #a8ff60; --cs-kpi-orders-rgb:  168, 255,  96;
+    --cs-kpi-revenue:   #a8ff60; --cs-kpi-revenue-rgb: 168, 255,  96;
+    --cs-kpi-items:     #7ab8ff; --cs-kpi-items-rgb:  122, 184, 255;
+    --cs-kpi-basket:    #ffb86b; --cs-kpi-basket-rgb: 255, 184, 107;
+    --cs-map-empty:     #1a2418;
+    --cs-font-sans:     'JetBrains Mono', 'IBM Plex Mono', Menlo, Consolas, monospace;
+    --cs-font-mono:     'JetBrains Mono', 'IBM Plex Mono', Menlo, Consolas, monospace;
+    --cs-term-amber:    #ffb86b;
+    --cs-term-blue:     #7ab8ff;
+    --cs-term-red:      #ff5f5f;
+    --cs-term-dim:      #5a6b5a;
+    --cs-term-panel2:   #141a14;
+    /* Accent = phosphor clair → texte sombre dessus, hover plus sombre */
+    --cs-accent-on:     #0a0d0a;
+    --cs-accent-2-on:   #0a0d0a;
+    --cs-accent-hover:  #8de050;
+}
+
+/* Light = vibe IDE / Notepad++ : papier crème, accents syntaxe */
+[data-cs-theme="terminal"][data-bs-theme="light"] {
+    /* Surfaces */
+    --cs-bg:            #FAF8F2;  /* fond papier crème */
+    --cs-bg-card:       #FAF8F2;  /* cards sur papier */
+    --cs-bg-card-hover: #EFEAD8;  /* hover de ligne */
+    --cs-border:        #D4CFBE;  /* bordures fines */
+    --cs-shadow:        none;
+    /* Texte */
+    --cs-text:          #2B2A26;  /* texte principal */
+    --cs-text-muted:    #6B6858;  /* labels secondaires */
+    /* Accents : success green = "phosphor" du mode light */
+    --cs-accent:        #2E7D32;
+    --cs-accent-rgb:    46, 125, 50;
+    --cs-accent-2:      #1F5FA8;
+    --cs-success:       #2E7D32;
+    --cs-danger:        #B23A48;
+    --cs-warning:       #C77700;
+    --cs-map-empty:     #E8E4D6;
+    /* Palette IDE — réutilisée via les variables terminal existantes */
+    --cs-term-amber:    #B5651D;  /* string ocre → montants */
+    --cs-term-blue:     #1F5FA8;  /* keyword → refs / liens */
+    --cs-term-red:      #B23A48;  /* danger */
+    --cs-term-dim:      #6B6858;  /* secondary text */
+    --cs-term-panel2:   #F2EFE5;  /* bg-alt → headers panels */
+    /* Accent = forest green foncé → texte blanc dessus */
+    --cs-accent-on:     #FAF8F2;
+    --cs-accent-2-on:   #FAF8F2;
+    --cs-accent-hover:  #1F5928;
+    --cs-term-line-strong: #8A8775;
+    --cs-term-comment:  #7A8C5E;  /* olive → // commentaires */
+    --cs-term-number:   #8E3A8A;  /* plum → IDs */
+    --cs-term-type:     #2D6A4F;  /* forest green → statuts neutres */
+    --cs-term-selection:#FFF2A8;  /* highlight ligne courante */
+}
+/* Dark : alias des nouvelles variables pour ne rien casser */
+[data-cs-theme="terminal"][data-bs-theme="dark"] {
+    --cs-term-line-strong: var(--cs-border);
+    --cs-term-comment:  var(--cs-term-dim);
+    --cs-term-number:   var(--cs-term-blue);
+    --cs-term-type:     var(--cs-accent);
+    --cs-term-selection:rgba(168, 255, 96, 0.18);
+}
+
+/* ============================================================
+ *  BASE — monospace partout, pas de radius, pas d'ombre
+ * ============================================================ */
+
+[data-cs-theme="terminal"] body{
+    background: var(--cs-bg);
+}
+
+[data-cs-theme="terminal"] #cs-app {
+    font-family: var(--cs-font-mono);
+    font-size: 12px;
+    line-height: 1.5;
+    background: var(--cs-bg);
+    color: var(--cs-text);
+}
+[data-cs-theme="terminal"] .cs-section,
+[data-cs-theme="terminal"] .cs-kpi-card,
+[data-cs-theme="terminal"] .cs-customer-stat,
+[data-cs-theme="terminal"] .cs-goal-card {
+    border-radius: 0;
+    box-shadow: none;
+}
+
+/* ============================================================
+ *  HEADER — bandeau sobre, ▮▮▮ + COOLSTATS + version, droite : pills + date + LIVE
+ * ============================================================ */
+
+[data-cs-theme="terminal"] .cs-header {
+	background: var(--cs-term-panel2);
+	color: var(--cs-text);
+	border: 1px solid var(--cs-border);
+	box-shadow: none;
+	border-radius: 0;
+	margin: 10px 0 16px 0;
+	padding: 10px 15px;
+}
+
+/* Logo ▮▮▮ : phosphor green (dark) / forest green (light) */
+[data-cs-theme="terminal"] .cs-header .cs-logo-term {
+    color: var(--cs-accent);
+    font-family: var(--cs-font-mono);
+    font-size: 14px;
+    letter-spacing: 1px;
+    line-height: 1;
+}
+
+/* Titre COOLSTATS */
+[data-cs-theme="terminal"] .cs-header-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+[data-cs-theme="terminal"] .cs-header .cs-header-brand h1,
+[data-cs-theme="terminal"] .cs-header h1 {
+    font-family: var(--cs-font-mono);
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: 1px;
+    color: var(--cs-accent);
+    text-transform: uppercase;
+    margin: 0;
+    line-height: 1;
+}
+[data-cs-theme="terminal"] .cs-header-version {
+    font-family: var(--cs-font-mono);
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--cs-term-dim);
+    margin-left: 8px;
+}
+
+/* Date : monospace, dim */
+[data-cs-theme="terminal"] .cs-header .cs-header-date {
+    font-family: var(--cs-font-mono);
+    font-size: 11px;
+    color: var(--cs-term-dim);
+    background: transparent;
+    border: none;
+    padding: 0;
+}
+
+/* Daterange button → pill bordée amber [Q-1] */
+[data-cs-theme="terminal"] .cs-header .cs-daterange-btn {
+    background: transparent;
+    color: var(--cs-term-amber);
+    border: 1px solid var(--cs-border);
+    border-radius: 0;
+    padding: 4px 10px;
+    font-family: var(--cs-font-mono);
+    font-size: 11px;
+    text-transform: none;
+    letter-spacing: 0;
+    box-shadow: none;
+}
+[data-cs-theme="terminal"] .cs-header .cs-daterange-btn::after,
+[data-cs-theme="terminal"] .cs-header .cs-daterange-btn i { color: var(--cs-term-amber); }
+
+/* Compare pill → "vs prev period" sobre */
+[data-cs-theme="terminal"] .cs-header .cs-pill-dropdown[data-filter="compare_with"] .cs-pill-btn {
+    background: transparent;
+    color: var(--cs-text);
+    border: 1px solid var(--cs-border);
+    border-radius: 0;
+    padding: 4px 10px;
+    font-family: var(--cs-font-mono);
+    font-size: 11px;
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+    box-shadow: none;
+}
+[data-cs-theme="terminal"] .cs-header .cs-pill-dropdown[data-filter="compare_with"] .cs-pill-btn::after {
+    border-top-color: var(--cs-text);
+}
+[data-cs-theme="terminal"] .cs-pill-dropdown[data-filter="compare_with"] .cs-pill-menu {
+    background: var(--cs-bg-card);
+    border: 1px solid var(--cs-border);
+    border-radius: 0;
+    box-shadow: none;
+    font-family: var(--cs-font-mono);
+}
+[data-cs-theme="terminal"] .cs-pill-dropdown[data-filter="compare_with"] .cs-pill-option {
+    background: transparent;
+    color: var(--cs-text);
+    font-family: var(--cs-font-mono);
+    font-size: 11px;
+    border-radius: 0;
+}
+[data-cs-theme="terminal"] .cs-pill-dropdown[data-filter="compare_with"] .cs-pill-option.cs-active {
+    background: var(--cs-bg-card-hover);
+    color: var(--cs-accent);
+}
+
+/* Boutons utilitaires (customize/fullscreen/pdf/theme) en mono dim */
+[data-cs-theme="terminal"] .cs-header .btn-outline-secondary {
+    background: transparent;
+    color: var(--cs-text);
+    border: 1px solid var(--cs-border);
+    border-radius: 0;
+    padding: 2px 8px;
+    font-family: var(--cs-font-mono);
+}
+[data-cs-theme="terminal"] .cs-header .btn-outline-secondary i { color: var(--cs-text); }
+[data-cs-theme="terminal"] .cs-header .btn-outline-secondary:hover {
+    background: var(--cs-bg-card);
+    color: var(--cs-accent);
+    border-color: var(--cs-border);
+}
+[data-cs-theme="terminal"] .cs-header .btn-outline-secondary:hover i { color: var(--cs-accent); }
+
+/* Mode badge "LIVE ●" — phosphor inversé, dot clignotant */
+[data-cs-theme="terminal"] .cs-header-mode {
+    background: var(--cs-accent);
+    color: var(--cs-bg);
+    border: none;
+    border-radius: 0;
+    padding: 4px 10px;
+    font-family: var(--cs-font-mono);
+    font-weight: 700;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+[data-cs-theme="terminal"] .cs-mode-dot {
+    background: var(--cs-bg);
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 4px;
+    animation: cs-term-blink 1.4s infinite;
+}
+@keyframes cs-term-blink { 50% { opacity: 0.3; } }
+
+/* Séparateur "│" entre date et badge — pas dans le DOM, on l'ajoute avant cs-header-date */
+[data-cs-theme="terminal"] .cs-header .cs-header-date::before {
+    content: "│ ";
+    color: var(--cs-term-dim);
+    margin-right: 4px;
+}
+
+/* ============================================================
+ *  KPI — grid 5 cards minimalistes, label dim, value 22px phosphor
+ * ============================================================ */
+
+[data-cs-theme="terminal"] .cs-kpi-row {
+    margin-bottom: 12px;
+}
+/* Grid 5 colonnes (override Bootstrap row/col) — toujours sur 1 ligne */
+[data-cs-theme="terminal"] .cs-kpi-row .row {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 10px;
+    margin: 0;
+    --bs-gutter-x: 0;
+    --bs-gutter-y: 0;
+}
+[data-cs-theme="terminal"] .cs-kpi-row .row > [class*="col"] {
+    width: 100%;
+    max-width: none;
+    padding: 0;
+    flex: none;
+}
+@media (max-width: 900px) {
+    [data-cs-theme="terminal"] .cs-kpi-row .row {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+    }
+}
+@media (max-width: 540px) {
+    [data-cs-theme="terminal"] .cs-kpi-row .row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+    }
+}
+[data-cs-theme="terminal"] .cs-kpi-card {
+    background: var(--cs-bg-card);
+    border: 1px solid var(--cs-border);
+    border-radius: 0;
+    box-shadow: none;
+    padding: 14px 16px;
+    transition: none;
+    /* Empile label / value / trend verticalement (override du flex horizontal du socle) */
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    height: 100%;
+}
+[data-cs-theme="terminal"] .cs-kpi-card:hover {
+    background: var(--cs-bg-card-hover);
+}
+
+/* Pas d'icônes en terminal */
+[data-cs-theme="terminal"] .cs-kpi-card .cs-kpi-icon { display: none; }
+[data-cs-theme="terminal"] .cs-kpi-card .cs-kpi-body { display: block; }
+
+[data-cs-theme="terminal"] .cs-kpi-card .cs-kpi-label {
+    color: var(--cs-term-dim);
+    font-family: var(--cs-font-mono);
+    font-size: 10px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+}
+[data-cs-theme="terminal"] .cs-kpi-card .cs-kpi-label::before {
+    content: "// ";
+    color: var(--cs-term-comment);
+}
+[data-cs-theme="terminal"] .cs-kpi-card .cs-kpi-value {
+    font-family: var(--cs-font-mono);
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: var(--cs-accent);
+    line-height: 1;
+}
+[data-cs-theme="terminal"] .cs-kpi-card .cs-trend {
+    margin-top: 8px;
+}
+/* CA (revenue) et Panier moyen (basket) en amber */
+[data-cs-theme="terminal"] .cs-kpi-card[data-stat="revenue"] .cs-kpi-value,
+[data-cs-theme="terminal"] .cs-kpi-card[data-stat="basket"] .cs-kpi-value {
+    color: var(--cs-term-amber);
+}
+/* Taux de retour : valeur en couleur texte neutre */
+[data-cs-theme="terminal"] .cs-kpi-card[data-stat="returns"] .cs-kpi-value {
+    color: var(--cs-text);
+}
+
+/* Trend : ▲ +X% en vert / ▼ -X% en rouge, en mono 11px sous la valeur */
+[data-cs-theme="terminal"] .cs-kpi-card .cs-trend {
+    display: block;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+    margin-top: 2px;
+    font-family: var(--cs-font-mono);
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0;
+    text-transform: none;
+    box-shadow: none;
+    position: static;
+    transform: none;
+}
+[data-cs-theme="terminal"] .cs-kpi-card .cs-trend-up      { color: var(--cs-accent); }
+[data-cs-theme="terminal"] .cs-kpi-card .cs-trend-down    { color: var(--cs-term-red); }
+[data-cs-theme="terminal"] .cs-kpi-card .cs-trend-neutral { color: var(--cs-term-dim); }
+[data-cs-theme="terminal"] .cs-kpi-card .cs-trend i { display: none; }
+[data-cs-theme="terminal"] .cs-kpi-card .cs-trend::before {
+    margin-right: 2px;
+}
+[data-cs-theme="terminal"] .cs-kpi-card .cs-trend-up::before    { content: "▲ "; }
+[data-cs-theme="terminal"] .cs-kpi-card .cs-trend-down::before  { content: "▼ "; }
+
+/* 5e carte (Taux de retour) — pas de trend %, juste "● ret" en rouge */
+[data-cs-theme="terminal"] .cs-kpi-row .col-xl:nth-child(5) .cs-trend,
+[data-cs-theme="terminal"] .cs-kpi-card .cs-trend-returns {
+    color: var(--cs-term-red);
+}
+[data-cs-theme="terminal"] .cs-kpi-card .cs-trend-returns::before {
+    content: "● ";
+}
+
+/* Note "// comparaison : ..." mono italique (olive en light) */
+[data-cs-theme="terminal"] .cs-kpi-compare-note {
+    display: block;
+    background: transparent;
+    color: var(--cs-term-comment);
+    font-family: var(--cs-font-mono);
+    font-size: 11px;
+    font-style: italic;
+    margin-top: 12px;
+    margin-bottom: 6px;
+    padding: 0;
+    border: none;
+    text-transform: lowercase;
+    letter-spacing: 0;
+}
+[data-cs-theme="terminal"] .cs-kpi-compare-note::before {
+    content: "// ";
+    color: var(--cs-term-comment);
+}
+
+/* ============================================================
+ *  CLIENTS (variante Terminal) — grid 6 cols + dashed dividers
+ * ============================================================ */
+
+[data-cs-theme="terminal"] .cs-customers-term {
+    background: var(--cs-bg-card);
+    border: 1px solid var(--cs-border);
+    margin-bottom: 12px;
+    padding: 0;
+}
+[data-cs-theme="terminal"] .cs-customers-term .cs-section-header {
+    /* hérite du pattern global ┌─ TITLE */
+    margin: 0;
+}
+[data-cs-theme="terminal"] .cs-customers-term-grid {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 0;
+    padding: 14px;
+}
+[data-cs-theme="terminal"] .cs-customers-term-stat {
+    position: relative;
+    padding: 0 14px;
+    border-right: 1px dashed var(--cs-border);
+    overflow: hidden;
+}
+[data-cs-theme="terminal"][data-bs-theme="light"] .cs-customers-term-stat {
+    border-right: 1px dashed rgba(42, 111, 31, 0.3);
+}
+[data-cs-theme="terminal"] .cs-customers-term-stat:last-child { border-right: none; }
+[data-cs-theme="terminal"] .cs-customers-term-v {
+    color: var(--cs-accent);
+    font-family: var(--cs-font-mono);
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.5px;
+}
+[data-cs-theme="terminal"] .cs-customers-term-pct {
+    font-size: 11px;
+    color: var(--cs-accent);
+    font-weight: 700;
+    letter-spacing: 0;
+}
+[data-cs-theme="terminal"] .cs-customers-term-l {
+    color: var(--cs-term-dim);
+    font-family: var(--cs-font-mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    margin-top: 6px;
+    line-height: 1.3;
+}
+
+/* Variantes sémantiques : LTV amber, refund neutre */
+[data-cs-theme="terminal"] .cs-customers-term-stat--amber   .cs-customers-term-v { color: var(--cs-term-amber); }
+[data-cs-theme="terminal"] .cs-customers-term-stat--neutral .cs-customers-term-v { color: var(--cs-text); }
+
+/* Header right-side meta "6 metrics" */
+[data-cs-theme="terminal"] .cs-customers-term .cs-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0;
+}
+[data-cs-theme="terminal"] .cs-customers-term-meta {
+    color: var(--cs-term-dim);
+}
+
+/* Drill overlay scoped à la cellule */
+[data-cs-theme="terminal"] .cs-customers-term-stat .cs-drill-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(10, 13, 10, 0.92);
+    border: 1px solid var(--cs-accent);
+    box-shadow: inset 0 0 40px rgba(168, 255, 96, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity .12s ease;
+    pointer-events: none;
+}
+[data-cs-theme="terminal"] .cs-customers-term-stat .cs-drill-overlay i {
+    color: var(--cs-accent);
+    font-size: 18px;
+    text-shadow: 0 0 6px var(--cs-accent);
+}
+[data-cs-theme="terminal"] .cs-customers-term-stat .cs-drill-overlay span { display: none; }
+[data-cs-theme="terminal"] .cs-customers-term-stat:hover .cs-drill-overlay { opacity: 1; }
+
+/* Tablette : 3 colonnes (≤ 900px) */
+@media (max-width: 900px) {
+    [data-cs-theme="terminal"] .cs-customers-term-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px 0;
+    }
+    [data-cs-theme="terminal"] .cs-customers-term-stat:nth-child(3n) { border-right: none; }
+}
+/* Mobile : 2 colonnes (≤ 540px) */
+@media (max-width: 540px) {
+    [data-cs-theme="terminal"] .cs-customers-term-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px 0;
+    }
+    [data-cs-theme="terminal"] .cs-customers-term-stat:nth-child(3n) { border-right: 1px dashed var(--cs-border); }
+    [data-cs-theme="terminal"] .cs-customers-term-stat:nth-child(2n) { border-right: none; }
+}
+
+/* ============================================================
+ *  PAYS (variante terminal) — map + classement
+ * ============================================================ */
+
+[data-cs-theme="terminal"] .cs-country-term {
+    background: var(--cs-bg-card);
+    border: 1px solid var(--cs-border);
+    margin-bottom: 0;
+    padding: 0;
+}
+[data-cs-theme="terminal"] .cs-country-term > .cs-section-header {
+    margin: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+[data-cs-theme="terminal"] .cs-country-term-badge {
+    background: var(--cs-bg);
+    border: 1px solid var(--cs-border);
+    padding: 2px 8px;
+    color: var(--cs-accent);
+    font-family: var(--cs-font-mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+[data-cs-theme="terminal"] .cs-country-term-body {
+    padding: 14px;
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 16px;
+    align-items: start;
+}
+@media (max-width: 900px) {
+    [data-cs-theme="terminal"] .cs-country-term-body { grid-template-columns: 1fr; }
+}
+
+/* Carte */
+[data-cs-theme="terminal"] .cs-country-term-map {
+    background: var(--cs-bg);
+    border: 1px dashed var(--cs-border);
+    padding: 10px;
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+[data-cs-theme="terminal"] .cs-country-term-map svg { width: 100%; height: auto; }
+[data-cs-theme="terminal"] .cs-country-term-map .cs-map-path {
+    fill: var(--cs-map-empty);
+    stroke: var(--cs-border);
+    stroke-width: 1;
+}
+[data-cs-theme="terminal"] .cs-country-term-map .cs-map-path.cs-map-active,
+[data-cs-theme="terminal"] .cs-country-term-map .cs-map-path:hover {
+    fill: var(--cs-accent);
+    stroke: var(--cs-bg);
+}
+
+/* Classement */
+[data-cs-theme="terminal"] .cs-country-term-list-h {
+    font-family: var(--cs-font-mono);
+    font-size: 10px;
+    color: var(--cs-term-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--cs-border);
+    margin-bottom: 6px;
+}
+[data-cs-theme="terminal"] .cs-country-term-row {
+    display: grid;
+    grid-template-columns: 30px 1fr auto auto;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px dashed var(--cs-border);
+    align-items: center;
+    font-family: var(--cs-font-mono);
+    font-size: 11.5px;
+}
+[data-cs-theme="terminal"] .cs-country-term-row:last-child { border-bottom: none; }
+[data-cs-theme="terminal"] .cs-country-term-rank {
+    color: var(--cs-accent);
+    font-weight: 700;
+}
+[data-cs-theme="terminal"] .cs-country-term-name { color: var(--cs-text); }
+[data-cs-theme="terminal"] .cs-country-term-iso { color: var(--cs-term-dim); }
+[data-cs-theme="terminal"] .cs-country-term-amt { color: var(--cs-term-amber); font-weight: 600; }
+[data-cs-theme="terminal"] .cs-country-term-meta { color: var(--cs-term-dim); font-size: 11px; }
+
+/* Survol carte → soulignement phosphor du nom */
+[data-cs-theme="terminal"] .cs-country-term .cs-country-rank-item.cs-rank-highlight .cs-country-term-name {
+    text-decoration: underline;
+    text-decoration-color: var(--cs-accent);
+    text-underline-offset: 3px;
+}
+
+/* ============================================================
+ *  PAIEMENTS (variante terminal) — bar chart phosphor dégressif
+ * ============================================================ */
+
+[data-cs-theme="terminal"] .cs-payment-term {
+    background: var(--cs-bg-card);
+    border: 1px solid var(--cs-border);
+    margin-bottom: 0;
+    padding: 0;
+}
+[data-cs-theme="terminal"] .cs-payment-term > .cs-section-header {
+    margin: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Toggle "COMMANDES ● / CA €" */
+[data-cs-theme="terminal"] .cs-payment-term-sort {
+    display: inline-flex;
+    gap: 4px;
+    font-family: var(--cs-font-mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0;
+    color: var(--cs-term-dim);
+    align-items: center;
+}
+[data-cs-theme="terminal"] .cs-payment-term-sort-label {
+    cursor: pointer;
+    color: var(--cs-term-dim);
+    padding: 2px 8px;
+}
+[data-cs-theme="terminal"] .cs-payment-term-sort-label.cs-active {
+    background: var(--cs-bg);
+    border: 1px solid var(--cs-border);
+    color: var(--cs-accent);
+}
+[data-cs-theme="terminal"] .cs-payment-term-sort-label.cs-active::after {
+    content: " ●";
+    color: var(--cs-accent);
+    margin-left: 2px;
+}
+[data-cs-theme="terminal"] .cs-payment-term-sort .form-check {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+    width: 0;
+    height: 0;
+    margin: 0;
+}
+
+[data-cs-theme="terminal"] .cs-payment-term-chart {
+    padding: 14px;
+}
+[data-cs-theme="terminal"] .cs-payment-term-chart canvas {
+    background: transparent;
+}
+
+/* ============================================================
+ *  TUNNEL DE CONVERSION (variante terminal)
+ * ============================================================ */
+
+[data-cs-theme="terminal"] .cs-signups-term {
+    background: var(--cs-bg-card);
+    border: 1px solid var(--cs-border);
+    margin-bottom: 12px;
+    padding: 0;
+}
+[data-cs-theme="terminal"] .cs-signups-term > .cs-section-header {
+    margin: 0;
+}
+[data-cs-theme="terminal"] .cs-signups-term-body {
+    padding: 18px;
+}
+
+/* Step rail : comptes créés → ont commandé */
+[data-cs-theme="terminal"] .cs-signups-term-rail {
+    display: grid;
+    grid-template-columns: 1fr 50px 1fr;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+[data-cs-theme="terminal"] .cs-signups-term-card {
+    background: var(--cs-bg);
+    border: 1px solid var(--cs-border);
+    padding: 18px 14px;
+    text-align: center;
+}
+[data-cs-theme="terminal"] .cs-signups-term-v {
+    font-family: var(--cs-font-mono);
+    font-size: 32px;
+    color: var(--cs-accent);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -1px;
+}
+[data-cs-theme="terminal"] .cs-signups-term-l {
+    font-family: var(--cs-font-mono);
+    font-size: 10px;
+    color: var(--cs-term-dim);
+    margin-top: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+[data-cs-theme="terminal"] .cs-signups-term-arrow {
+    text-align: center;
+}
+[data-cs-theme="terminal"] .cs-signups-term-arrow-icon {
+    color: var(--cs-accent);
+    font-size: 18px;
+    line-height: 1;
+}
+[data-cs-theme="terminal"] .cs-signups-term-arrow-pct {
+    display: inline-block;
+    color: var(--cs-accent);
+    font-family: var(--cs-font-mono);
+    font-size: 11px;
+    font-weight: 700;
+    margin-top: 4px;
+    border: 1px solid var(--cs-accent);
+    padding: 1px 6px;
+}
+
+/* Ligne secondaire : fantômes / délai */
+[data-cs-theme="terminal"] .cs-signups-term-secondary {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+@media (max-width: 700px) {
+    [data-cs-theme="terminal"] .cs-signups-term-secondary { grid-template-columns: 1fr; }
+}
+[data-cs-theme="terminal"] .cs-signups-term-stat {
+    background: var(--cs-bg);
+    border: 1px solid var(--cs-border);
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+[data-cs-theme="terminal"] .cs-signups-term-stat-icon {
+    color: var(--cs-term-dim);
+    font-size: 14px;
+    flex-shrink: 0;
+}
+[data-cs-theme="terminal"] .cs-signups-term-stat-body { flex: 1; min-width: 0; }
+[data-cs-theme="terminal"] .cs-signups-term-stat-v {
+    font-family: var(--cs-font-mono);
+    font-size: 22px;
+    color: var(--cs-text);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.5px;
+}
+[data-cs-theme="terminal"] .cs-signups-term-stat-v--good { color: var(--cs-accent); }
+[data-cs-theme="terminal"] .cs-signups-term-stat--bad .cs-signups-term-stat-v { color: var(--cs-term-red); }
+[data-cs-theme="terminal"] .cs-signups-term-stat-l {
+    font-family: var(--cs-font-mono);
+    font-size: 10px;
+    color: var(--cs-term-dim);
+    margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+[data-cs-theme="terminal"] .cs-signups-term-stat-pct {
+    color: var(--cs-accent);
+    font-family: var(--cs-font-mono);
+    font-size: 10px;
+    font-weight: 700;
+    border: 1px solid var(--cs-accent);
+    padding: 1px 6px;
+    flex-shrink: 0;
+}
+[data-cs-theme="terminal"] .cs-signups-term-stat--bad .cs-signups-term-stat-pct {
+    color: var(--cs-term-red);
+    border-color: var(--cs-term-red);
+}
+
+/* ============================================================
+ *  COURBE DES COMMANDES (variante terminal)
+ * ============================================================ */
+
+[data-cs-theme="terminal"] .cs-orders-chart-term {
+    background: var(--cs-bg-card);
+    border: 1px solid var(--cs-border);
+    margin-bottom: 12px;
+    padding: 0;
+}
+[data-cs-theme="terminal"] .cs-orders-chart-term > .cs-section-header {
+    margin: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Toggle "COMMANDES ● / CA €" identique au payment */
+[data-cs-theme="terminal"] .cs-orders-term-sort {
+    display: inline-flex;
+    gap: 4px;
+    font-family: var(--cs-font-mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0;
+    color: var(--cs-term-dim);
+    align-items: center;
+}
+[data-cs-theme="terminal"] .cs-orders-term-sort-label {
+    cursor: pointer;
+    color: var(--cs-term-dim);
+    padding: 2px 8px;
+}
+[data-cs-theme="terminal"] .cs-orders-term-sort-label.cs-active {
+    background: var(--cs-bg);
+    border: 1px solid var(--cs-border);
+    color: var(--cs-accent);
+}
+[data-cs-theme="terminal"] .cs-orders-term-sort-label.cs-active::after {
+    content: " ●";
+    color: var(--cs-accent);
+    margin-left: 2px;
+}
+[data-cs-theme="terminal"] .cs-orders-term-sort .form-check {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+    width: 0;
+    height: 0;
+    margin: 0;
+}
+
+[data-cs-theme="terminal"] .cs-orders-term-chart {
+    padding: 14px;
+}
+[data-cs-theme="terminal"] .cs-orders-term-chart canvas {
+    background: transparent;
+}
+
+/* ============================================================
+ *  PAIR WRAPPER — country_map + payment_breakdown côte à côte
+ * ============================================================ */
+[data-cs-theme="terminal"] .cs-term-pair {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    gap: 12px;
+    margin-bottom: 12px;
+}
+[data-cs-theme="terminal"] .cs-term-pair > .cs-section {
+    margin-bottom: 0;
+    height: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+@media (max-width: 1100px) {
+    [data-cs-theme="terminal"] .cs-term-pair { grid-template-columns: 1fr; }
+}
+
+/* ============================================================
+ *  COMMUNES — sections, transitions, etc.
+ * ============================================================ */
+
+/* Section headers — ┌─ TITLE en mono dim sur background panel2 */
+[data-cs-theme="terminal"] .cs-section-header {
+    background: var(--cs-term-panel2);
+    color: var(--cs-term-dim);
+    border-bottom: 1px dashed var(--cs-border);
+    padding: 6px 12px;
+    font-family: var(--cs-font-mono);
+    font-size: 11px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+[data-cs-theme="terminal"] .cs-section-header::before {
+    content: "┌─ ";
+    color: var(--cs-accent);
+    margin-right: 4px;
+}
+
+/* ============================================================
+ *  TRENDS GLOBAUX — discrets, sans pill, juste couleur sémantique
+ * ============================================================ */
+[data-cs-theme="terminal"] .cs-trend {
+    background: transparent;
+    border: 1px solid var(--cs-border);
+    border-radius: 0;
+    font-family: var(--cs-font-mono);
+}
+
+/* ============================================================
+ *  Drill overlay : scanner CRT (fond near-black opaque + glow phosphor)
+ * ============================================================ */
+[data-cs-theme="terminal"][data-bs-theme="dark"] .cs-drill-overlay {
+    background: rgba(10, 13, 10, 0.92);
+    border: 1px solid var(--cs-accent);
+    box-shadow: inset 0 0 40px rgba(168, 255, 96, 0.35);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
+[data-cs-theme="terminal"][data-bs-theme="dark"] .cs-drill-overlay i,
+[data-cs-theme="terminal"][data-bs-theme="dark"] .cs-drill-overlay span {
+    color: var(--cs-accent) !important;
+    text-shadow: 0 0 8px var(--cs-accent);
+}
+[data-cs-theme="terminal"][data-bs-theme="light"] .cs-drill-overlay {
+    background: rgba(235, 232, 223, 0.95);
+    border: 1px solid var(--cs-accent);
+}
+[data-cs-theme="terminal"][data-bs-theme="light"] .cs-drill-overlay i,
+[data-cs-theme="terminal"][data-bs-theme="light"] .cs-drill-overlay span {
+    color: var(--cs-accent) !important;
+}
+
+/* Barres ASCII injectées par JS dans la section top_products (héritage) */
+[data-cs-theme="terminal"] .cs-ascii-bar {
+    color: var(--cs-accent);
+    font-family: var(--cs-font-mono);
+    letter-spacing: -1px;
+    margin-left: 6px;
+    user-select: none;
+}
+
+/* ============================================================
+ *  MARGES BRUTES (variante terminal) — état empty + stats
+ * ============================================================ */
+[data-cs-theme="terminal"] .cs-margins-term {
+    background: var(--cs-bg-card);
+    border: 1px solid var(--cs-border);
+    margin-bottom: 12px;
+    padding: 0;
+}
+[data-cs-theme="terminal"] .cs-margins-term > .cs-section-header { margin: 0; display: flex; justify-content: space-between; align-items: center; }
+[data-cs-theme="terminal"] .cs-margins-term-cov {
+    border: 1px solid var(--cs-accent);
+    color: var(--cs-accent);
+    background: var(--cs-bg);
+    padding: 2px 8px;
+    font-family: var(--cs-font-mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+[data-cs-theme="terminal"] .cs-margins-term-cov--bad  { border-color: var(--cs-term-red); color: var(--cs-term-red); }
+[data-cs-theme="terminal"] .cs-margins-term-cov--warn { border-color: var(--cs-term-amber); color: var(--cs-term-amber); }
+[data-cs-theme="terminal"] .cs-margins-term-empty {
+    padding: 24px 14px;
+    text-align: center;
+}
+[data-cs-theme="terminal"] .cs-margins-term-warn {
+    color: var(--cs-term-amber);
+    font-size: 20px;
+    margin-bottom: 8px;
+}
+[data-cs-theme="terminal"] .cs-margins-term-title {
+    color: var(--cs-term-amber);
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+[data-cs-theme="terminal"] .cs-margins-term-desc {
+    color: var(--cs-term-dim);
+    font-size: 11px;
+    line-height: 1.6;
+    max-width: 680px;
+    margin: 0 auto;
+}
+[data-cs-theme="terminal"] .cs-margins-term-code {
+    background: rgba(168, 255, 96, 0.12);
+    color: var(--cs-accent);
+    padding: 1px 6px;
+}
+[data-cs-theme="terminal"] .cs-margins-term-em { color: var(--cs-text); }
+[data-cs-theme="terminal"] .cs-margins-term-cta {
+    display: inline-block;
+    margin-top: 14px;
+    background: var(--cs-accent);
+    color: var(--cs-bg);
+    border: 0;
+    padding: 7px 16px;
+    font-family: var(--cs-font-mono);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-decoration: none;
+    cursor: pointer;
+}
+[data-cs-theme="terminal"] .cs-margins-term-body { padding: 14px; }
+[data-cs-theme="terminal"] .cs-margins-term-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+}
+@media (max-width: 700px) {
+    [data-cs-theme="terminal"] .cs-margins-term-grid { grid-template-columns: 1fr; }
+}
+[data-cs-theme="terminal"] .cs-margins-term-stat {
+    background: var(--cs-bg);
+    border: 1px solid var(--cs-border);
+    padding: 12px 14px;
+}
+[data-cs-theme="terminal"] .cs-margins-term-stat-l {
+    color: var(--cs-term-dim);
+    font-family: var(--cs-font-mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+}
+[data-cs-theme="terminal"] .cs-margins-term-stat-v {
+    color: var(--cs-text);
+    font-family: var(--cs-font-mono);
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.5px;
+}
+[data-cs-theme="terminal"] .cs-margins-term-stat--main .cs-margins-term-stat-v { color: var(--cs-accent); font-size: 26px; }
+[data-cs-theme="terminal"] .cs-margins-term-stat-sub {
+    color: var(--cs-term-dim);
+    font-family: var(--cs-font-mono);
+    font-size: 10px;
+    margin-top: 4px;
+}
+[data-cs-theme="terminal"] .cs-margins-term-top {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--cs-border);
+}
+[data-cs-theme="terminal"] .cs-margins-term-top-h {
+    color: var(--cs-term-dim);
+    font-family: var(--cs-font-mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+}
+[data-cs-theme="terminal"] .cs-margins-term-row {
+    display: grid;
+    grid-template-columns: 28px 1fr auto;
+    gap: 8px;
+    padding: 5px 0;
+    border-bottom: 1px dashed var(--cs-border);
+    font-family: var(--cs-font-mono);
+    font-size: 11.5px;
+}
+[data-cs-theme="terminal"] .cs-margins-term-row:last-child { border-bottom: none; }
+[data-cs-theme="terminal"] .cs-margins-term-row-r { color: var(--cs-term-dim); }
+[data-cs-theme="terminal"] .cs-margins-term-row-n { color: var(--cs-text); }
+[data-cs-theme="terminal"] .cs-margins-term-row-v { color: var(--cs-term-amber); font-weight: 600; }
+
+/* ============================================================
+ *  TRAFIC & VISITEURS (variante terminal)
+ * ============================================================ */
+[data-cs-theme="terminal"] .cs-traffic-term {
+    background: var(--cs-bg-card);
+    border: 1px solid var(--cs-border);
+    margin-bottom: 12px;
+    padding: 0;
+}
+[data-cs-theme="terminal"] .cs-traffic-term > .cs-section-header { margin: 0; display: flex; justify-content: space-between; align-items: center; }
+[data-cs-theme="terminal"] .cs-traffic-term-badge {
+    background: var(--cs-bg);
+    border: 1px solid var(--cs-border);
+    padding: 2px 8px;
+    color: var(--cs-term-amber);
+    font-family: var(--cs-font-mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+[data-cs-theme="terminal"] .cs-traffic-term-badge--ok { color: var(--cs-accent); }
+[data-cs-theme="terminal"] .cs-traffic-term-empty {
+    padding: 22px 14px;
+    text-align: center;
+}
+[data-cs-theme="terminal"] .cs-traffic-term-icon {
+    color: var(--cs-term-dim);
+    font-size: 24px;
+    margin-bottom: 8px;
+}
+[data-cs-theme="terminal"] .cs-traffic-term-title {
+    color: var(--cs-text);
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+}
+[data-cs-theme="terminal"] .cs-traffic-term-desc {
+    color: var(--cs-term-dim);
+    font-size: 11px;
+    max-width: 600px;
+    margin: 0 auto 18px;
+    line-height: 1.5;
+}
+[data-cs-theme="terminal"] .cs-traffic-term-providers {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    max-width: 720px;
+    margin: 0 auto;
+}
+@media (max-width: 700px) {
+    [data-cs-theme="terminal"] .cs-traffic-term-providers { grid-template-columns: 1fr; }
+}
+[data-cs-theme="terminal"] .cs-traffic-term-provider {
+    background: var(--cs-bg);
+    border: 1px solid var(--cs-border);
+    padding: 14px 12px;
+    position: relative;
+    text-align: left;
+}
+[data-cs-theme="terminal"] .cs-traffic-term-provider-soon {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    font-family: var(--cs-font-mono);
+    font-size: 9px;
+    color: var(--cs-accent);
+    background: rgba(168, 255, 96, 0.12);
+    padding: 1px 5px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+[data-cs-theme="terminal"] .cs-traffic-term-provider-i {
+    color: var(--cs-accent);
+    font-size: 18px;
+    margin-bottom: 6px;
+    font-family: var(--cs-font-mono);
+    font-weight: 700;
+}
+[data-cs-theme="terminal"] .cs-traffic-term-provider-n {
+    color: var(--cs-text);
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 2px;
+}
+[data-cs-theme="terminal"] .cs-traffic-term-provider-d {
+    color: var(--cs-term-dim);
+    font-size: 10px;
+}
+[data-cs-theme="terminal"] .cs-traffic-term-note {
+    color: var(--cs-term-dim);
+    font-size: 10px;
+    margin: 18px auto 0;
+    max-width: 720px;
+    line-height: 1.5;
+}
+[data-cs-theme="terminal"] .cs-traffic-term-body { padding: 14px; }
+[data-cs-theme="terminal"] .cs-traffic-term-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+}
+[data-cs-theme="terminal"] .cs-traffic-term-stat {
+    background: var(--cs-bg);
+    border: 1px solid var(--cs-border);
+    padding: 12px 14px;
+}
+[data-cs-theme="terminal"] .cs-traffic-term-stat-v {
+    color: var(--cs-accent);
+    font-family: var(--cs-font-mono);
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1;
+}
+[data-cs-theme="terminal"] .cs-traffic-term-stat-l {
+    color: var(--cs-term-dim);
+    font-family: var(--cs-font-mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    margin-top: 4px;
+}
+
+/* ============================================================
+ *  PANIERS ABANDONNÉS (variante terminal)
+ * ============================================================ */
+[data-cs-theme="terminal"] .cs-abandoned-term {
+    background: var(--cs-bg-card);
+    border: 1px solid var(--cs-border);
+    margin-bottom: 12px;
+    padding: 0;
+}
+[data-cs-theme="terminal"] .cs-abandoned-term > .cs-section-header { margin: 0; display: flex; justify-content: space-between; align-items: center; }
+[data-cs-theme="terminal"] .cs-abandoned-term-badge {
+    border: 1px solid var(--cs-term-amber);
+    color: var(--cs-term-amber);
+    padding: 2px 8px;
+    background: var(--cs-bg);
+    font-family: var(--cs-font-mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+[data-cs-theme="terminal"] .cs-abandoned-term-badge--bad { border-color: var(--cs-term-red); color: var(--cs-term-red); }
+[data-cs-theme="terminal"] .cs-abandoned-term-badge--ok  { border-color: var(--cs-accent); color: var(--cs-accent); }
+[data-cs-theme="terminal"] .cs-abandoned-term-body { padding: 14px; }
+[data-cs-theme="terminal"] .cs-abandoned-term-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 14px;
+}
+@media (max-width: 900px) { [data-cs-theme="terminal"] .cs-abandoned-term-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 540px) { [data-cs-theme="terminal"] .cs-abandoned-term-grid { grid-template-columns: 1fr; } }
+[data-cs-theme="terminal"] .cs-abandoned-term-tile {
+    background: var(--cs-bg);
+    border: 1px solid var(--cs-border);
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+[data-cs-theme="terminal"] .cs-abandoned-term-tile-icon { color: var(--cs-term-dim); font-size: 18px; flex-shrink: 0; }
+[data-cs-theme="terminal"] .cs-abandoned-term-tile-icon--bad { color: var(--cs-term-red); }
+[data-cs-theme="terminal"] .cs-abandoned-term-tile-body { flex: 1; min-width: 0; }
+[data-cs-theme="terminal"] .cs-abandoned-term-tile-v {
+    font-family: var(--cs-font-mono);
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.5px;
+    color: var(--cs-text);
+}
+[data-cs-theme="terminal"] .cs-abandoned-term-tile-v--bad   { color: var(--cs-term-red); }
+[data-cs-theme="terminal"] .cs-abandoned-term-tile-v--amber { color: var(--cs-term-amber); }
+[data-cs-theme="terminal"] .cs-abandoned-term-tile-v--good  { color: var(--cs-accent); }
+[data-cs-theme="terminal"] .cs-abandoned-term-tile-l {
+    color: var(--cs-term-dim);
+    font-family: var(--cs-font-mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 4px;
+}
+[data-cs-theme="terminal"] .cs-abandoned-term-top-h {
+    color: var(--cs-term-dim);
+    font-family: var(--cs-font-mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+}
+[data-cs-theme="terminal"] .cs-abandoned-term-top-h-sub { color: #3a4a3a; }
+[data-cs-theme="terminal"] .cs-abandoned-term-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--cs-font-mono);
+    font-size: 11.5px;
+}
+[data-cs-theme="terminal"] .cs-abandoned-term-table thead th {
+    color: var(--cs-term-dim);
+    border-bottom: 1px solid var(--cs-border);
+    text-align: left;
+    padding: 6px 8px;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+[data-cs-theme="terminal"] .cs-abandoned-term-table tbody td {
+    padding: 7px 8px;
+    border-bottom: 1px dashed var(--cs-border);
+}
+[data-cs-theme="terminal"] .cs-abandoned-term-table tbody tr:last-child td { border-bottom: none; }
+[data-cs-theme="terminal"] .cs-abandoned-term-rank      { color: var(--cs-term-dim); }
+[data-cs-theme="terminal"] .cs-abandoned-term-customer  { color: var(--cs-text); }
+[data-cs-theme="terminal"] .cs-abandoned-term-empty-cell { color: #3a4a3a; }
+[data-cs-theme="terminal"] .cs-abandoned-term-email     { color: var(--cs-term-blue); }
+[data-cs-theme="terminal"] .cs-abandoned-term-date      { color: var(--cs-term-dim); }
+[data-cs-theme="terminal"] .cs-abandoned-term-qty       { color: var(--cs-accent); }
+[data-cs-theme="terminal"] .cs-abandoned-term-val       { color: var(--cs-term-amber); font-weight: 600; }
+[data-cs-theme="terminal"] .cs-abandoned-term-action    { color: var(--cs-term-dim); text-align: center; }
+[data-cs-theme="terminal"] .cs-abandoned-term-action a  { color: var(--cs-term-dim); text-decoration: none; }
+[data-cs-theme="terminal"] .cs-abandoned-term-action a:hover { color: var(--cs-accent); }
+
+/* ============================================================
+ *  HIGHLIGHTS (variante terminal) — 3 cards
+ * ============================================================ */
+[data-cs-theme="terminal"] .cs-highlights-term { margin-bottom: 12px; }
+[data-cs-theme="terminal"] .cs-highlights-term-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+}
+@media (max-width: 900px) { [data-cs-theme="terminal"] .cs-highlights-term-grid { grid-template-columns: 1fr; } }
+[data-cs-theme="terminal"] .cs-hl-term-card {
+    background: var(--cs-bg-card);
+    border: 1px solid var(--cs-border);
+    padding: 0;
+    margin: 0;
+}
+[data-cs-theme="terminal"] .cs-hl-term-card > .cs-section-header { margin: 0; }
+[data-cs-theme="terminal"] .cs-hl-term-icon--green  { color: var(--cs-accent); }
+[data-cs-theme="terminal"] .cs-hl-term-icon--amber  { color: var(--cs-term-amber); }
+[data-cs-theme="terminal"] .cs-hl-term-icon--blue   { color: var(--cs-term-blue); }
+[data-cs-theme="terminal"] .cs-hl-term-body {
+    padding: 14px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+[data-cs-theme="terminal"] .cs-hl-term-thumb {
+    width: 44px;
+    height: 44px;
+    background: var(--cs-bg);
+    border: 1px solid var(--cs-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    color: var(--cs-term-dim);
+    flex-shrink: 0;
+}
+[data-cs-theme="terminal"] .cs-hl-term-thumb--green { color: var(--cs-accent); }
+[data-cs-theme="terminal"] .cs-hl-term-thumb--amber { color: var(--cs-term-amber); }
+[data-cs-theme="terminal"] .cs-hl-term-thumb img { width: 100%; height: 100%; object-fit: cover; }
+[data-cs-theme="terminal"] .cs-hl-term-info { flex: 1; min-width: 0; }
+[data-cs-theme="terminal"] .cs-hl-term-name {
+    color: var(--cs-text);
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+[data-cs-theme="terminal"] .cs-hl-term-meta {
+    color: var(--cs-term-dim);
+    font-family: var(--cs-font-mono);
+    font-size: 10px;
+    margin-top: 4px;
+}
+[data-cs-theme="terminal"] .cs-hl-term-ref   { color: var(--cs-term-blue); }
+[data-cs-theme="terminal"] .cs-hl-term-emph  { color: var(--cs-text); font-weight: 700; }
+[data-cs-theme="terminal"] .cs-hl-term-growth { color: var(--cs-accent); }
+[data-cs-theme="terminal"] .cs-hl-term-growth--bad { color: var(--cs-term-red); }
+[data-cs-theme="terminal"] .cs-hl-term-empty {
+    padding: 18px 14px;
+    text-align: center;
+    color: var(--cs-term-dim);
+    font-size: 11.5px;
+    width: 100%;
+}
+[data-cs-theme="terminal"] .cs-hl-term-nosignal {
+    color: var(--cs-accent);
+    font-family: var(--cs-font-mono);
+    font-size: 11px;
+    margin-bottom: 6px;
+}
+[data-cs-theme="terminal"] .cs-hl-term-nosignal--amber { color: var(--cs-term-amber); }
+[data-cs-theme="terminal"] .cs-hl-term-nosignal--blue  { color: var(--cs-term-blue); }
+[data-cs-theme="terminal"] .cs-hl-term-pairs {
+    font-family: var(--cs-font-mono);
+    font-size: 11.5px;
+    gap: 10px;
+}
+[data-cs-theme="terminal"] .cs-hl-term-thumb {
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
+}
+[data-cs-theme="terminal"] .cs-hl-term-pair-name {
+    color: var(--cs-text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+    flex: 1 1 0;
+    max-width: 160px;
+}
+[data-cs-theme="terminal"] .cs-hl-term-pair-plus { color: var(--cs-term-dim); flex-shrink: 0; }
+[data-cs-theme="terminal"] .cs-hl-term-pair-count {
+    background: rgba(168, 255, 96, 0.12);
+    color: var(--cs-accent);
+    padding: 1px 6px;
+    font-size: 10px;
+    font-weight: 700;
+    margin-left: auto;
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+/* ============================================================
+ *  TRANSPORTEURS (variante terminal)
+ * ============================================================ */
+[data-cs-theme="terminal"] .cs-perf-term {
+    background: var(--cs-bg-card);
+    border: 1px solid var(--cs-border);
+    margin-bottom: 12px;
+    padding: 0;
+    cursor: pointer;
+}
+[data-cs-theme="terminal"] .cs-perf-term > .cs-section-header { margin: 0; display: flex; justify-content: space-between; align-items: center; }
+[data-cs-theme="terminal"] .cs-perf-term-detail {
+    color: var(--cs-term-blue);
+    font-family: var(--cs-font-mono);
+    font-size: 11px;
+    text-decoration: underline;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+[data-cs-theme="terminal"] .cs-perf-term-body { padding: 14px; }
+[data-cs-theme="terminal"] .cs-perf-term-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 4px;
+    border-bottom: 1px dashed var(--cs-border);
+    font-family: var(--cs-font-mono);
+    font-size: 11.5px;
+}
+[data-cs-theme="terminal"] .cs-perf-term-row--last { border-bottom: none; }
+[data-cs-theme="terminal"] .cs-perf-term-label { color: var(--cs-text); }
+[data-cs-theme="terminal"] .cs-perf-term-val {
+    color: var(--cs-term-dim);
+    font-weight: 600;
+}
+[data-cs-theme="terminal"] .cs-perf-term-val--good { color: var(--cs-accent); }
+[data-cs-theme="terminal"] .cs-perf-term-val--bad  { color: var(--cs-term-red); }
+[data-cs-theme="terminal"] .cs-perf-term-val--dim  { color: var(--cs-term-dim); }
+
+/* ============================================================
+ *  ACTIVITÉ RÉCENTE (variante terminal)
+ * ============================================================ */
+[data-cs-theme="terminal"] .cs-activity-term {
+    background: var(--cs-bg-card);
+    border: 1px solid var(--cs-border);
+    margin-bottom: 12px;
+    padding: 0;
+}
+[data-cs-theme="terminal"] .cs-activity-term > .cs-section-header { margin: 0; }
+[data-cs-theme="terminal"] .cs-activity-term-body { padding: 8px 14px 14px; }
+[data-cs-theme="terminal"] .cs-activity-term-row {
+    display: grid;
+    grid-template-columns: 14px 130px 50px 1fr auto 110px;
+    gap: 12px;
+    padding: 9px 4px;
+    border-bottom: 1px dashed var(--cs-border);
+    font-family: var(--cs-font-mono);
+    font-size: 11.5px;
+    align-items: center;
+    color: var(--cs-text);
+    text-decoration: none;
+}
+[data-cs-theme="terminal"] .cs-activity-term-row:last-of-type { border-bottom: none; }
+[data-cs-theme="terminal"] .cs-activity-term-row:hover { background: var(--cs-bg-card-hover); }
+[data-cs-theme="terminal"] .cs-activity-term-dot { color: var(--cs-accent); }
+[data-cs-theme="terminal"] .cs-activity-term-ref {
+    color: var(--cs-term-blue);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+[data-cs-theme="terminal"] .cs-activity-term-id       { color: var(--cs-term-dim); }
+[data-cs-theme="terminal"] .cs-activity-term-customer { color: var(--cs-text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+[data-cs-theme="terminal"] .cs-activity-term-state {
+    border: 1px solid var(--cs-accent);
+    color: var(--cs-accent);
+    padding: 1px 7px;
+    font-family: var(--cs-font-mono);
+    font-size: 10px;
+    letter-spacing: 0.3px;
+}
+
+/* Couleurs sémantiques (dot + badge status) selon kind */
+[data-cs-theme="terminal"] .cs-activity-term-row--pending .cs-activity-term-dot   { color: var(--cs-term-amber); }
+[data-cs-theme="terminal"] .cs-activity-term-row--pending .cs-activity-term-state { border-color: var(--cs-term-amber); color: var(--cs-term-amber); }
+[data-cs-theme="terminal"] .cs-activity-term-row--shipped .cs-activity-term-dot   { color: var(--cs-accent); }
+[data-cs-theme="terminal"] .cs-activity-term-row--shipped .cs-activity-term-state { border-color: var(--cs-accent); color: var(--cs-accent); }
+[data-cs-theme="terminal"] .cs-activity-term-row--paid    .cs-activity-term-dot   { color: var(--cs-term-blue); }
+[data-cs-theme="terminal"] .cs-activity-term-row--paid    .cs-activity-term-state { border-color: var(--cs-term-blue); color: var(--cs-term-blue); }
+[data-cs-theme="terminal"] .cs-activity-term-row--cancel  .cs-activity-term-dot   { color: var(--cs-term-red); }
+[data-cs-theme="terminal"] .cs-activity-term-row--cancel  .cs-activity-term-state { border-color: var(--cs-term-red); color: var(--cs-term-red); }
+[data-cs-theme="terminal"] .cs-activity-term-time { color: var(--cs-term-dim); text-align: right; }
+[data-cs-theme="terminal"] .cs-activity-term-more-wrap {
+    text-align: center;
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--cs-border);
+}
+[data-cs-theme="terminal"] .cs-activity-term-more {
+    background: transparent;
+    color: var(--cs-accent);
+    border: 1px solid var(--cs-border);
+    padding: 6px 16px;
+    font-family: var(--cs-font-mono);
+    font-size: 11px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+[data-cs-theme="terminal"] .cs-activity-term-more:hover { border-color: var(--cs-accent); background: rgba(168, 255, 96, 0.08); }
+[data-cs-theme="terminal"] .cs-activity-term .cs-activity-hidden { display: none; }
+[data-cs-theme="terminal"] .cs-activity-expanded .cs-activity-hidden { display: grid; }
+
+/* ============================================================
+ *  DERNIÈRES COMMANDES (variante terminal)
+ * ============================================================ */
+[data-cs-theme="terminal"] .cs-orders-term {
+    background: var(--cs-bg-card);
+    border: 1px solid var(--cs-border);
+    margin-bottom: 12px;
+    padding: 0;
+}
+[data-cs-theme="terminal"] .cs-orders-term > .cs-section-header { margin: 0; display: flex; justify-content: space-between; align-items: center; }
+[data-cs-theme="terminal"] .cs-orders-term-count {
+    color: var(--cs-accent);
+    border: 1px solid var(--cs-border);
+    padding: 1px 6px;
+    margin-left: 6px;
+    background: var(--cs-bg);
+    font-weight: 400;
+}
+[data-cs-theme="terminal"] .cs-orders-term-controls {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+[data-cs-theme="terminal"] .cs-orders-term-controls .cs-pill-btn,
+[data-cs-theme="terminal"] .cs-orders-term-newcust,
+[data-cs-theme="terminal"] .cs-orders-term-search {
+    background: var(--cs-bg);
+    border: 1px solid var(--cs-border);
+    border-radius: 0;
+    padding: 2px 8px;
+    font-family: var(--cs-font-mono);
+    font-size: 11px;
+    color: var(--cs-text);
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: none;
+}
+[data-cs-theme="terminal"] .cs-orders-term-controls .cs-pill-btn::after { border-top-color: var(--cs-text); }
+[data-cs-theme="terminal"] .cs-orders-term-newcust { display: inline-flex; align-items: center; gap: 4px; cursor: pointer; }
+[data-cs-theme="terminal"] .cs-orders-term-newcust input { display: none; }
+[data-cs-theme="terminal"] .cs-orders-term-newcust.cs-active { color: var(--cs-accent); border-color: var(--cs-accent); }
+[data-cs-theme="terminal"] .cs-orders-term-search::placeholder {
+    color: var(--cs-term-dim);
+    text-transform: uppercase;
+}
+
+[data-cs-theme="terminal"] .cs-orders-term .cs-collapsible-body { padding: 10px 14px 14px; }
+[data-cs-theme="terminal"] .cs-orders-term-filters {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+}
+[data-cs-theme="terminal"] .cs-orders-term-tab {
+    border: 1px solid var(--cs-border);
+    background: transparent;
+    color: var(--cs-text);
+    padding: 3px 10px;
+    text-transform: uppercase;
+    font-family: var(--cs-font-mono);
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+}
+[data-cs-theme="terminal"] .cs-orders-term-tab.cs-active {
+    border-color: var(--cs-accent);
+    color: var(--cs-accent);
+    background: var(--cs-bg);
+}
+
+[data-cs-theme="terminal"] .cs-orders-term-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--cs-font-mono);
+    font-size: 11.5px;
+}
+[data-cs-theme="terminal"] .cs-orders-term-table thead th {
+    color: var(--cs-term-dim);
+    border-bottom: 1px solid var(--cs-border);
+    text-align: left;
+    padding: 8px 8px;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+[data-cs-theme="terminal"] .cs-orders-term-table tbody td {
+    padding: 8px 8px;
+    border-bottom: 1px dashed var(--cs-border);
+}
+[data-cs-theme="terminal"] .cs-orders-term-table tbody tr:last-child td { border-bottom: none; }
+[data-cs-theme="terminal"] .cs-orders-term-ref      { color: var(--cs-term-blue); text-decoration: underline; text-underline-offset: 3px; }
+[data-cs-theme="terminal"] .cs-orders-term-customer { color: var(--cs-text); }
+[data-cs-theme="terminal"] .cs-orders-term-payment  { color: var(--cs-text); }
+[data-cs-theme="terminal"] .cs-orders-term-date     { color: var(--cs-term-dim); }
+[data-cs-theme="terminal"] .cs-orders-term-amount   { color: var(--cs-term-amber); font-weight: 700; }
+[data-cs-theme="terminal"] .cs-orders-term-status {
+    border: 1px solid var(--cs-accent);
+    color: var(--cs-accent);
+    padding: 1px 7px;
+    font-family: var(--cs-font-mono);
+    font-size: 10px;
+    letter-spacing: 0.3px;
+    display: inline-block;
+}
+/* Couleurs sémantiques selon kind */
+[data-cs-theme="terminal"] .cs-orders-term-status--pending { border-color: var(--cs-term-amber); color: var(--cs-term-amber); }
+[data-cs-theme="terminal"] .cs-orders-term-status--shipped { border-color: var(--cs-accent);     color: var(--cs-accent); }
+[data-cs-theme="terminal"] .cs-orders-term-status--paid    { border-color: var(--cs-term-blue);  color: var(--cs-term-blue); }
+[data-cs-theme="terminal"] .cs-orders-term-status--cancel  { border-color: var(--cs-term-red);   color: var(--cs-term-red); }
+[data-cs-theme="terminal"] .cs-orders-term-country  { color: var(--cs-term-dim); }
+[data-cs-theme="terminal"] .cs-orders-term-action a { color: var(--cs-term-blue); text-decoration: none; }
+
+[data-cs-theme="terminal"] .cs-orders-term-pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 14px;
+    padding-top: 10px;
+    border-top: 1px solid var(--cs-border);
+    font-family: var(--cs-font-mono);
+    font-size: 11px;
+    color: var(--cs-term-dim);
+}
+[data-cs-theme="terminal"] .cs-orders-term-pages { display: flex; gap: 4px; }
+[data-cs-theme="terminal"] .cs-orders-term-page {
+    border: 1px solid var(--cs-border);
+    color: var(--cs-accent);
+    background: transparent;
+    padding: 3px 10px;
+    font-family: var(--cs-font-mono);
+    font-size: 11px;
+    cursor: pointer;
+}
+[data-cs-theme="terminal"] .cs-orders-term-page.cs-disabled,
+[data-cs-theme="terminal"] .cs-orders-term-page[disabled] {
+    color: #3a4a3a;
+    cursor: not-allowed;
+}
+
+/* ============================================================
+ *  NATIVE PAYMENT (variante terminal) — table
+ * ============================================================ */
+[data-cs-theme="terminal"] .cs-native-payment-term {
+    background: var(--cs-bg-card);
+    border: 1px solid var(--cs-border);
+    margin-bottom: 12px;
+    padding: 0;
+}
+[data-cs-theme="terminal"] .cs-native-payment-term > .cs-section-header { margin: 0; }
+[data-cs-theme="terminal"] .cs-native-payment-term-body { padding: 14px; }
+[data-cs-theme="terminal"] .cs-native-payment-term-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--cs-font-mono);
+    font-size: 11.5px;
+}
+[data-cs-theme="terminal"] .cs-native-payment-term-table thead th {
+    color: var(--cs-term-dim);
+    border-bottom: 1px solid var(--cs-border);
+    text-align: left;
+    padding: 6px 8px;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+[data-cs-theme="terminal"] .cs-native-payment-term-table tbody td {
+    padding: 7px 8px;
+    border-bottom: 1px dashed var(--cs-border);
+}
+[data-cs-theme="terminal"] .cs-native-payment-term-table tbody tr:last-child td { border-bottom: none; }
+[data-cs-theme="terminal"] .cs-native-payment-term-method { color: var(--cs-text); }
+[data-cs-theme="terminal"] .cs-native-payment-term-orders { color: var(--cs-accent); }
+[data-cs-theme="terminal"] .cs-native-payment-term-pct    { color: var(--cs-term-dim); }
+[data-cs-theme="terminal"] .cs-native-payment-term-ca     { color: var(--cs-term-amber); font-weight: 600; }
+
+/* Native payment masqué uniquement sous brutalist (pas terminal) */
+[data-cs-theme="terminal"] [data-cs-section="native_payment"] { display: block; }
+
+/* ============================================================
+ *  FOOTER (variante terminal)
+ * ============================================================ */
+[data-cs-theme="terminal"] .cs-footer {
+    color: var(--cs-term-dim);
+    font-family: var(--cs-font-mono);
+    font-size: 10px;
+    margin-top: 20px;
+    text-align: center;
+    border-top: 1px dashed var(--cs-border);
+    padding-top: 14px;
+}
+[data-cs-theme="terminal"] .cs-footer-prompt {
+    color: var(--cs-accent);
+}
+
+/* ============================================================
+ *  TOP PRODUITS (variante terminal) — panel + table dense
+ * ============================================================ */
+
+[data-cs-theme="terminal"] .cs-top-products-term {
+    background: var(--cs-bg-card);
+    border: 1px solid var(--cs-border);
+    margin-bottom: 12px;
+    padding: 0;
+}
+[data-cs-theme="terminal"] .cs-top-products-term > .cs-section-header {
+    margin: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Bloc contrôles à droite du header */
+[data-cs-theme="terminal"] .cs-top-term-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    color: var(--cs-term-dim);
+    text-transform: uppercase;
+    letter-spacing: 0;
+}
+
+/* Pill "TOP 10 ▾" */
+[data-cs-theme="terminal"] .cs-top-term-limit .cs-pill-btn {
+    background: var(--cs-bg);
+    color: var(--cs-text);
+    border: 1px solid var(--cs-border);
+    border-radius: 0;
+    padding: 2px 8px;
+    font-family: var(--cs-font-mono);
+    font-size: 11px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0;
+    box-shadow: none;
+}
+[data-cs-theme="terminal"] .cs-top-term-limit .cs-pill-btn::after { border-top-color: var(--cs-text); }
+[data-cs-theme="terminal"] .cs-top-term-limit .cs-pill-menu {
+    background: var(--cs-bg-card);
+    border: 1px solid var(--cs-border);
+    border-radius: 0;
+    box-shadow: none;
+}
+[data-cs-theme="terminal"] .cs-top-term-limit .cs-pill-option {
+    background: transparent;
+    color: var(--cs-text);
+    font-family: var(--cs-font-mono);
+    font-size: 11px;
+    border-radius: 0;
+}
+[data-cs-theme="terminal"] .cs-top-term-limit .cs-pill-option.cs-active {
+    background: var(--cs-bg-card-hover);
+    color: var(--cs-accent);
+}
+
+/* Toggle Volume / CA € : "VOLUME ● CA €" */
+[data-cs-theme="terminal"] .cs-top-term-sort {
+    display: inline-flex;
+    gap: 4px;
+    font-family: var(--cs-font-mono);
+    font-size: 11px;
+    color: var(--cs-term-dim);
+    text-transform: uppercase;
+    letter-spacing: 0;
+}
+[data-cs-theme="terminal"] .cs-top-term-sort-label {
+    cursor: pointer;
+    color: var(--cs-term-dim);
+    padding: 0 2px;
+}
+[data-cs-theme="terminal"] .cs-top-term-sort-label.cs-active {
+    color: var(--cs-text);
+}
+[data-cs-theme="terminal"] .cs-top-term-sort-label.cs-active::after {
+    content: " ●";
+    color: var(--cs-accent);
+    margin-left: 2px;
+}
+[data-cs-theme="terminal"] .cs-top-term-sort .form-check {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+    width: 0;
+    height: 0;
+    margin: 0;
+}
+
+/* Totaux "· 87.4% du volume · 33 u · 650€" */
+[data-cs-theme="terminal"] .cs-top-term-totals {
+    color: var(--cs-term-dim);
+    font-family: var(--cs-font-mono);
+    font-size: 11px;
+    letter-spacing: 0;
+}
+[data-cs-theme="terminal"] .cs-top-term-totals b {
+    color: var(--cs-text);
+    font-weight: 700;
+}
+[data-cs-theme="terminal"] .cs-top-term-totals-ca {
+    background: rgba(168, 255, 96, 0.12);
+    color: var(--cs-accent);
+    padding: 1px 6px;
+}
+
+/* Table */
+[data-cs-theme="terminal"] .cs-top-products-term-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--cs-font-mono);
+    font-size: 11.5px;
+    margin: 0;
+}
+[data-cs-theme="terminal"] .cs-top-products-term .table-responsive { padding: 14px; }
+[data-cs-theme="terminal"] .cs-top-products-term-table thead th {
+    color: var(--cs-term-dim);
+    border-bottom: 1px solid var(--cs-border);
+    padding: 6px 8px;
+    text-transform: uppercase;
+    font-weight: 400;
+    letter-spacing: .5px;
+    text-align: left;
+}
+[data-cs-theme="terminal"] .cs-top-products-term-table tbody td {
+    padding: 6px 8px;
+    border-bottom: 1px dashed var(--cs-border);
+    color: var(--cs-text);
+}
+[data-cs-theme="terminal"] .cs-top-products-term-table tbody tr:last-child td { border-bottom: none; }
+[data-cs-theme="terminal"] .cs-top-products-term-table tbody td:first-child { color: var(--cs-term-dim); }
+[data-cs-theme="terminal"] .cs-top-products-term-table .cs-top-term-name {
+    color: var(--cs-text);
+    text-decoration: none;
+}
+[data-cs-theme="terminal"] .cs-top-products-term-table .cs-top-term-name:hover { color: var(--cs-accent); }
+[data-cs-theme="terminal"] .cs-top-products-term-table .cs-top-term-ref  { color: var(--cs-term-blue); }
+[data-cs-theme="terminal"] .cs-top-products-term-table .cs-top-term-u    { color: var(--cs-accent); }
+[data-cs-theme="terminal"] .cs-top-products-term-table .cs-top-term-ca   { color: var(--cs-term-amber); font-weight: 600; }
+
+/* Barre ASCII bicolore : filled phosphor + empty dim border */
+[data-cs-theme="terminal"] .cs-top-products-term-table .cs-top-term-bar {
+    padding: 6px 8px;
+    letter-spacing: -1px;
+    line-height: 1;
+}
+[data-cs-theme="terminal"] .cs-ascii-bar { user-select: none; }
+[data-cs-theme="terminal"] .cs-ascii-on  { color: var(--cs-accent); }
+[data-cs-theme="terminal"] .cs-ascii-off { color: var(--cs-border); }
