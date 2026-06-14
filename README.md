@@ -22,6 +22,8 @@
 
 PrestaShop **1.7, 8, 9** · PHP **7.2+**. Aucune dépendance Composer requise.
 
+> 🧩 Une version **legacy compatible ThirtyBees / PrestaShop 1.6** est disponible **sur demande** via [zm40.com](https://zm40.com).
+
 ## Installation
 
 1. Télécharger la dernière release (`coolstats.zip`).
