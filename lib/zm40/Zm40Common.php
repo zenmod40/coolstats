@@ -23,6 +23,10 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+if (class_exists('Zm40Common')) {
+    return;
+}
+
 class Zm40Common
 {
     const VERSION   = '1.0';

@@ -66,6 +66,23 @@ class AdminCoolStatsController extends ModuleAdminController
         $this->ctx = new CoolStatsContext();
     }
 
+    /**
+     * Compatibilité traduction cross-version : PrestaShop 9 a retiré la méthode
+     * legacy l() des contrôleurs admin. On délègue au natif sur 1.7/8, sinon on
+     * passe par le traducteur Symfony (repli : chaîne source).
+     */
+    public function l($string, $class = null, $addslashes = false, $htmlentities = true)
+    {
+        if (method_exists(get_parent_class($this), 'l')) {
+            return parent::l($string, $class, $addslashes, $htmlentities);
+        }
+        if (method_exists($this, 'trans')) {
+            return $this->trans($string, array(), 'Modules.Coolstats.Admin');
+        }
+
+        return $string;
+    }
+
     public function initContent()
     {
         if (Tools::getValue('ajax')) {

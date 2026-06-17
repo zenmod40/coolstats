@@ -45,7 +45,7 @@ class CoolStats extends Module
     {
         $this->name = 'coolstats';
         $this->tab = 'administration';
-        $this->version = '1.0.2';
+        $this->version = '1.0.3';
         $this->author = 'ZM40';
         $this->need_instance = 0;
         $this->bootstrap = true;

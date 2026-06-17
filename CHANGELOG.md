@@ -3,6 +3,13 @@
 Toutes les évolutions notables du module sont listées ici.
 Format inspiré de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/), versions [SemVer](https://semver.org/lang/fr/).
 
+## [1.0.3] — 2026-06-17
+
+### Corrigé
+
+- Compatibilité PrestaShop 9 : le contrôleur d'administration plantait (`UndefinedMethodError` sur `l()`) car PrestaShop 9 a retiré la méthode de traduction legacy des contrôleurs admin. Ajout d'une couche de compatibilité (traducteur Symfony, repli sur la chaîne source).
+- Brique ZM40 Common : garde `class_exists` pour éviter une redéclaration de classe quand plusieurs modules ZM40 cohabitent.
+
 ## [1.0.2] — 2026-06-14
 
 Première publication open source.
