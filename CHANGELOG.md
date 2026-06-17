@@ -3,6 +3,12 @@
 Toutes les évolutions notables du module sont listées ici.
 Format inspiré de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/), versions [SemVer](https://semver.org/lang/fr/).
 
+## [1.0.4] — 2026-06-17
+
+### Corrigé
+
+- Page de configuration (onglet Trafic & visiteurs) : avertissement console « le contrôle de formulaire avec name='COOLSTATS_MATOMO_URL' ne peut recevoir le focus », qui pouvait empêcher la sauvegarde sur certains navigateurs. La validation HTML5 du navigateur s'appliquait à un champ situé dans un onglet masqué. Le champ URL Matomo passe en `type="text"` et le formulaire en `novalidate` (la validation reste assurée côté serveur).
+
 ## [1.0.3] — 2026-06-17
 
 ### Corrigé

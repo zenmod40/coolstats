@@ -588,7 +588,11 @@
         {if isset($zm40_modules) && $zm40_modules|@count}<button type="button" class="cs-tab" data-tab="modules"><i class="icon-th-large"></i> Modules ZM40</button>{/if}
     </div>
 
-    <form method="post" action="{$cs_form_action}">
+    {* novalidate : le formulaire couvre plusieurs onglets masqués (display:none).
+       La validation HTML5 d'un champ caché (ex. URL Matomo, nombre hors min/max)
+       déclenche « invalid form control is not focusable » et peut bloquer la
+       sauvegarde. La validation est faite côté serveur (casts, clamps, whitelists). *}
+    <form method="post" action="{$cs_form_action}" novalidate>
         <input type="hidden" name="submitCoolStatsConfig" value="1">
 
         {* === ONGLET ÉTATS === *}
@@ -696,7 +700,7 @@
                 <div class="cs-form-row">
                     <div class="cs-form-label">URL Matomo<small>Sans slash final, ex: https://analytics.example.com</small></div>
                     <div class="cs-form-field">
-                        <input type="url" name="COOLSTATS_MATOMO_URL" value="{$cs_config.COOLSTATS_MATOMO_URL|escape:'html'}" class="cs-input" placeholder="https://analytics.example.com" style="max-width:420px">
+                        <input type="text" inputmode="url" name="COOLSTATS_MATOMO_URL" value="{$cs_config.COOLSTATS_MATOMO_URL|escape:'html'}" class="cs-input" placeholder="https://analytics.example.com" style="max-width:420px">
                     </div>
                 </div>
                 <div class="cs-form-row">
