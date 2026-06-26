@@ -1016,6 +1016,22 @@
     border-radius: 8px;
     transition: all 0.2s ease;
 }
+
+/* Indicateur HT / TTC (mode d'affichage des montants) */
+.cs-tax-badge {
+    display: inline-flex;
+    align-items: center;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.3px;
+    padding: 5px 11px;
+    border-radius: 8px;
+    color: var(--cs-accent);
+    background: rgba(var(--cs-accent-rgb), 0.10);
+    border: 1px solid rgba(var(--cs-accent-rgb), 0.30);
+    white-space: nowrap;
+    cursor: default;
+}
 .cs-daterange-btn:hover,
 .cs-daterange-btn.show {
     border-color: var(--cs-accent);

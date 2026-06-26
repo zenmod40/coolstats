@@ -77,6 +77,51 @@
     padding: 2px 8px;
 }
 .zm40-eco-badge-installed { color: #1a7f37; background: #e9f7ee; border-color: #c3e9d0; }
-.zm40-eco-links { font-size: 13px; }
-.zm40-eco-links a { color: #2563EB; text-decoration: none; }
-.zm40-eco-links a:hover { text-decoration: underline; }
+/* v1.2 — Badge OS (vert/cream) */
+.zm40-eco-badge-os { color: #1a7f37; background: #f0fdf4; border-color: #bbf7d0; }
+/* v1.2 — Badge Pro (tang/orange) */
+.zm40-eco-badge-pro { color: #b45309; background: #fff7ed; border-color: #fed7aa; }
+/* v1.2 — Badge Pro Subscription (bleu) */
+.zm40-eco-badge-sub { color: #1d4ed8; background: #eff6ff; border-color: #bfdbfe; }
+/* v1.2 — Carte Pro légèrement différenciée */
+.zm40-eco-card-pro { border-color: #fed7aa; }
+/* v1.2 — Layout boutons : alignés, gap propre, plus de séparateur · besoin */
+.zm40-eco-links {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    font-size: 13px;
+    margin-top: auto;
+}
+.zm40-eco-links a {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 12.5px;
+    text-decoration: none !important;
+    transition: all .15s ease;
+    line-height: 1.3;
+}
+/* v1.2 — Bouton SECONDAIRE (Découvrir, GitHub) — outline neutre */
+.zm40-eco-links a:not(.zm40-eco-cta) {
+    background: transparent;
+    color: #475569 !important;
+    border: 1px solid #cbd5e1;
+}
+.zm40-eco-links a:not(.zm40-eco-cta):hover {
+    background: #f1f5f9;
+    color: #1e293b !important;
+    border-color: #94a3b8;
+}
+/* v1.2 — CTA PRIMAIRE (Acheter / Souscrire / Configurer) — filled tang */
+.zm40-eco-cta {
+    background: #f97316;
+    color: #fff !important;
+    border: 1px solid #f97316;
+}
+.zm40-eco-cta:hover {
+    background: #ea580c;
+    border-color: #ea580c;
+}

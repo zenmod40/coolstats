@@ -164,17 +164,38 @@ class CoolStatsHelpers
     }
 
     /**
-     * Expression SQL du CA selon la config "inclure les frais de port".
+     * Mode d'affichage du CA : 'ttc' (défaut, rétro-compatible) ou 'ht'.
+     * Lu depuis COOLSTATS_REVENUE_TAX_MODE (scope boutique en multi-shop).
+     */
+    public static function taxMode()
+    {
+        $m = strtolower((string) Configuration::get('COOLSTATS_REVENUE_TAX_MODE'));
+        return ($m === 'ht') ? 'ht' : 'ttc';
+    }
+
+    /**
+     * Suffixe de colonne PrestaShop selon le mode : 'tax_excl' (HT) ou 'tax_incl' (TTC).
+     * PrestaShop stocke les deux montants : on lit la vraie valeur, on ne recalcule pas la TVA.
+     * S'applique aux colonnes total_paid_*, total_shipping_* (commande) et total_price_* (ligne).
+     */
+    public static function taxSuffix()
+    {
+        return self::taxMode() === 'ht' ? 'tax_excl' : 'tax_incl';
+    }
+
+    /**
+     * Expression SQL du CA selon la config "inclure les frais de port" + le mode HT/TTC.
      * Utilisée dans les SUM/AVG pour les sections KPI, country, paiement, etc.
      */
     public static function getRevenueExpression($alias = 'o')
     {
+        $sfx = self::taxSuffix();
         $includeShipping = (int) Configuration::get('COOLSTATS_INCLUDE_SHIPPING_IN_CA');
         if ($includeShipping === 0) {
             // Évite de descendre négatif si shipping > paid (cas marginaux : avoirs, frais réintégrés).
-            return "GREATEST({$alias}.total_paid_tax_incl - {$alias}.total_shipping_tax_incl, 0)";
+            return "GREATEST({$alias}.total_paid_{$sfx} - {$alias}.total_shipping_{$sfx}, 0)";
         }
-        return "{$alias}.total_paid_tax_incl";
+        return "{$alias}.total_paid_{$sfx}";
     }
 
     /**

@@ -45,7 +45,7 @@ class CoolStats extends Module
     {
         $this->name = 'coolstats';
         $this->tab = 'administration';
-        $this->version = '1.0.4';
+        $this->version = '1.0.5';
         $this->author = 'ZM40';
         $this->need_instance = 0;
         $this->bootstrap = true;
@@ -296,6 +296,9 @@ class CoolStats extends Module
             Configuration::updateValue('COOLSTATS_EXPORT_SEPARATOR', Tools::getValue('COOLSTATS_EXPORT_SEPARATOR'));
             Configuration::updateValue('COOLSTATS_COMPARE_DEFAULT', Tools::getValue('COOLSTATS_COMPARE_DEFAULT'));
 
+            // Mode d'affichage du CA : toggle HT (activé) / TTC (défaut, décoché)
+            Configuration::updateValue('COOLSTATS_REVENUE_TAX_MODE', (int) Tools::getValue('COOLSTATS_REVENUE_TAX_MODE') ? 'ht' : 'ttc');
+
             // Configs métier (toggles avec input hidden=0 pour gérer le cas décoché)
             Configuration::updateValue('COOLSTATS_INCLUDE_SHIPPING_IN_CA', (int) Tools::getValue('COOLSTATS_INCLUDE_SHIPPING_IN_CA'));
             Configuration::updateValue('COOLSTATS_EXCLUDE_FREE_ORDERS',    (int) Tools::getValue('COOLSTATS_EXCLUDE_FREE_ORDERS'));
@@ -311,7 +314,7 @@ class CoolStats extends Module
             // ZM40 Common — interrupteur réseau (toggle avec hidden=0 pour le décoché)
             Configuration::updateValue('ZM40_NET_ENABLED',         (int) Tools::getValue('ZM40_NET_ENABLED'));
             // Sauvegarde = rafraîchir le feed ZM40 (refetch au prochain rendu)
-            Zm40Common::clearFeedCache();
+            Zm40CommonCst::clearFeedCache();
 
             // Provider trafic (whitelist : none, native_ps, matomo, ga4, plausible)
             $tp = (string) Tools::getValue('COOLSTATS_TRAFFIC_PROVIDER');
@@ -384,6 +387,7 @@ class CoolStats extends Module
             'COOLSTATS_ORDERS_PER_PAGE'        => Configuration::get('COOLSTATS_ORDERS_PER_PAGE') ?: 25,
             'COOLSTATS_EXPORT_SEPARATOR'       => Configuration::get('COOLSTATS_EXPORT_SEPARATOR') ?: ';',
             'COOLSTATS_COMPARE_DEFAULT'        => Configuration::get('COOLSTATS_COMPARE_DEFAULT') ?: 'prev',
+            'COOLSTATS_REVENUE_TAX_MODE'       => (strtolower((string) Configuration::get('COOLSTATS_REVENUE_TAX_MODE')) === 'ht' ? 'ht' : 'ttc'),
             'COOLSTATS_INCLUDE_SHIPPING_IN_CA' => (int) Configuration::get('COOLSTATS_INCLUDE_SHIPPING_IN_CA'),
             'COOLSTATS_EXCLUDE_FREE_ORDERS'    => (int) Configuration::get('COOLSTATS_EXCLUDE_FREE_ORDERS'),
             'COOLSTATS_INACTIVITY_DAYS'        => (int) (Configuration::get('COOLSTATS_INACTIVITY_DAYS') ?: 90),
@@ -436,15 +440,15 @@ class CoolStats extends Module
             'cs_multishop_ctx'   => $this->getMultishopContext(),
             'cs_pdf_selected'    => $this->getPdfSelected(),
             // ── ZM40 Common (footer + notice MAJ + bloc open source + autres modules) ──
-            'zm40_net_enabled'   => Zm40Common::isNetEnabled() ? 1 : 0,
-            'zm40_footer_html'   => Zm40Common::footer('CoolStats', $this->version, 'coolstats'),
-            'zm40_update'        => Zm40Common::checkUpdate('coolstats', $this->version),
-            'zm40_modules'       => Zm40Common::modulesFeed('coolstats'),
+            'zm40_net_enabled'   => Zm40CommonCst::isNetEnabled() ? 1 : 0,
+            'zm40_footer_html'   => Zm40CommonCst::footer('CoolStats', $this->version, 'coolstats'),
+            'zm40_update'        => Zm40CommonCst::checkUpdate('coolstats', $this->version),
+            'zm40_modules'       => Zm40CommonCst::modulesFeed('coolstats'),
             'zm40_about_name'    => 'CoolStats',
             'zm40_about_license' => 'GPL v3',
-            'zm40_about_github'  => Zm40Common::githubUrl('coolstats'),
-            'zm40_about_site'    => Zm40Common::siteUrl('coolstats', 'panel', '/contact'),
-            'zm40_about_modules' => Zm40Common::siteUrl('coolstats', 'panel', '/'),
+            'zm40_about_github'  => Zm40CommonCst::githubUrl('coolstats'),
+            'zm40_about_site'    => Zm40CommonCst::siteUrl('coolstats', 'panel', '/contact'),
+            'zm40_about_modules' => Zm40CommonCst::siteUrl('coolstats', 'panel', '/'),
         ));
 
         return $this->display(__FILE__, 'views/templates/admin/configure.tpl');

@@ -152,8 +152,9 @@ class AdminCoolStatsController extends ModuleAdminController
             'cs_country'       => $this->country,
             'cs_channels'      => $this->channels,
             'cs_compare_mode'  => $this->compareMode,
+            'cs_tax_label'     => CoolStatsHelpers::taxMode() === 'ht' ? 'HT' : 'TTC',
             'cs_product'       => $this->product,
-            'cs_zm40_url'      => Zm40Common::siteUrl('coolstats', 'footer'),
+            'cs_zm40_url'      => Zm40CommonCst::siteUrl('coolstats', 'footer'),
             'cs_current_date'  => $this->formatFrenchDate(),
             'cs_current_date_numeric' => date('d.m.y') . ' · ' . date('H:i'),
             'cs_version'       => $this->module->version,
@@ -748,6 +749,7 @@ class AdminCoolStatsController extends ModuleAdminController
         $valid       = CoolStatsHelpers::getOrderStateCondition('valid', 'o');
         $countryJoin = CoolStatsHelpers::getCountryJoin($this->country, 'o');
         $channelsJoin = CoolStatsHelpers::getChannelsJoin($this->channels, 'o');
+        $sfx         = CoolStatsHelpers::taxSuffix();
         $validWhere  = $valid ? (' AND ' . $valid) : '';
 
         // Filtre produit : appliqué au Top 10 (n'affiche que la catégorie du
@@ -773,7 +775,7 @@ class AdminCoolStatsController extends ModuleAdminController
             MAX(cl.name) AS name,
             COUNT(DISTINCT od.product_id) AS product_count,
             SUM(od.product_quantity) AS total_qty,
-            SUM(od.total_price_tax_incl) AS total_revenue
+            SUM(od.total_price_{$sfx}) AS total_revenue
         FROM {$p}order_detail od
         INNER JOIN {$p}orders o ON o.id_order = od.id_order
         LEFT JOIN {$p}product pr ON pr.id_product = od.product_id
@@ -809,7 +811,7 @@ class AdminCoolStatsController extends ModuleAdminController
         // la part du Top 10 / la part du produit recherché sur l'ensemble.
         $global = $db->getRow("SELECT
             SUM(od.product_quantity) AS global_qty,
-            SUM(od.total_price_tax_incl) AS global_revenue
+            SUM(od.total_price_{$sfx}) AS global_revenue
         {$commonFrom}");
         $globalQty = (int) ($global['global_qty'] ?? 0);
         $globalRevenue = round((float) ($global['global_revenue'] ?? 0), 2);
@@ -859,6 +861,7 @@ class AdminCoolStatsController extends ModuleAdminController
         $to   = pSQL($this->dates['to']) . ' 23:59:59';
         $countryJoin = CoolStatsHelpers::getCountryJoin($this->country, 'o');
         $imageJoin = CoolStatsHelpers::getProductImageJoin('od.product_id', 'imgc');
+        $sfx = CoolStatsHelpers::taxSuffix();
 
         $productWhere = '';
         if ($this->product) {
@@ -878,7 +881,7 @@ class AdminCoolStatsController extends ModuleAdminController
             od.product_reference,
             COALESCE(NULLIF(pa.ean13, ''), p.ean13, '') AS ean13,
             od.product_quantity AS qty,
-            od.total_price_tax_incl AS value,
+            od.total_price_{$sfx} AS value,
             imgc.id_image
         FROM {$p}orders o
         INNER JOIN (

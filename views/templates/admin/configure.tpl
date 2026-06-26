@@ -910,6 +910,18 @@
                 <h3 class="cs-panel-title">Calcul du chiffre d'affaires</h3>
 
                 <div class="cs-form-row cs-form-row--switch">
+                    <div class="cs-form-label">Afficher le chiffre d'affaires en HT</div>
+                    <div class="cs-form-field">
+                        <label class="cs-switch">
+                            <input type="hidden" name="COOLSTATS_REVENUE_TAX_MODE" value="0">
+                            <input type="checkbox" name="COOLSTATS_REVENUE_TAX_MODE" value="1" {if $cs_config.COOLSTATS_REVENUE_TAX_MODE == 'ht'}checked{/if}>
+                            <span class="cs-switch-slider"></span>
+                        </label>
+                    </div>
+                    <div class="cs-form-desc">Désactivé (défaut) : CA en TTC. Activé : CA en HT (hors taxes). Bascule tout le dashboard — KPI, graphiques, pays, paiements, top produits & catégories, commandes récentes, remboursements, marketplaces — sur les montants réellement enregistrés par PrestaShop (aucun recalcul de TVA). Les marges restent toujours en HT. Le HT est le repère naturel en B2B, le TTC en B2C. Réglable par boutique en multi-shop.</div>
+                </div>
+
+                <div class="cs-form-row cs-form-row--switch">
                     <div class="cs-form-label">Inclure les frais de port dans le CA</div>
                     <div class="cs-form-field">
                         <label class="cs-switch">
@@ -918,7 +930,7 @@
                             <span class="cs-switch-slider"></span>
                         </label>
                     </div>
-                    <div class="cs-form-desc">Si désactivé, le CA des KPI = total payé TTC moins les frais de port. Affecte les indicateurs globaux, la carte des pays et la répartition par paiement (pas le top produits, qui n'inclut jamais le shipping).</div>
+                    <div class="cs-form-desc">Si désactivé, le CA des KPI = total payé (selon le mode HT/TTC ci-dessus) moins les frais de port. Affecte les indicateurs globaux, la carte des pays et la répartition par paiement (pas le top produits, qui n'inclut jamais le shipping).</div>
                 </div>
 
                 <div class="cs-form-row cs-form-row--switch">

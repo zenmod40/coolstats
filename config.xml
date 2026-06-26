@@ -2,7 +2,7 @@
 <module>
     <name>coolstats</name>
     <displayName><![CDATA[CoolStats Dashboard]]></displayName>
-    <version><![CDATA[1.0.4]]></version>
+    <version><![CDATA[1.0.5]]></version>
     <description><![CDATA[Dashboard de statistiques moderne et adaptatif (vente directe + marketplaces).]]></description>
     <author><![CDATA[ZM40]]></author>
     <tab><![CDATA[administration]]></tab>

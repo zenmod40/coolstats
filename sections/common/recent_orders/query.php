@@ -67,9 +67,11 @@ function coolstats_section_recent_orders(CoolStatsContext $ctx, array $params)
         $where .= " AND o.id_order = (SELECT MIN(o2.id_order) FROM {$p}orders o2 WHERE o2.id_customer = o.id_customer)";
     }
 
+    $sfx = CoolStatsHelpers::taxSuffix();
+
     // Tri (drill-down basket / items / défaut date)
     if ($sortBy === 'basket') {
-        $orderBy = 'o.total_paid_tax_incl DESC';
+        $orderBy = "o.total_paid_{$sfx} DESC";
     } elseif ($sortBy === 'items') {
         $orderBy = 'items_qty DESC';
     } else {
@@ -95,7 +97,7 @@ function coolstats_section_recent_orders(CoolStatsContext $ctx, array $params)
         o.id_order,
         o.reference,
         o.date_add,
-        o.total_paid_tax_incl AS total,
+        o.total_paid_{$sfx} AS total,
         o.current_state,
         osl.name AS status_name,
         os.color AS status_color,

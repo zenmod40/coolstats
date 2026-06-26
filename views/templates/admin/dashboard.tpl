@@ -88,6 +88,9 @@
         </div>
         <div class="d-flex align-items-center gap-2 flex-wrap" id="cs-filters">
 
+            {* ── Indicateur HT / TTC (mode d'affichage des montants) ── *}
+            <span class="cs-tax-badge" title="{l s='Tous les montants du dashboard sont affichés en %s. Réglable dans la configuration (Calcul du chiffre d\'affaires).' sprintf=[$cs_tax_label] mod='coolstats'}">{l s='CA' mod='coolstats'} {$cs_tax_label|escape:'html'}</span>
+
             {* ── Recherche produit (filtre global du dashboard) ── *}
             <div class="cs-product-search" id="cs-product-search">
                 <i class="bi bi-search cs-product-search-icon"></i>

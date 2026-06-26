@@ -25,6 +25,7 @@ function coolstats_section_customers(CoolStatsContext $ctx, array $params)
 
     $valid = CoolStatsHelpers::getOrderStateCondition('valid', 'o');
     $cancelled = CoolStatsHelpers::getOrderStateCondition('cancelled', 'o');
+    $sfx = CoolStatsHelpers::taxSuffix();
     $countryJoin = CoolStatsHelpers::getCountryJoin(isset($params['country']) ? $params['country'] : null, 'o');
     $channels     = isset($params['channels']) && is_array($params['channels']) ? $params['channels'] : array();
     $channelsJoin = CoolStatsHelpers::getChannelsJoin($channels, 'o');
@@ -92,7 +93,7 @@ function coolstats_section_customers(CoolStatsContext $ctx, array $params)
     // ── Remboursements : commandes annulées sur la période ──
     $refundRow = $db->getRow("SELECT
         COUNT(o.id_order) AS refund_count,
-        COALESCE(SUM(o.total_paid_tax_incl), 0) AS refund_value
+        COALESCE(SUM(o.total_paid_{$sfx}), 0) AS refund_value
     FROM {$p}orders o
     {$countryJoin}
     {$channelsJoin}

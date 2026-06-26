@@ -23,15 +23,15 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-if (class_exists('Zm40Common')) {
+if (class_exists('Zm40CommonCst', false)) {
     return;
 }
 
-class Zm40Common
+class Zm40CommonCst
 {
-    const VERSION   = '1.0';
+    const VERSION   = '1.3';
     const SITE      = 'https://zm40.com';
-    const FEED_URL  = 'https://zm40.com/feed/modules.json';
+    const FEED_URL  = 'https://zm40.com/feed/modules-v2.json'; // v2 : OS + Pro avec metadata enrichi
     const GH_ORG    = 'zenmod40';
     const HTTP_TIMEOUT = 3;
     const CACHE_TTL = 86400; // 24 h
@@ -158,7 +158,7 @@ class Zm40Common
      */
     public static function clearFeedCache()
     {
-        Configuration::updateValue('ZM40_FEED_CACHE_TS', 0);
+        Configuration::updateValue('ZM40_FEED_CACHE_TS2', 0);
     }
 
     /**
@@ -175,16 +175,16 @@ class Zm40Common
         }
 
         $now   = time();
-        $ts    = (int) Configuration::get('ZM40_FEED_CACHE_TS');
-        $cache = (string) Configuration::get('ZM40_FEED_CACHE');
+        $ts    = (int) Configuration::get('ZM40_FEED_CACHE_TS2');
+        $cache = (string) Configuration::get('ZM40_FEED_CACHE2');
 
         if (($now - $ts) >= self::CACHE_TTL || $cache === '') {
             $body = self::httpGet(self::FEED_URL);
             if ($body !== '') {
                 $cache = $body;
-                Configuration::updateValue('ZM40_FEED_CACHE', $cache);
+                Configuration::updateValue('ZM40_FEED_CACHE2', $cache);
             }
-            Configuration::updateValue('ZM40_FEED_CACHE_TS', $now); // throttle
+            Configuration::updateValue('ZM40_FEED_CACHE_TS2', $now); // throttle
         }
 
         $data = json_decode($cache, true);
@@ -204,16 +204,63 @@ class Zm40Common
             if ($slug === '' || $slug === $excludeSlug) {
                 continue;
             }
-            $url    = isset($m['url']) ? (string) $m['url'] : '';
-            $github = isset($m['github']) ? (string) $m['github'] : '';
+            // v1 rétro-compat : 'url'. v2 : 'landing_url' (canonique). Privilégie v2.
+            $url    = isset($m['landing_url']) ? (string) $m['landing_url']
+                    : (isset($m['url']) ? (string) $m['url'] : '');
+            $github = isset($m['github']) && $m['github'] !== null ? (string) $m['github'] : '';
+
+            // Détection module installé : on cherche par technical_name (champ 'module'
+            // dans le feed v2), et on fallback sur le slug pour v1.
+            $techName = isset($m['module']) ? (string) $m['module'] : $slug;
+            $installed = class_exists('Module') ? (bool) Module::isInstalled($techName) : false;
+
+            // Si installé, on construit le lien direct vers sa page de config
+            // dans le BO → l'utilisateur peut y aller en 1 clic depuis cet écran
+            // (au lieu du bouton "Acheter" qui n'a plus de sens).
+            $configureUrl = '';
+            if ($installed && class_exists('Context')) {
+                try {
+                    $ctx = Context::getContext();
+                    if ($ctx && isset($ctx->link)) {
+                        $configureUrl = $ctx->link->getAdminLink('AdminModules', true, array(), array(
+                            'configure' => $techName,
+                        ));
+                    }
+                } catch (Exception $e) {
+                    $configureUrl = '';
+                }
+            }
+
+            // Champs v2 enrichis (avec fallbacks sécurisés pour rétro-compat v1)
+            $type          = isset($m['type'])          ? (string) $m['type']          : 'open_source';
+            $pricing_model = isset($m['pricing_model']) ? (string) $m['pricing_model'] : 'free';
+            $price_from_ht = isset($m['price_from_ht']) ? (int)    $m['price_from_ht'] : null;
+            $license       = isset($m['license'])       ? (string) $m['license']       : 'GPL v3';
+            $badge         = isset($m['badge'])         ? (string) $m['badge']         : 'Open source';
+            $purchase_url  = isset($m['purchase_url']) && $m['purchase_url'] !== null
+                           ? self::withUtm((string) $m['purchase_url'], $excludeSlug, 'ecosystem')
+                           : null;
+
             $out[] = array(
-                'slug'      => $slug,
-                'name'      => isset($m['name']) ? (string) $m['name'] : $slug,
-                'tagline'   => isset($m['tagline']) ? (string) $m['tagline'] : '',
-                'url'       => self::withUtm($url, $excludeSlug, 'ecosystem'),
-                'icon'      => isset($m['icon']) ? (string) $m['icon'] : '',
-                'github'    => self::withUtm($github, $excludeSlug, 'ecosystem'),
-                'installed' => class_exists('Module') ? (bool) Module::isInstalled($slug) : false,
+                'slug'          => $slug,
+                'module'        => $techName,
+                'name'          => isset($m['name']) ? (string) $m['name'] : $slug,
+                'tagline'       => isset($m['tagline']) ? (string) $m['tagline'] : '',
+                'url'           => self::withUtm($url, $excludeSlug, 'ecosystem'),
+                'icon'          => isset($m['icon']) ? (string) $m['icon'] : '',
+                'github'        => $github !== '' ? self::withUtm($github, $excludeSlug, 'ecosystem') : '',
+                'installed'     => $installed,
+                'configure_url' => $configureUrl,
+                // === v2 ===
+                'type'          => $type,
+                'pricing_model' => $pricing_model,
+                'price_from_ht' => $price_from_ht,
+                'license'       => $license,
+                'badge'         => $badge,
+                'purchase_url'  => $purchase_url,
+                'is_os'         => ($type === 'open_source'),
+                'is_pro'        => ($type === 'pro'),
+                'is_sub'        => ($pricing_model === 'subscription'),
             );
         }
         return $out;

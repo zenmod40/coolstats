@@ -87,10 +87,11 @@ function coolstats_section_marketplace_breakdown(CoolStatsContext $ctx, array $p
         $joinExpr  = "LEFT JOIN {$p}shoppingfeed_order sf ON sf.id_order = o.id_order";
     }
 
+    $sfx = CoolStatsHelpers::taxSuffix();
     $sql = "SELECT
         {$labelExpr}                AS marketplace_key,
         COUNT(DISTINCT o.id_order)  AS nb_orders,
-        SUM(o.total_paid_tax_incl)  AS revenue
+        SUM(o.total_paid_{$sfx})  AS revenue
     FROM {$p}orders o
     {$joinExpr}
     {$countryJoin}

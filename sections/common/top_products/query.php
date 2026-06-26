@@ -28,6 +28,7 @@ function coolstats_section_top_products(CoolStatsContext $ctx, array $params)
     $channels     = isset($params['channels']) && is_array($params['channels']) ? $params['channels'] : array();
     $channelsJoin = CoolStatsHelpers::getChannelsJoin($channels, 'o');
     $valid       = CoolStatsHelpers::getOrderStateCondition('valid', 'o');
+    $sfx         = CoolStatsHelpers::taxSuffix();
 
     $sortMode = (string) Tools::getValue('sort', 'qty');
     $sortMode = in_array($sortMode, array('qty', 'revenue'), true) ? $sortMode : 'qty';
@@ -56,7 +57,7 @@ function coolstats_section_top_products(CoolStatsContext $ctx, array $params)
         MAX(p.reference) AS p_reference,
         MAX(p.ean13) AS ean13,
         SUM(od.product_quantity) AS total_qty,
-        SUM(od.total_price_tax_incl) AS total_revenue,
+        SUM(od.total_price_{$sfx}) AS total_revenue,
         MAX(img.id_image) AS id_image
     FROM {$p}order_detail od
     INNER JOIN {$p}orders o ON o.id_order = od.id_order
@@ -107,7 +108,7 @@ function coolstats_section_top_products(CoolStatsContext $ctx, array $params)
     // ── Total global de la période (mêmes filtres : valides + pays + dates) ──
     $globalRow = $db->getRow("SELECT
         COALESCE(SUM(od.product_quantity), 0) AS qty,
-        COALESCE(SUM(od.total_price_tax_incl), 0) AS revenue
+        COALESCE(SUM(od.total_price_{$sfx}), 0) AS revenue
     FROM {$p}order_detail od
     INNER JOIN {$p}orders o ON o.id_order = od.id_order
     {$countryJoin}

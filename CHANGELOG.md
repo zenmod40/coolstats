@@ -3,6 +3,16 @@
 Toutes les évolutions notables du module sont listées ici.
 Format inspiré de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/), versions [SemVer](https://semver.org/lang/fr/).
 
+## [1.0.5] — 2026-06-17
+
+### Ajouté
+
+- Chiffre d'affaires en HT ou TTC : nouveau réglage en tête de configuration (Calcul du chiffre d'affaires). Il bascule l'ensemble du dashboard — KPI, graphiques, carte des pays, répartition par paiement, top produits & catégories, commandes récentes, remboursements et marketplaces — entre les montants HT et TTC réellement enregistrés par PrestaShop (aucun recalcul de TVA). Défaut : TTC (comportement inchangé pour les installations existantes). Réglable par boutique en multi-shop. Un indicateur « CA HT » / « CA TTC » est affiché dans la barre du dashboard. Les marges restent toujours calculées en HT.
+
+### Corrigé
+
+- Écosystème ZM40 : la liste des autres modules pouvait rester limitée à l'ancien feed (3 modules) après la migration vers le feed enrichi. La clé de cache du feed est désormais versionnée, ce qui invalide automatiquement l'ancien cache et affiche la liste complète sans attendre l'expiration.
+
 ## [1.0.4] — 2026-06-17
 
 ### Corrigé
