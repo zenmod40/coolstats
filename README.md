@@ -17,6 +17,7 @@
 - **Connecteurs** : Google Analytics 4, Matomo, + tracking natif PrestaShop.
 - **Thèmes** (Aurora, Cozy, Editorial, Brutalist, Terminal) + mode clair/sombre, changeables depuis le dashboard.
 - **Vente directe & marketplaces** réunies dans une seule vue.
+- **Chiffre d'affaires en HT ou TTC** : un réglage bascule tout le dashboard entre les montants HT et TTC enregistrés par PrestaShop (sans recalcul de TVA), par boutique en multi-shop. Les marges restent calculées en HT.
 
 ## Compatibilité
 
