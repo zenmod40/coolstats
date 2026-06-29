@@ -650,6 +650,59 @@
 /* ── Charts ── */
 .cs-charts-section { padding-bottom: 18px; }
 .cs-chart-wrap { padding: 8px 4px 0; }
+
+/* Légende du graphe (affichée quand une comparaison est active) */
+.cs-chart-legend {
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 2px 4px 0;
+    font-size: 12px;
+    color: var(--cs-text-muted, #8a8f99);
+}
+.cs-chart-legend-item { display: inline-flex; align-items: center; gap: 7px; }
+.cs-chart-legend-line {
+    display: inline-block;
+    width: 22px;
+    height: 0;
+    border-top: 2.5px solid var(--cs-accent);
+}
+.cs-chart-legend-line--dashed {
+    border-top: 2px dashed var(--cs-accent);
+    opacity: 0.65;
+}
+
+/* Sélecteur de type de graphe (barres V / barres H / donut) */
+.cs-chart-type-switch {
+    display: inline-flex;
+    gap: 2px;
+    padding: 2px;
+    border-radius: 8px;
+    background: var(--cs-bg-card, rgba(127,127,127,0.08));
+    border: 1px solid var(--cs-border, rgba(127,127,127,0.2));
+}
+.cs-chart-type-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 24px;
+    padding: 0;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--cs-text-muted, #8a8f99);
+    cursor: pointer;
+    font-size: 13px;
+    line-height: 1;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+.cs-chart-type-btn:hover { color: var(--cs-accent); }
+.cs-chart-type-btn.is-active {
+    background: var(--cs-accent);
+    color: #fff;
+}
 .cs-line-mode-label,
 .cs-bar-mode-label { transition: color 0.15s ease, font-weight 0.15s ease; }
 .cs-line-mode-label.cs-active,

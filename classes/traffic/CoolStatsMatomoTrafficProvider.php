@@ -260,11 +260,20 @@ class CoolStatsMatomoTrafficProvider implements CoolStatsTrafficProvider
         if (is_array($r)) {
             foreach ($r as $row) {
                 if (!is_array($row)) continue;
-                $label = strtolower(isset($row['label']) ? (string) $row['label'] : '');
+                // Le label est LOCALISÉ par Matomo (« Desktop » → « Ordinateur de bureau »
+                // en FR), donc on identifie le desktop via le segment (`deviceType==desktop`)
+                // ou le logo (`.../devices/desktop.png`), indépendants de la langue.
+                // Le label reste un dernier recours.
+                $label   = strtolower(isset($row['label'])   ? (string) $row['label']   : '');
+                $segment = strtolower(isset($row['segment']) ? (string) $row['segment'] : '');
+                $logo    = strtolower(isset($row['logo'])    ? (string) $row['logo']    : '');
                 $visits = (int) ($row['nb_visits'] ?? 0);
-                if (strpos($label, 'desktop') !== false) {
+                $isDesktop = (strpos($segment, 'desktop') !== false)
+                          || (strpos($logo, 'desktop') !== false)
+                          || (strpos($label, 'desktop') !== false);
+                if ($isDesktop) {
                     $desktop += $visits;
-                } elseif ($label !== '') {
+                } elseif ($label !== '' || $segment !== '') {
                     // Tablet, smartphone, phablet, console, smarttv → "mobile/autre"
                     $mobile += $visits;
                 }

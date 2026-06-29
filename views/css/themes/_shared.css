@@ -10,7 +10,6 @@
 
 /* ============================================================
  *  LOGO — 10 variantes (5 thèmes × 2 modes)
- *  Référence : LOGO.md (Claude Design)
  * ============================================================ */
 [data-cs-theme="cozy"][data-bs-theme="light"]     { --cs-logo-bg: #2a241e; --cs-logo-mark: #f5c66c; }
 [data-cs-theme="cozy"][data-bs-theme="dark"]      { --cs-logo-bg: #f5c66c; --cs-logo-mark: #2a241e; }

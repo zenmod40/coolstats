@@ -8,16 +8,47 @@
 ![PrestaShop 1.7 → 9](https://img.shields.io/badge/PrestaShop-1.7%20%E2%86%92%209-blue)
 ![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue)
 
-![CoolStats — dashboard](https://zm40.com/assets/img/coolstats/dashboard-aurora.webp)
+![CoolStats — dashboard Aurora](https://zm40.com/assets/img/coolstats/dashboard-aurora.webp)
+
+## 5 thèmes prêts à l'emploi · clair & sombre
+
+CoolStats embarque cinq thèmes complets, basculables depuis le dashboard. Chacun couvre l'intégralité de l'interface (KPI, cartes, tableaux, graphiques) — pas un simple swap de couleurs.
+
+| Aurora | Cozy | Editorial |
+|:--:|:--:|:--:|
+| ![Aurora](https://zm40.com/assets/img/coolstats/dashboard-aurora.webp) | ![Cozy](https://zm40.com/assets/img/coolstats/dashboard-cozy.webp) | ![Editorial](https://zm40.com/assets/img/coolstats/dashboard-editorial.webp) |
+| *Pop éditorial, hero coloré* | *Tile-based, chaleureux* | *Rapport magazine, typo serif* |
+
+| Neo Brutalist | Terminal |
+|:--:|:--:|
+| ![Brutalist](https://zm40.com/assets/img/coolstats/dashboard-brutalist.webp) | ![Terminal](https://zm40.com/assets/img/coolstats/dashboard-terminal.webp) |
+| *KPI pop, bordures épaisses* | *Console verte sur fond noir* |
+
+## Sections du dashboard
+
+Quelques exemples des sections drag & drop (toutes optionnelles, réorganisables, masquables) :
+
+| Carte Europe | Paniers abandonnés |
+|:--:|:--:|
+| ![Carte Europe](https://zm40.com/assets/img/coolstats/section-carte-europe.webp) | ![Paniers abandonnés](https://zm40.com/assets/img/coolstats/section-paniers-abandonnes.webp) |
+
+| Objectifs avec projection | Top catégories & produits |
+|:--:|:--:|
+| ![Objectifs](https://zm40.com/assets/img/coolstats/section-objectifs.webp) | ![Top catégories](https://zm40.com/assets/img/coolstats/section-top-categories.webp) |
+
+![Top produits avec photos](https://zm40.com/assets/img/coolstats/section-top-produits.webp)
 
 ## Fonctionnalités
 
-- **Sections drag & drop** : KPI, objectifs, top produits & catégories, carte Europe, graphiques, marges, retours… réorganisables.
+- **Sections drag & drop** : KPI, objectifs, top produits & catégories, carte Europe, graphiques, marges, retours, relation client… réorganisables.
 - **Recherche produit** (nom / réf / EAN) qui filtre l'ensemble du dashboard.
 - **Connecteurs** : Google Analytics 4, Matomo, + tracking natif PrestaShop.
 - **Thèmes** (Aurora, Cozy, Editorial, Brutalist, Terminal) + mode clair/sombre, changeables depuis le dashboard.
 - **Vente directe & marketplaces** réunies dans une seule vue.
 - **Chiffre d'affaires en HT ou TTC** : un réglage bascule tout le dashboard entre les montants HT et TTC enregistrés par PrestaShop (sans recalcul de TVA), par boutique en multi-shop. Les marges restent calculées en HT.
+- **Relation client** : KPI de la période — Commandes, Demandes SAV (service client natif PrestaShop, avec part des commandes) et Rétractations (si le module Rétractations est installé) — + courbe d'évolution des demandes SAV sur le même modèle que la courbe des commandes.
+- **Comparaison de périodes** : période précédente ou N-1 superposée en pointillé sur la courbe des commandes, alignée index par index, bascule Commandes / CA, légende explicite.
+- **Répartition par moyen de paiement** : type de graphique sélectionnable depuis l'en-tête du bloc (barres verticales, barres horizontales, donut) — choix mémorisé par utilisateur.
 
 ## Compatibilité
 

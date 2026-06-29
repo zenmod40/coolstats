@@ -3,6 +3,19 @@
 Toutes les évolutions notables du module sont listées ici.
 Format inspiré de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/), versions [SemVer](https://semver.org/lang/fr/).
 
+## [1.0.6] — 2026-06-29
+
+### Ajouté
+
+- Courbe des commandes : la période de comparaison s'affiche désormais en pointillé sur le graphique lorsqu'une comparaison (période précédente ou N-1) est sélectionnée. La série précédente est alignée index par index sur la période courante, suit le bascule Commandes / CA, et le tooltip distingue les deux périodes. Une légende explique le trait plein (période actuelle) et le trait pointillé (période de comparaison).
+- Répartition par moyen de paiement : choix du type de graphique directement dans l'en-tête du bloc — barres verticales, barres horizontales ou camembert (donut). Le choix est mémorisé par utilisateur (navigateur), indépendamment de la métrique Commandes / CA.
+- Section « Relation client » : KPI de la période — Commandes (référence), Demandes SAV (service client natif PrestaShop) avec leur part des commandes, et Rétractations (affiché uniquement si le module Rétractations est installé). Tendances vs période précédente lorsque la comparaison est active.
+- Section « Courbe des demandes SAV » : évolution des fils de service client dans le temps, sur le même modèle que la courbe des commandes (granularité automatique + comparaison en pointillé).
+
+### Corrigé
+
+- Connecteur Matomo : la répartition Mobile / Desktop comptait toutes les visites en « Mobile » et affichait Desktop à 0 lorsque l'instance Matomo n'était pas en anglais (le libellé du type d'appareil est traduit par Matomo, ex. « Ordinateur de bureau » en français). La détection se base désormais sur le segment Matomo (`deviceType==desktop`) et le logo, indépendants de la langue, au lieu du libellé traduit.
+
 ## [1.0.5] — 2026-06-17
 
 ### Ajouté

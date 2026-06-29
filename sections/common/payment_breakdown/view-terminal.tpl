@@ -6,6 +6,11 @@
     <div class="cs-section-header">
         <span>€ {l s='Répartition par moyen de paiement' mod='coolstats'}</span>
         <div class="cs-payment-term-sort">
+            <div class="cs-chart-type-switch" data-chart-type-switch>
+                <button type="button" class="cs-chart-type-btn" data-type="bar" title="{l s='Barres verticales' mod='coolstats'}"><i class="bi bi-bar-chart-fill"></i></button>
+                <button type="button" class="cs-chart-type-btn" data-type="hbar" title="{l s='Barres horizontales' mod='coolstats'}"><i class="bi bi-bar-chart-steps"></i></button>
+                <button type="button" class="cs-chart-type-btn" data-type="doughnut" title="{l s='Camembert' mod='coolstats'}"><i class="bi bi-pie-chart-fill"></i></button>
+            </div>
             <span class="cs-payment-term-sort-label cs-active" data-mode="orders">{l s='Commandes' mod='coolstats'}</span>
             <span class="cs-payment-term-sort-label" data-mode="revenue">{l s='CA' mod='coolstats'} &euro;</span>
             <div class="form-check form-switch mb-0">

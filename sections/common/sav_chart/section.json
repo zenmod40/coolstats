@@ -1,0 +1,7 @@
+{
+    "id": "sav_chart",
+    "title": "Courbe des demandes SAV",
+    "order": 44,
+    "context": "always",
+    "enabled": true
+}

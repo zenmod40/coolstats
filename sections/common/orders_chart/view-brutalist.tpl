@@ -5,7 +5,9 @@
 <div class="cs-section cs-orders-chart-section cs-orders-chart-brutal" data-cs-section="orders_chart"
      data-chart-labels="{$section_data.labels|@json_encode|escape:'html'}"
      data-chart-orders="{$section_data.orders_data|@json_encode|escape:'html'}"
-     data-chart-revenue="{$section_data.revenue_data|@json_encode|escape:'html'}">
+     data-chart-revenue="{$section_data.revenue_data|@json_encode|escape:'html'}"
+     data-chart-orders-compare="{if $section_data.orders_compare}{$section_data.orders_compare|@json_encode|escape:'html'}{else}[]{/if}"
+     data-chart-revenue-compare="{if $section_data.revenue_compare}{$section_data.revenue_compare|@json_encode|escape:'html'}{else}[]{/if}">
     <div class="cs-orders-brutal-header">
         <span class="cs-orders-brutal-title">📈 {l s='Courbe des commandes' mod='coolstats'}</span>
         <div class="cs-orders-brutal-right">
@@ -19,6 +21,12 @@
             <span class="cs-orders-brutal-badge">{l s='CMD' mod='coolstats'} · 28{l s='J' mod='coolstats'}</span>
         </div>
     </div>
+    {if $section_data.orders_compare}
+    <div class="cs-chart-legend">
+        <span class="cs-chart-legend-item"><span class="cs-chart-legend-line"></span> {l s='Période actuelle' mod='coolstats'}</span>
+        <span class="cs-chart-legend-item"><span class="cs-chart-legend-line cs-chart-legend-line--dashed"></span> {if $section_data.compare_mode == 'yoy'}{l s='Année précédente (N-1)' mod='coolstats'}{else}{l s='Période précédente' mod='coolstats'}{/if}</span>
+    </div>
+    {/if}
     <div class="cs-orders-brutal-chart-wrap">
         <canvas id="cs-chart-line" height="200"></canvas>
     </div>

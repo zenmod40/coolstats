@@ -13,6 +13,7 @@
         initCountryMap();
         initCountryFilterBadge();
         initLineChart();
+        initSavChart();
         initBarChart();
         initCustomize();
         initCollapsibles();
@@ -36,6 +37,7 @@
             if (!e.detail) return;
             if (e.detail.id === 'country_map')        initCountryMap();
             if (e.detail.id === 'orders_chart')       initLineChart();
+            if (e.detail.id === 'sav_chart')          initSavChart();
             if (e.detail.id === 'payment_breakdown')  initBarChart();
             if (e.detail.id === 'country_map' || e.detail.id === 'payment_breakdown') initBrutalistPairs();
             // top_products re-rendu (ex: changement tri/limit) → restaure l'onglet actif.
@@ -728,6 +730,7 @@
     // ── Charts (Chart.js) — 2 sections distinctes ──
     var csChartLine = null;
     var csChartBar = null;
+    var csChartSav = null;
 
     function initLineChart() {
         if (typeof Chart === 'undefined') return;
@@ -739,6 +742,8 @@
         var labels  = parseDataAttr(section, 'data-chart-labels', []);
         var orders  = parseDataAttr(section, 'data-chart-orders', []);
         var revenue = parseDataAttr(section, 'data-chart-revenue', []);
+        var ordersCompare  = parseDataAttr(section, 'data-chart-orders-compare', []);
+        var revenueCompare = parseDataAttr(section, 'data-chart-revenue-compare', []);
         var isDark = (document.documentElement.getAttribute('data-bs-theme') || 'dark') === 'dark';
         var theme = document.documentElement.getAttribute('data-cs-theme');
         var isBrutal = theme === 'brutalist';
@@ -774,12 +779,174 @@
                 color: tickColor
             });
         }
+        var datasets = [buildLineDataset(orders, 'Commandes', getAccentColor())];
+        if (ordersCompare && ordersCompare.length) {
+            datasets.push(buildCompareDataset(ordersCompare, 'Commandes (préc.)', getAccentColor()));
+        }
         csChartLine = new Chart(canvas.getContext('2d'), {
             type: 'line',
-            data: { labels: labels, datasets: [buildLineDataset(orders, 'Commandes', getAccentColor())] },
+            data: { labels: labels, datasets: datasets },
             options: opts
         });
-        bindLineToggle(orders, revenue);
+        bindLineToggle(orders, revenue, ordersCompare, revenueCompare);
+    }
+
+    // Courbe des demandes SAV (même rendu que la courbe des commandes, sans bascule de métrique)
+    function initSavChart() {
+        if (typeof Chart === 'undefined') return;
+        var section = document.querySelector('[data-cs-section="sav_chart"]');
+        if (!section) return;
+        var canvas = document.getElementById('cs-chart-sav');
+        if (!canvas) return;
+        var labels     = parseDataAttr(section, 'data-chart-labels', []);
+        var sav        = parseDataAttr(section, 'data-chart-sav', []);
+        var savCompare = parseDataAttr(section, 'data-chart-sav-compare', []);
+        var isDark = (document.documentElement.getAttribute('data-bs-theme') || 'dark') === 'dark';
+        var theme = document.documentElement.getAttribute('data-cs-theme');
+        var isBrutal = theme === 'brutalist';
+        var isTerm = theme === 'terminal';
+        var gridColor = isBrutal ? 'rgba(13,13,13,0.25)' : (isTerm ? 'rgba(168,255,96,0.15)' : (isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)'));
+        var tickColor = isBrutal ? '#0d0d0d' : (isTerm ? '#5a6b5a' : (isDark ? '#9498a8' : '#6b7280'));
+        if (csChartSav) csChartSav.destroy();
+        var opts = chartCommonOptions(gridColor, tickColor, 'orders');
+        opts.plugins.tooltip.callbacks.label = function (ctx) {
+            var pre = (ctx.chart.data.datasets.length > 1 && ctx.dataset.label) ? ctx.dataset.label + ' : ' : '';
+            return ' ' + pre + ctx.parsed.y + ' dem.';
+        };
+        var datasets = [buildLineDataset(sav, 'Demandes SAV', getAccentColor())];
+        if (savCompare && savCompare.length) {
+            datasets.push(buildCompareDataset(savCompare, 'Demandes SAV (préc.)', getAccentColor()));
+        }
+        csChartSav = new Chart(canvas.getContext('2d'), {
+            type: 'line',
+            data: { labels: labels, datasets: datasets },
+            options: opts
+        });
+    }
+
+    // Type de graphe paiements choisi par l'utilisateur (mémorisé par personne)
+    function paymentChartType() {
+        try { var t = localStorage.getItem('cs_payment_chart_type'); return (t === 'hbar' || t === 'doughnut') ? t : 'bar'; }
+        catch (e) { return 'bar'; }
+    }
+    function setPaymentChartType(t) { try { localStorage.setItem('cs_payment_chart_type', t); } catch (e) {} }
+
+    // Terminal : wrap les labels longs sur 2-3 lignes max
+    function csSplitLabel(s, maxChars, maxLines) {
+        s = String(s || '');
+        if (s.length <= maxChars) return s;
+        var words = s.split(/\s+/), lines = [], cur = '';
+        for (var i = 0; i < words.length; i++) {
+            var test = cur ? cur + ' ' + words[i] : words[i];
+            if (test.length <= maxChars || !cur) { cur = test; }
+            else { lines.push(cur); cur = words[i]; }
+        }
+        if (cur) lines.push(cur);
+        if (lines.length > maxLines) {
+            var tail = lines.slice(maxLines - 1).join(' ');
+            if (tail.length > maxChars + 1) tail = tail.slice(0, maxChars) + '…';
+            lines = lines.slice(0, maxLines - 1).concat([tail]);
+        }
+        return lines.length > 1 ? lines : s;
+    }
+
+    // Palette du donut : accent en tête, puis couleurs distinctes
+    function csPaletteColors(n) {
+        var base = ['#06B6D4', '#F59E0B', '#10B981', '#EF4444', '#8B5CF6', '#EC4899', '#14B8A6', '#F97316'];
+        var acc = getAccentColor();
+        var arr = [acc];
+        for (var i = 0; i < base.length && arr.length < n; i++) {
+            if (base[i].toLowerCase() !== String(acc).toLowerCase()) arr.push(base[i]);
+        }
+        while (arr.length < n) arr.push(base[arr.length % base.length]);
+        return arr.slice(0, n);
+    }
+
+    // Rendu du graphe paiements selon le type (bar | hbar | doughnut) et la métrique (commandes | CA)
+    function renderPaymentChart(breakdown, type, isRevenue) {
+        var canvas = document.getElementById('cs-chart-bar');
+        if (!canvas || typeof Chart === 'undefined') return;
+        var isDark = (document.documentElement.getAttribute('data-bs-theme') || 'dark') === 'dark';
+        var isTerm = document.documentElement.getAttribute('data-cs-theme') === 'terminal';
+        var gridColor = isTerm ? 'rgba(168,255,96,0.10)' : (isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)');
+        var tickColor = isTerm ? '#5a6b5a' : (isDark ? '#9498a8' : '#6b7280');
+        var metricLabel = isRevenue ? 'CA' : 'Commandes';
+        var data = breakdown.map(function (b) { return isRevenue ? b.revenue : b.orders; });
+        var fmtVal = function (v) {
+            return isRevenue ? (v.toLocaleString('fr-FR', { maximumFractionDigits: 0 }) + ' €') : (v + ' cmd');
+        };
+
+        if (csChartBar) csChartBar.destroy();
+
+        // ── Donut / camembert ──
+        if (type === 'doughnut') {
+            var colors = csPaletteColors(data.length);
+            var total = data.reduce(function (a, b) { return a + (b || 0); }, 0);
+            csChartBar = new Chart(canvas.getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: breakdown.map(function (b) { return b.label; }),
+                    datasets: [{ data: data, backgroundColor: colors, borderColor: isDark ? '#1a1d28' : '#fff', borderWidth: 2 }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false, cutout: '58%',
+                    plugins: {
+                        legend: { position: 'right', labels: { color: tickColor, font: { size: 12 }, boxWidth: 12, usePointStyle: true, pointStyle: 'circle' } },
+                        tooltip: {
+                            backgroundColor: '#1a1d28', titleColor: '#fff', bodyColor: '#9498a8',
+                            borderColor: '#2a2d3a', borderWidth: 1, cornerRadius: 8, padding: 10,
+                            callbacks: {
+                                label: function (ctx) {
+                                    var pct = total > 0 ? Math.round((ctx.parsed / total) * 100) : 0;
+                                    return ' ' + ctx.label + ' : ' + fmtVal(ctx.parsed) + ' (' + pct + '%)';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            return;
+        }
+
+        // ── Barres (verticales 'bar' ou horizontales 'hbar') ──
+        var isH = (type === 'hbar');
+        var barLabels = breakdown.map(function (b) { return (isTerm && !isH) ? csSplitLabel(b.label, 16, 3) : b.label; });
+        var barConfig;
+        if (isTerm) {
+            var phosphor = (document.documentElement.getAttribute('data-bs-theme') === 'light') ? '42,111,31' : '168,255,96';
+            var opacities = [1, 0.65, 0.35, 0.2, 0.15, 0.1];
+            var bg = data.map(function (_, i) { return 'rgba(' + phosphor + ',' + (opacities[i] || 0.1) + ')'; });
+            barConfig = { label: metricLabel, data: data, backgroundColor: bg, borderColor: 'transparent', borderRadius: 0, borderSkipped: false, barPercentage: 0.7, categoryPercentage: 0.85 };
+        } else {
+            barConfig = { label: metricLabel, data: data, backgroundColor: isRevenue ? '#06B6D4' : getAccentColor(), borderRadius: 6 };
+        }
+        // mode 'orders' → pas de callback auto sur l'axe Y ; on gère le formatage nous-mêmes (orientation + métrique)
+        var opts = chartCommonOptions(gridColor, tickColor, 'orders', 'bar');
+        opts.indexAxis = isH ? 'y' : 'x';
+        opts.plugins.tooltip.callbacks.label = function (ctx) {
+            return ' ' + fmtVal(isH ? ctx.parsed.x : ctx.parsed.y);
+        };
+        if (isRevenue) {
+            var valAxis = isH ? opts.scales.x : opts.scales.y;
+            valAxis.ticks = Object.assign({}, valAxis.ticks, {
+                callback: function (val) { return val >= 1000 ? (val / 1000).toFixed(0) + 'k€' : val + '€'; }
+            });
+        }
+        if (isTerm) {
+            var vScale = isH ? opts.scales.x : opts.scales.y;
+            var cScale = isH ? opts.scales.y : opts.scales.x;
+            vScale.grid = { color: gridColor, borderDash: [4, 4], tickBorderDash: [4, 4], drawTicks: false, lineWidth: 0.5, display: true };
+            vScale.border = { display: false };
+            vScale.ticks = Object.assign({}, vScale.ticks, { font: { family: 'JetBrains Mono, monospace', size: 9 }, color: tickColor, maxTicksLimit: 4 });
+            cScale.grid = { display: false };
+            cScale.border = { display: false };
+            cScale.ticks = Object.assign({}, cScale.ticks, { autoSkip: false, maxRotation: 0, font: { family: 'JetBrains Mono, monospace', size: 9 }, color: tickColor });
+        }
+        csChartBar = new Chart(canvas.getContext('2d'), {
+            type: 'bar',
+            data: { labels: barLabels, datasets: [barConfig] },
+            options: opts
+        });
     }
 
     function initBarChart() {
@@ -788,95 +955,10 @@
         if (!section) return;
         var canvas = document.getElementById('cs-chart-bar');
         if (!canvas) return;
-
         var breakdown = parseDataAttr(section, 'data-chart-breakdown', []);
-        var isDark = (document.documentElement.getAttribute('data-bs-theme') || 'dark') === 'dark';
-        var theme = document.documentElement.getAttribute('data-cs-theme');
-        var isTerm = theme === 'terminal';
-        var gridColor = isTerm ? 'rgba(168,255,96,0.10)' : (isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)');
-        var tickColor = isTerm ? '#5a6b5a' : (isDark ? '#9498a8' : '#6b7280');
-
-        if (csChartBar) csChartBar.destroy();
-        // Terminal : wrap les labels longs sur 2 lignes max (3e fusionnée + tronquée)
-        function csSplitLabel(s, maxChars, maxLines) {
-            s = String(s || '');
-            if (s.length <= maxChars) return s;
-            var words = s.split(/\s+/);
-            var lines = [];
-            var cur = '';
-            for (var i = 0; i < words.length; i++) {
-                var test = cur ? cur + ' ' + words[i] : words[i];
-                if (test.length <= maxChars || !cur) {
-                    cur = test;
-                } else {
-                    lines.push(cur);
-                    cur = words[i];
-                }
-            }
-            if (cur) lines.push(cur);
-            if (lines.length > maxLines) {
-                var tail = lines.slice(maxLines - 1).join(' ');
-                if (tail.length > maxChars + 1) tail = tail.slice(0, maxChars) + '…';
-                lines = lines.slice(0, maxLines - 1).concat([tail]);
-            }
-            return lines.length > 1 ? lines : s;
-        }
-        var barLabels = breakdown.map(function (b) {
-            return isTerm ? csSplitLabel(b.label, 16, 3) : b.label;
-        });
-        var barData   = breakdown.map(function (b) { return b.orders; });
-        var barConfig;
-        if (isTerm) {
-            // Bars phosphor avec opacité dégressive (1, 0.65, 0.35, 0.2, 0.15, 0.1)
-            var phosphor = (document.documentElement.getAttribute('data-bs-theme') === 'light') ? '42,111,31' : '168,255,96';
-            var opacities = [1, 0.65, 0.35, 0.2, 0.15, 0.1];
-            var bg = barData.map(function (_, i) {
-                return 'rgba(' + phosphor + ',' + (opacities[i] || 0.1) + ')';
-            });
-            barConfig = {
-                label: 'Commandes',
-                data: barData,
-                backgroundColor: bg,
-                borderColor: 'transparent',
-                borderRadius: 0,
-                borderSkipped: false,
-                barPercentage: 0.7,
-                categoryPercentage: 0.85
-            };
-        } else {
-            barConfig = { label: 'Commandes', data: barData, backgroundColor: getAccentColor(), borderRadius: 6 };
-        }
-        var opts = chartCommonOptions(gridColor, tickColor, 'orders', 'bar');
-        if (isTerm) {
-            opts.scales.y.grid = {
-                color: gridColor,
-                borderDash: [4, 4],
-                tickBorderDash: [4, 4],
-                drawTicks: false,
-                lineWidth: 0.5,
-                display: true
-            };
-            opts.scales.y.border = { display: false };
-            opts.scales.y.ticks = Object.assign({}, opts.scales.y.ticks, {
-                font: { family: 'JetBrains Mono, monospace', size: 9 },
-                color: tickColor,
-                maxTicksLimit: 4
-            });
-            opts.scales.x.grid = { display: false };
-            opts.scales.x.border = { display: false };
-            opts.scales.x.ticks = Object.assign({}, opts.scales.x.ticks, {
-                autoSkip: false,
-                maxRotation: 0,
-                font: { family: 'JetBrains Mono, monospace', size: 9 },
-                color: tickColor
-            });
-        }
-        csChartBar = new Chart(canvas.getContext('2d'), {
-            type: 'bar',
-            data: { labels: barLabels, datasets: [barConfig] },
-            options: opts
-        });
-        bindBarToggle(breakdown);
+        var toggle = document.getElementById('cs-bar-mode-toggle');
+        renderPaymentChart(breakdown, paymentChartType(), toggle ? toggle.checked : false);
+        bindPaymentControls(breakdown);
     }
 
     function buildLineDataset(data, label, color) {
@@ -934,6 +1016,24 @@
         };
     }
 
+    // Dataset de la période de comparaison : même forme/couleur que la série courante,
+    // mais en pointillé, atténué, sans remplissage ni points — dessiné derrière.
+    function buildCompareDataset(data, label, color) {
+        var ds = buildLineDataset(data, label, color);
+        ds.borderDash = [5, 4];
+        ds.fill = false;
+        ds.backgroundColor = 'transparent';
+        ds.borderWidth = Math.max(1, (ds.borderWidth || 2) - 0.5);
+        ds.pointRadius = 0;
+        ds.pointHoverRadius = 3;
+        ds.tension = ds.tension || 0;
+        ds.order = 2;
+        if (typeof ds.borderColor === 'string' && ds.borderColor.charAt(0) === '#') {
+            ds.borderColor = hexToRgba(ds.borderColor, 0.6);
+        }
+        return ds;
+    }
+
     function chartCommonOptions(gridColor, tickColor, mode, type) {
         var opts = {
             responsive: true,
@@ -954,7 +1054,9 @@
                             var v = mode === 'revenue'
                                 ? ctx.parsed.y.toLocaleString('fr-FR', { maximumFractionDigits: 0 })
                                 : ctx.parsed.y;
-                            return ' ' + v + suffix;
+                            var pre = (ctx.chart.data.datasets.length > 1 && ctx.dataset.label)
+                                ? ctx.dataset.label + ' : ' : '';
+                            return ' ' + pre + v + suffix;
                         }
                     }
                 }
@@ -974,14 +1076,24 @@
         return opts;
     }
 
-    function bindLineToggle(orders, revenue) {
+    function bindLineToggle(orders, revenue, ordersCompare, revenueCompare) {
         var toggle = document.getElementById('cs-line-mode-toggle');
         if (!toggle) return;
+        ordersCompare = ordersCompare || [];
+        revenueCompare = revenueCompare || [];
         toggle.addEventListener('change', function () {
             var rev = toggle.checked;
             csChartLine.data.datasets[0] = rev
                 ? buildLineDataset(revenue, 'CA', '#06B6D4')
                 : buildLineDataset(orders, 'Commandes', getAccentColor());
+            // Série de comparaison (si présente) — suit le mode actif
+            var cmp = rev ? revenueCompare : ordersCompare;
+            if (cmp && cmp.length) {
+                csChartLine.data.datasets[1] = buildCompareDataset(
+                    cmp, (rev ? 'CA' : 'Commandes') + ' (préc.)', rev ? '#06B6D4' : getAccentColor());
+            } else if (csChartLine.data.datasets.length > 1) {
+                csChartLine.data.datasets.splice(1, 1);
+            }
             updateChartMode(csChartLine, rev);
             csChartLine.update();
             toggleModeLabels(document.querySelectorAll('.cs-line-mode-label'), rev);
@@ -998,46 +1110,43 @@
         });
     }
 
-    function bindBarToggle(breakdown) {
+    function bindPaymentControls(breakdown) {
         var toggle = document.getElementById('cs-bar-mode-toggle');
-        if (!toggle) return;
-        toggle.addEventListener('change', function () {
-            var rev = toggle.checked;
-            var theme = document.documentElement.getAttribute('data-cs-theme');
-            var isTerm = theme === 'terminal';
-            var newData = breakdown.map(function (b) { return rev ? b.revenue : b.orders; });
-            var bg;
-            if (isTerm) {
-                var phosphor = (document.documentElement.getAttribute('data-bs-theme') === 'light') ? '42,111,31' : '168,255,96';
-                var opacities = [1, 0.65, 0.35, 0.2, 0.15, 0.1];
-                bg = newData.map(function (_, i) { return 'rgba(' + phosphor + ',' + (opacities[i] || 0.1) + ')'; });
-            } else {
-                bg = rev ? '#06B6D4' : getAccentColor();
-            }
-            csChartBar.data.datasets[0] = {
-                label: rev ? 'CA' : 'Commandes',
-                data: newData,
-                backgroundColor: bg,
-                borderRadius: isTerm ? 0 : 6,
-                borderColor: 'transparent',
-                borderSkipped: false,
-                barPercentage: isTerm ? 0.7 : undefined,
-                categoryPercentage: isTerm ? 0.85 : undefined
-            };
-            updateChartMode(csChartBar, rev);
-            csChartBar.update();
-            toggleModeLabels(document.querySelectorAll('.cs-bar-mode-label, .cs-payment-term-sort-label'), rev);
-        });
-        // Clic sur les labels (terminal sans switch visuel)
-        document.querySelectorAll('.cs-payment-term-sort-label').forEach(function (lbl) {
-            lbl.addEventListener('click', function () {
-                var target = lbl.getAttribute('data-mode') === 'revenue';
-                if (toggle.checked !== target) {
-                    toggle.checked = target;
-                    toggle.dispatchEvent(new Event('change', { bubbles: true }));
-                }
+        function metric() { return toggle ? toggle.checked : false; }
+
+        // Bascule métrique Commandes / CA
+        if (toggle) {
+            toggle.addEventListener('change', function () {
+                renderPaymentChart(breakdown, paymentChartType(), toggle.checked);
+                toggleModeLabels(document.querySelectorAll('.cs-bar-mode-label, .cs-payment-term-sort-label'), toggle.checked);
             });
-        });
+            // Clic sur les labels (terminal sans switch visuel)
+            document.querySelectorAll('.cs-payment-term-sort-label').forEach(function (lbl) {
+                lbl.addEventListener('click', function () {
+                    var target = lbl.getAttribute('data-mode') === 'revenue';
+                    if (toggle.checked !== target) {
+                        toggle.checked = target;
+                        toggle.dispatchEvent(new Event('change', { bubbles: true }));
+                    }
+                });
+            });
+        }
+
+        // Sélecteur de type de graphe (barres V / barres H / donut), mémorisé par utilisateur
+        var switchEl = document.querySelector('[data-chart-type-switch]');
+        if (switchEl) {
+            var cur = paymentChartType();
+            var btns = switchEl.querySelectorAll('.cs-chart-type-btn');
+            btns.forEach(function (btn) {
+                btn.classList.toggle('is-active', btn.getAttribute('data-type') === cur);
+                btn.addEventListener('click', function () {
+                    var t = btn.getAttribute('data-type');
+                    setPaymentChartType(t);
+                    btns.forEach(function (b) { b.classList.toggle('is-active', b === btn); });
+                    renderPaymentChart(breakdown, t, metric());
+                });
+            });
+        }
     }
 
     function updateChartMode(chart, isRevenue) {
@@ -1046,7 +1155,9 @@
             var v = isRevenue
                 ? ctx.parsed.y.toLocaleString('fr-FR', { maximumFractionDigits: 0 })
                 : ctx.parsed.y;
-            return ' ' + v + suffix;
+            var pre = (ctx.chart.data.datasets.length > 1 && ctx.dataset.label)
+                ? ctx.dataset.label + ' : ' : '';
+            return ' ' + pre + v + suffix;
         };
         chart.options.scales.y.ticks.callback = isRevenue
             ? function (val) { return val >= 1000 ? (val / 1000).toFixed(0) + 'k\u20ac' : val + '\u20ac'; }

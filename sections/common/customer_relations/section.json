@@ -1,0 +1,7 @@
+{
+    "id": "customer_relations",
+    "title": "Relation client",
+    "order": 46,
+    "context": "always",
+    "enabled": true
+}
