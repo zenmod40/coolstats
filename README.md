@@ -8,6 +8,8 @@
 ![PrestaShop 1.7 → 9](https://img.shields.io/badge/PrestaShop-1.7%20%E2%86%92%209-blue) [![Téléchargements](https://img.shields.io/github/downloads/zenmod40/coolstats/total.svg)](https://github.com/zenmod40/coolstats/releases) [![Version](https://img.shields.io/github/v/release/zenmod40/coolstats)](https://github.com/zenmod40/coolstats/releases/latest)
 ![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue)
 
+> 📦 **[Page du module sur zm40.com](https://zm40.com/coolstats)** · [Documentation](https://zm40.com/coolstats/documentation) · [Changelog](https://zm40.com/coolstats/changelog)
+
 ![CoolStats — dashboard Aurora](https://zm40.com/assets/img/coolstats/dashboard-aurora.webp)
 
 ## 5 thèmes prêts à l'emploi · clair & sombre
