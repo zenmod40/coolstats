@@ -3,10 +3,10 @@
 > Tableau de bord analytics nouvelle génération pour PrestaShop.
 > Vente directe **et** marketplaces, en un coup d'œil.
 
-*Modern analytics dashboard for PrestaShop. Free & open source (GPL v3).*
+*Modern analytics dashboard for PrestaShop. Free & open source (OSL 3.0).*
 
 ![PrestaShop 1.7 → 9](https://img.shields.io/badge/PrestaShop-1.7%20%E2%86%92%209-blue) [![Téléchargements](https://img.shields.io/github/downloads/zenmod40/coolstats/total.svg)](https://github.com/zenmod40/coolstats/releases) [![Version](https://img.shields.io/github/v/release/zenmod40/coolstats)](https://github.com/zenmod40/coolstats/releases/latest)
-![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue)
+![License: OSL 3.0](https://img.shields.io/badge/License-OSL--3.0-blue)
 
 > 📦 **[Page du module sur zm40.com](https://zm40.com/coolstats)** · [Documentation](https://zm40.com/coolstats/documentation) · [Changelog](https://zm40.com/coolstats/changelog)
 
@@ -86,6 +86,6 @@ Les PR sont bienvenues. Merci de garder le style du code et d'ouvrir une issue a
 
 ## Licence
 
-GNU **GPL v3** © 2026 Nicolas Michaud — ZM40 / Magic Garden · [zm40.com](https://zm40.com)
+**OSL 3.0** © 2026 Nicolas Michaud — ZM40 / Magic Garden · [zm40.com](https://zm40.com)
 
 Voir [LICENSE](LICENSE) pour le texte complet.
