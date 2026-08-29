@@ -23,8 +23,7 @@
             <i class="bi bi-bar-chart-line"></i>
             <h4 class="mt-3 mb-2">Aucune source de trafic configurée</h4>
             <p class="text-muted small mb-3">
-                CoolStats préfère ne rien afficher plutôt que de montrer des chiffres trompeurs.
-                Connecte un outil d'analyse fiable pour activer cette section.
+                Branchez Matomo, Google Analytics ou Plausible pour activer cette section.
             </p>
             <div class="cs-traffic-providers-grid">
                 <div class="cs-traffic-provider cs-traffic-provider-soon">
@@ -47,8 +46,8 @@
                 </div>
             </div>
             <p class="small text-muted mt-3 mb-0">
-                <i class="bi bi-info-circle"></i> Le tracking natif PrestaShop (statsdata) est <strong>incomplet et obsolète</strong> :
-                pas de détection mobile fiable, pas de filtrage des bots, OS reconnus limités. CoolStats l'ignore désormais par défaut.
+                <i class="bi bi-info-circle"></i> Le tracking natif PrestaShop (statsdata) n'est pas utilisé :
+                détection mobile peu fiable, pas de filtrage des robots, systèmes d'exploitation reconnus limités.
             </p>
         </div>
     {else}

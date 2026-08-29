@@ -970,6 +970,12 @@
     border: 1px solid rgba(var(--cs-accent-rgb), 0.35);
 }
 
+/* Compteur de zones rechargées — largeur stable pendant que les chiffres défilent */
+.cs-refresh-progress {
+    font-variant-numeric: tabular-nums;
+    padding: 4px 10px;
+}
+
 /* ── Input texte dashboard (suit le thème, remplace form-control Bootstrap) ── */
 .cs-search-input {
     background: var(--cs-bg-card);

@@ -15,9 +15,9 @@
     {if $cs_visual_theme == 'editorial'}<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">{/if}
     {if $cs_visual_theme == 'brutalist'}<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Anton&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">{/if}
     {if $cs_visual_theme == 'terminal'}<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">{/if}
-    <link rel="stylesheet" href="{$cs_module_path}views/css/coolstats.css">
-    <link rel="stylesheet" href="{$cs_module_path}views/css/themes/_shared.css">
-    <link rel="stylesheet" href="{$cs_module_path}views/css/themes/{$cs_visual_theme}.css">
+    <link rel="stylesheet" href="{$cs_module_path}views/css/coolstats.css?v={$cs_version|escape:'url'}">
+    <link rel="stylesheet" href="{$cs_module_path}views/css/themes/_shared.css?v={$cs_version|escape:'url'}">
+    <link rel="stylesheet" href="{$cs_module_path}views/css/themes/{$cs_visual_theme}.css?v={$cs_version|escape:'url'}">
     <script>(function(){ldelim}
         var NATIVE_MODE = {ldelim} aurora:'dark', cozy:'light', editorial:'light', brutalist:'light', terminal:'dark' {rdelim};
         var theme = '{$cs_visual_theme}';
@@ -79,7 +79,7 @@
                 {/if}
                 <h1>{$cs_brand_name}{if $cs_visual_theme == 'brutalist'}!{/if}</h1>
                 {if $cs_visual_theme == 'cozy' && $cs_employee_firstname}
-                    <small class="text-secondary cs-greeting">{l s='Bonjour %s · voici tes stats' sprintf=[$cs_employee_firstname] mod='coolstats'} ☕</small>
+                    <small class="text-secondary cs-greeting">{l s='Bonjour %s · voici vos stats' sprintf=[$cs_employee_firstname] mod='coolstats'} ☕</small>
                 {/if}
             </div>
             {if $cs_visual_theme == 'brutalist' || $cs_visual_theme == 'terminal'}
@@ -170,6 +170,7 @@
             <span class="badge cs-country-filter-badge{if !$cs_country} d-none{/if}" id="cs-country-filter-badge" role="button" title="Retirer le filtre pays">
                 <i class="bi bi-geo-alt-fill me-1"></i><span id="cs-country-filter-label">{if $cs_country}{$cs_country}{/if}</span><i class="bi bi-x-lg ms-2" style="font-size:11px"></i>
             </span>
+            <span class="badge cs-badge-accent cs-refresh-progress d-none" id="cs-refresh-progress" title="Zones en cours d'actualisation" aria-live="polite"></span>
             <button class="btn btn-sm btn-outline-secondary" id="cs-customize-btn" title="Personnaliser le dashboard"><i class="bi bi-sliders"></i></button>
             <button class="btn btn-sm btn-outline-secondary" id="cs-fullscreen-btn" title="Mode présentation (plein écran)"><i class="bi bi-display"></i></button>
             <button class="btn btn-sm btn-outline-secondary" id="cs-pdf-btn" title="Exporter en PDF"><i class="bi bi-file-earmark-pdf"></i></button>
@@ -350,7 +351,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
 {/if}
-<script src="{$cs_module_path}views/js/coolstats.js"></script>
+<script src="{$cs_module_path}views/js/coolstats.js?v={$cs_version|escape:'url'}"></script>
 {if isset($cs_lite_display) && $cs_lite_display}
 </body>
 </html>

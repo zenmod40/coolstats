@@ -9,7 +9,7 @@
             <div class="cs-carriers-brutal-v">{if $section_data.avg_delay !== null}{$section_data.avg_delay}{l s='j' mod='coolstats'}{else}N/A{/if}</div>
             <div class="cs-carriers-brutal-l">{l s='Délai moyen d\'expédition' mod='coolstats'}</div>
             {if $section_data.avg_delay === null}
-            <div class="cs-carriers-brutal-sub">{l s='Active le suivi colis pour voir cette donnée' mod='coolstats'}</div>
+            <div class="cs-carriers-brutal-sub">{l s='Activez le suivi colis pour voir cette donnée' mod='coolstats'}</div>
             {/if}
         </div>
         <div class="cs-carriers-brutal-stat">
@@ -23,7 +23,7 @@
             <div class="cs-carriers-brutal-v">{if !empty($section_data.top_carrier)}{$section_data.top_carrier}{else}—{/if}</div>
             <div class="cs-carriers-brutal-l">{l s='Transporteur favori' mod='coolstats'}</div>
             {if empty($section_data.top_carrier)}
-            <div class="cs-carriers-brutal-sub">{l s='Connecte tes tracking IDs' mod='coolstats'}</div>
+            <div class="cs-carriers-brutal-sub">{l s='Renseignez vos numéros de suivi' mod='coolstats'}</div>
             {/if}
         </div>
     </div>

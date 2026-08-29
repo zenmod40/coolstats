@@ -37,7 +37,7 @@ class CoolStats extends Module
     {
         $this->name = 'coolstats';
         $this->tab = 'administration';
-        $this->version = '1.0.7';
+        $this->version = '1.0.8';
         $this->author = 'ZM40';
         $this->need_instance = 0;
         $this->bootstrap = true;
@@ -418,6 +418,7 @@ class CoolStats extends Module
             'cs_dashboard_link'  => $this->context->link->getAdminLink('AdminCoolStats') . '&lite_display=1',
             'cs_ajax_link'       => $this->context->link->getAdminLink('AdminCoolStats') . '&ajax=1',
             'cs_module_path'     => $this->_path,
+            'cs_version'         => $this->version,
             'cs_mkp_modules'     => $ctx->getActiveMarketplaceModules(),
             'cs_mkp_modules_str' => implode(', ', $ctx->getActiveMarketplaceModules()),
             'cs_ps_version'      => _PS_VERSION_,

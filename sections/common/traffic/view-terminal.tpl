@@ -14,7 +14,7 @@
     <div class="cs-traffic-term-empty">
         <div class="cs-traffic-term-icon">📊</div>
         <div class="cs-traffic-term-title">{l s='Aucune source de trafic configurée' mod='coolstats'}</div>
-        <div class="cs-traffic-term-desc">{l s='CoolStats préfère ne rien afficher plutôt que de montrer des chiffres trompeurs. Connecte un outil d\'analyse fiable pour activer cette section.' mod='coolstats'}</div>
+        <div class="cs-traffic-term-desc">{l s='Branchez Matomo, Google Analytics ou Plausible pour activer cette section.' mod='coolstats'}</div>
         <div class="cs-traffic-term-providers">
             <div class="cs-traffic-term-provider">
                 <span class="cs-traffic-term-provider-soon">{l s='Bientôt' mod='coolstats'}</span>
@@ -35,7 +35,7 @@
                 <div class="cs-traffic-term-provider-d">{l s='Simple, sans cookies' mod='coolstats'}</div>
             </div>
         </div>
-        <div class="cs-traffic-term-note">ⓘ {l s='Le tracking natif PrestaShop (statsdata) est incomplet et obsolète : pas de détection mobile fiable, pas de filtrage des bots, OS encodés limités. CoolStats l\'ignore désormais par défaut.' mod='coolstats'}</div>
+        <div class="cs-traffic-term-note">ⓘ {l s='Le tracking natif PrestaShop (statsdata) n\'est pas utilisé : détection mobile peu fiable, pas de filtrage des robots, systèmes d\'exploitation reconnus limités.' mod='coolstats'}</div>
     </div>
     {else}
     <div class="cs-traffic-term-body">

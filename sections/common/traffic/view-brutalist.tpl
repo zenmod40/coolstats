@@ -12,7 +12,7 @@
     {if !$section_data.available}
     <div class="cs-traffic-brutal-empty">
         <div class="cs-traffic-brutal-h">{l s='Aucune source configurée' mod='coolstats'}</div>
-        <div class="cs-traffic-brutal-s">{l s='Connecte Matomo ou GA4 pour activer cette section' mod='coolstats'}</div>
+        <div class="cs-traffic-brutal-s">{l s='Branchez Matomo ou GA4 pour activer cette section' mod='coolstats'}</div>
         <div class="cs-traffic-brutal-providers">
             <div class="cs-traffic-brutal-provider">
                 <div class="cs-traffic-brutal-provider-n">{l s='Matomo' mod='coolstats'}</div>

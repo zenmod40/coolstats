@@ -3,6 +3,22 @@
 Toutes les évolutions notables du module sont listées ici.
 Format inspiré de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/), versions [SemVer](https://semver.org/lang/fr/).
 
+## [1.0.8] — 2026-08-29
+
+### Ajouté
+
+- **Compteur de progression pendant le rechargement du tableau de bord.** Changer de période ou de filtre recharge toutes les sections en parallèle, et le seul retour visuel était un léger estompage des cartes : sur un gros catalogue, l'attente pouvait laisser croire que rien ne se passait. Un compteur « n/total » s'affiche désormais dans la barre de filtres et avance à mesure que les sections répondent, puis disparaît une fois la dernière arrivée.
+
+### Modifié
+
+- **Reformulation des textes d'interface.** Plusieurs messages faisaient parler le module de lui-même à la troisième personne ou justifiaient un choix de conception au lieu d'indiquer quoi faire. L'écran vide de la section Trafic, par exemple, expliquait une préférence du module ; il indique maintenant simplement quels outils connecter. Le tutoiement résiduel a été aligné sur le vouvoiement employé partout ailleurs, y compris dans les variantes Terminal et Neo-brutalist, qui avaient divergé.
+- **Retrait du nom d'un outil tiers dans le bloc des marges.** Le message affiché quand le prix d'achat est absent citait un logiciel de gestion en exemple. Un module n'a pas à nommer un éditeur tiers dans son interface : la phrase parle désormais de « votre outil de gestion ». La variante Terminal disait déjà cela, les deux textes sont réalignés.
+
+### Corrigé
+
+- **Les feuilles de style et le script du tableau de bord étaient servis depuis le cache du navigateur après une mise à jour.** Ils étaient chargés sans indication de version, si bien qu'une correction pouvait rester invisible tant que l'utilisateur ne forçait pas le rechargement de la page. Le numéro de version est maintenant présent dans leur adresse.
+- Le numéro de version déclaré dans `config.xml` était resté à 1.0.6 alors que le module annonçait 1.0.7.
+
 ## [1.0.7] — 2026-08-21
 
 ### Modifié

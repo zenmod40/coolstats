@@ -316,9 +316,30 @@
     // ── Refresh des sections via AJAX ──
     function refreshAllSections() {
         var wrappers = document.querySelectorAll('[data-cs-section]');
+        var total = wrappers.length;
+        var done = 0;
+        var bump = function () { setRefreshProgress(++done, total); };
+
+        setRefreshProgress(0, total);
         wrappers.forEach(function (w) {
-            refreshSection(w.dataset.csSection);
+            var p = refreshSection(w.dataset.csSection);
+            if (p && p.then) { p.then(bump, bump); } else { bump(); }
         });
+    }
+
+    /**
+     * Compteur « n/total » pendant un refresh global. Les sections sont
+     * rechargées en parallèle : le compteur avance dans l'ordre des réponses.
+     */
+    function setRefreshProgress(done, total) {
+        var el = document.getElementById('cs-refresh-progress');
+        if (!el) return;
+        if (!total || done >= total) {
+            el.classList.add('d-none');
+            return;
+        }
+        el.textContent = done + '/' + total;
+        el.classList.remove('d-none');
     }
 
     function refreshSection(id) {
@@ -334,7 +355,7 @@
         url.searchParams.set('action', 'section');
         url.searchParams.set('id', id);
 
-        fetch(url.toString())
+        return fetch(url.toString())
             .then(function (r) {
                 if (csIsAuthRedirect(r)) { csRedirectToLogin(r.url); throw new Error('auth'); }
                 if (!r.ok) throw new Error('HTTP ' + r.status);

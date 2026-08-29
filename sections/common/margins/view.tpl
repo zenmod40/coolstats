@@ -20,7 +20,7 @@
             <i class="bi bi-info-circle text-muted"></i>
             <div class="mt-2">
                 <strong>Marges indisponibles.</strong>
-                <p class="small text-muted mb-0">Le calcul nécessite le prix d'achat (<code>wholesale_price</code>) des produits. Dès qu'il est renseigné — via PrestaShop ou votre outil de gestion (Store Commander, ERP…) — les marges s'affichent ici automatiquement.</p>
+                <p class="small text-muted mb-0">Le calcul nécessite le prix d'achat (<code>wholesale_price</code>) des produits. Dès qu'il est renseigné — via PrestaShop ou votre outil de gestion — les marges s'affichent ici automatiquement.</p>
             </div>
         </div>
     {else}

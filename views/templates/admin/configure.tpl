@@ -545,7 +545,7 @@
 
 </style>
 
-<link rel="stylesheet" href="{$cs_module_path}views/css/zm40-common.css">
+<link rel="stylesheet" href="{$cs_module_path}views/css/zm40-common.css?v={$cs_version|escape:'url'}">
 
 <div class="coolstats-admin">
 
@@ -660,7 +660,7 @@
         <div class="cs-tab-content" data-tab-content="traffic">
             <div class="cs-panel">
                 <h3 class="cs-panel-title">Source des données de trafic</h3>
-                <p class="cs-panel-desc">CoolStats n'affiche les statistiques de trafic que si vous connectez une <strong>source fiable</strong>. Par défaut, la section trafic du dashboard reste vide — c'est volontaire : nous préférons ne rien montrer plutôt que des chiffres trompeurs.</p>
+                <p class="cs-panel-desc">Les statistiques de trafic viennent d'une <strong>source externe</strong>. Tant qu'aucun fournisseur n'est configuré, la section trafic du dashboard reste vide.</p>
 
                 <div class="cs-form-row">
                     <div class="cs-form-label">Fournisseur actif</div>
@@ -747,12 +747,12 @@
                 <div class="cs-ga4-setup-guide">
                     <strong><i class="icon-info-sign"></i> Setup à faire une fois côté Google Cloud :</strong>
                     <ol class="small mb-0 mt-2" style="padding-left:20px">
-                        <li>Ouvre <a href="https://console.cloud.google.com" target="_blank" rel="noopener">console.cloud.google.com</a> et crée (ou choisis) un projet</li>
-                        <li>Active l'API <strong>Google Analytics Data API</strong> (menu APIs & Services → Library)</li>
-                        <li>Crée un <strong>Service Account</strong> (IAM &amp; Admin → Service Accounts → Create)</li>
-                        <li>Sur ce service account → onglet <strong>Keys</strong> → <strong>Add Key</strong> → JSON → télécharge le fichier</li>
-                        <li>Dans GA4 (<a href="https://analytics.google.com" target="_blank" rel="noopener">analytics.google.com</a>) → Admin → <strong>Property access management</strong> → ajoute l'email du service account avec le rôle <strong>Viewer</strong></li>
-                        <li>Copie l'<strong>ID de la propriété</strong> GA4 (Admin → Property → Property details, le nombre sous "PROPERTY ID")</li>
+                        <li>Ouvrez <a href="https://console.cloud.google.com" target="_blank" rel="noopener">console.cloud.google.com</a> et créez (ou choisissez) un projet</li>
+                        <li>Activez l'API <strong>Google Analytics Data API</strong> (menu APIs & Services → Library)</li>
+                        <li>Créez un <strong>Service Account</strong> (IAM &amp; Admin → Service Accounts → Create)</li>
+                        <li>Sur ce service account → onglet <strong>Keys</strong> → <strong>Add Key</strong> → JSON → téléchargez le fichier</li>
+                        <li>Dans GA4 (<a href="https://analytics.google.com" target="_blank" rel="noopener">analytics.google.com</a>) → Admin → <strong>Property access management</strong> → ajoutez l'email du service account avec le rôle <strong>Viewer</strong></li>
+                        <li>Copiez l'<strong>ID de la propriété</strong> GA4 (Admin → Property → Property details, le nombre sous "PROPERTY ID")</li>
                     </ol>
                 </div>
 
@@ -766,7 +766,7 @@
                     <div class="cs-form-label">Clé Service Account (JSON)<small>Contenu complet du fichier .json téléchargé</small></div>
                     <div class="cs-form-field">
                         <textarea name="COOLSTATS_GA4_SERVICE_ACCOUNT_JSON" id="cs-ga4-sa-json" class="cs-input" rows="6" style="font-family:monospace;font-size:11px;white-space:pre" placeholder='{ldelim}"type":"service_account","client_email":"...","private_key":"..."{rdelim}'>{$cs_config.COOLSTATS_GA4_SERVICE_ACCOUNT_JSON|escape:'html'}</textarea>
-                        <small class="text-muted">Le JSON est stocké en base — pensez aux droits d'accès admin. La clé privée ne quitte pas ton serveur.</small>
+                        <small class="text-muted">Le JSON est stocké en base — pensez aux droits d'accès admin. La clé privée ne quitte pas votre serveur.</small>
                     </div>
                 </div>
                 <div class="cs-form-row">
@@ -818,7 +818,7 @@
             <div class="cs-panel">
                 <h3 class="cs-panel-title">À propos du tracking</h3>
                 <ul class="cs-traffic-info">
-                    <li><i class="icon-shield"></i> <strong>Aucun tracking custom</strong> — CoolStats ne pose aucun cookie ni script de tracking sur votre boutique.</li>
+                    <li><i class="icon-shield"></i> <strong>Aucun tracking custom</strong> — aucun cookie ni script de tracking n'est ajouté sur votre boutique.</li>
                     <li><i class="icon-bolt"></i> <strong>Aucun impact sur la performance front</strong> — pas de JS supplémentaire, pas de requête bloquante.</li>
                     <li><i class="icon-check-circle"></i> <strong>Pas de doublon RGPD</strong> — vous gardez votre solution analytics existante (Matomo, GA4, Plausible…) sans interférence.</li>
                     <li><i class="icon-arrow-right"></i> <strong>V2 prévue</strong> — connecteurs Matomo / Plausible / GA4 pour des données fiables avec filtrage bots, détection device, etc.</li>
@@ -1037,7 +1037,7 @@
 
             <div class="cs-panel">
                 <h3 class="cs-panel-title">Optimisation base de données</h3>
-                <p class="cs-panel-desc">Crée un index sur <code>ps_connections.date_add</code> pour accélérer la section trafic. Sur un gros historique de visites, l'opération peut prendre plusieurs minutes — c'est normal, ne ferme pas l'onglet.</p>
+                <p class="cs-panel-desc">Création d'un index sur <code>ps_connections.date_add</code> pour accélérer la section trafic. Sur un gros historique de visites, l'opération peut prendre plusieurs minutes : ne fermez pas l'onglet.</p>
                 <div class="cs-form-row">
                     <div class="cs-form-label">Index trafic</div>
                     <div class="cs-form-field">
@@ -1051,7 +1051,7 @@
 
             <div class="cs-panel">
                 <h3 class="cs-panel-title">Mode debug</h3>
-                <p class="cs-panel-desc">Active les logs PHP et la console JS verbose. À désactiver en production.</p>
+                <p class="cs-panel-desc">Logs PHP détaillés et console JS verbeuse. À désactiver en production.</p>
                 <div class="cs-form-row cs-form-row--switch">
                     <div class="cs-form-label">Mode debug</div>
                     <div class="cs-form-field">
@@ -1067,7 +1067,7 @@
 
             <div class="cs-panel">
                 <h3 class="cs-panel-title">Mises à jour & autres modules (ZM40)</h3>
-                <p class="cs-panel-desc">Vérifie au maximum 1×/jour si une nouvelle version est disponible via l'API publique de GitHub, et affiche les autres modules ZM40 depuis zm40.com. Ces requêtes sont <strong>anonymes</strong> : aucune donnée de votre boutique n'est transmise. Décochez pour tout désactiver.</p>
+                <p class="cs-panel-desc">Vérification une fois par jour au maximum de la disponibilité d'une nouvelle version, via l'API publique de GitHub, et affichage des autres modules ZM40 depuis zm40.com. Ces requêtes sont <strong>anonymes</strong> : aucune donnée de votre boutique n'est transmise. Décochez pour tout désactiver.</p>
                 <div class="cs-form-row cs-form-row--switch">
                     <div class="cs-form-label">Vérifier les mises à jour</div>
                     <div class="cs-form-field">
@@ -1183,7 +1183,7 @@
             var tokenInput = document.querySelector('input[name="COOLSTATS_MATOMO_TOKEN"]');
             var siteInput  = document.querySelector('input[name="COOLSTATS_MATOMO_SITE_ID"]');
             if (!urlInput.value || !tokenInput.value || !siteInput.value) {
-                resultEl.innerHTML = '<span class="text-danger">Renseigne URL + token + site ID avant de tester.</span>';
+                resultEl.innerHTML = '<span class="text-danger">Renseignez l\'URL, le token et le site ID avant de tester.</span>';
                 return;
             }
             resultEl.innerHTML = '<span class="text-muted"><i class="icon-refresh"></i> Test en cours…</span>';
