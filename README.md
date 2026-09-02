@@ -51,6 +51,7 @@ Quelques exemples des sections drag & drop (toutes optionnelles, réorganisables
 - **Relation client** : KPI de la période — Commandes, Demandes SAV (service client natif PrestaShop, avec part des commandes) et Rétractations (si le module Rétractations est installé) — + courbe d'évolution des demandes SAV sur le même modèle que la courbe des commandes.
 - **Comparaison de périodes** : période précédente ou N-1 superposée en pointillé sur la courbe des commandes, alignée index par index, bascule Commandes / CA, légende explicite.
 - **Répartition par moyen de paiement** : type de graphique sélectionnable depuis l'en-tête du bloc (barres verticales, barres horizontales, donut) — choix mémorisé par utilisateur.
+- **Panneau sur le tableau de bord natif** : les cinq indicateurs clés (commandes, CA, articles par panier, panier moyen, taux de retour) avec leur tendance s'affichent sur la page d'accueil du back-office, suivent le calendrier natif de PrestaShop et renvoient vers le dashboard complet.
 
 ## Compatibilité
 

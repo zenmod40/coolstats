@@ -3,6 +3,12 @@
 Toutes les évolutions notables du module sont listées ici.
 Format inspiré de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/), versions [SemVer](https://semver.org/lang/fr/).
 
+## [1.0.9] — 2026-09-02
+
+### Ajouté
+
+- **Les indicateurs clés s'affichent sur le tableau de bord natif de PrestaShop.** Jusqu'ici le module n'était joignable que par son onglet, et la page d'accueil du back-office restait celle des modules natifs. CoolStats occupe désormais la zone centrale du tableau de bord avec un panneau au style PrestaShop : commandes, chiffre d'affaires, articles par panier, panier moyen et taux de retour, chacun avec sa tendance, et un bouton vers le dashboard complet. Changer la période dans le calendrier natif rafraîchit les valeurs sans recharger la page, comme le faisaient les modules de tableau de bord livrés avec PrestaShop. La tendance suit le mode de comparaison réglé dans le module, pas les dates de comparaison du calendrier natif. Les installations existantes sont accrochées automatiquement à la mise à jour.
+
 ## [1.0.8] — 2026-08-29
 
 ### Ajouté

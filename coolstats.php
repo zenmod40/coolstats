@@ -37,7 +37,7 @@ class CoolStats extends Module
     {
         $this->name = 'coolstats';
         $this->tab = 'administration';
-        $this->version = '1.0.8';
+        $this->version = '1.0.9';
         $this->author = 'ZM40';
         $this->need_instance = 0;
         $this->bootstrap = true;
@@ -53,6 +53,8 @@ class CoolStats extends Module
     {
         if (!parent::install()
             || !$this->registerHook('displayBackOfficeHeader')
+            || !$this->registerHook('dashboardZoneTwo')
+            || !$this->registerHook('dashboardData')
             || !$this->installTab()
             || !$this->installSchema()
         ) {
@@ -264,6 +266,78 @@ class CoolStats extends Module
             . '  });'
             . '});'
             . '</script>';
+    }
+
+    /**
+     * Tableau de bord PrestaShop, zone centrale : les cinq indicateurs clés dans
+     * un panneau natif, avec un bouton vers le dashboard CoolStats complet.
+     * Les valeurs sont rendues côté serveur pour le premier affichage, puis
+     * rafraîchies en AJAX par hookDashboardData quand la période du calendrier change.
+     */
+    public function hookDashboardZoneTwo($params)
+    {
+        $kpi = $this->getDashboardKpi($params);
+        $this->context->smarty->assign(array(
+            'cs_dash_values' => $kpi['data_value'],
+            'cs_dash_trends' => $kpi['data_trends'],
+            'cs_dash_link'   => $this->context->link->getAdminLink('AdminCoolStats'),
+        ));
+        return $this->display(__FILE__, 'views/templates/hook/dashboard_zone_two.tpl');
+    }
+
+    /**
+     * Réponse AJAX du tableau de bord natif. Le JS de PrestaShop injecte
+     * data_value par id d'élément et data_trends par id + classe dash_trend_*.
+     */
+    public function hookDashboardData($params)
+    {
+        return $this->getDashboardKpi($params);
+    }
+
+    /**
+     * Réutilise la requête de la section KPI avec les dates fournies par PrestaShop.
+     * La comparaison suit le réglage du module (période précédente par défaut),
+     * pas les dates de comparaison du calendrier PS.
+     */
+    private function getDashboardKpi(array $params)
+    {
+        require_once _PS_MODULE_DIR_ . 'coolstats/classes/CoolStatsContext.php';
+        require_once _PS_MODULE_DIR_ . 'coolstats/sections/common/kpi/query.php';
+
+        $isDate = function ($d) { return preg_match('/^\d{4}-\d{2}-\d{2}$/', (string) $d) === 1; };
+        $from = isset($params['date_from']) && $isDate($params['date_from']) ? $params['date_from'] : date('Y-m-01');
+        $to   = isset($params['date_to'])   && $isDate($params['date_to'])   ? $params['date_to']   : date('Y-m-d');
+
+        $compare = (string) Configuration::get('COOLSTATS_COMPARE_DEFAULT');
+        if (!in_array($compare, array('prev', 'yoy', 'none'), true)) {
+            $compare = 'prev';
+        }
+
+        $k = coolstats_section_kpi(new CoolStatsContext(), array(
+            'date_from'    => $from,
+            'date_to'      => $to,
+            'compare_with' => $compare,
+        ));
+
+        $trends = array();
+        foreach (array('orders', 'revenue', 'items', 'basket') as $key) {
+            $t = $k['trends'][$key];
+            $trends['cs_dash_' . $key . '_trend'] = array(
+                'way'   => ($t === null || $t == 0) ? 'right' : ($t > 0 ? 'up' : 'down'),
+                'value' => $t === null ? '' : ($t > 0 ? '+' : '') . number_format($t, 1, ',', ' ') . ' %',
+            );
+        }
+
+        return array(
+            'data_value' => array(
+                'cs_dash_orders'  => (string) (int) $k['total_orders'],
+                'cs_dash_revenue' => number_format($k['total_revenue'], 0, ',', ' ') . ' €',
+                'cs_dash_items'   => number_format($k['avg_items'], 2, ',', ' '),
+                'cs_dash_basket'  => number_format($k['avg_basket'], 0, ',', ' ') . ' €',
+                'cs_dash_returns' => number_format($k['return_rate'], 1, ',', ' ') . ' %',
+            ),
+            'data_trends' => $trends,
+        );
     }
 
     public function getContent()
