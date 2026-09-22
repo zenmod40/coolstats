@@ -24,6 +24,12 @@
                     <input class="form-check-input cs-filter" data-filter="sort" data-on-value="revenue" data-off-value="qty" type="checkbox" id="cs-top-mode-toggle" {if $section_data.sort_mode == 'revenue'}checked{/if}>
                 </div>
             </div>
+            <div class="cs-top-term-sort">
+                <span class="cs-top-term-sort-label{if $section_data.variants} cs-active{/if}">{l s='Par déclinaison' mod='coolstats'}</span>
+                <div class="form-check form-switch mb-0">
+                    <input class="form-check-input cs-filter" data-filter="variants" data-on-value="1" data-off-value="" type="checkbox" id="cs-top-variants-toggle" {if $section_data.variants}checked{/if}>
+                </div>
+            </div>
             <span class="cs-top-term-totals">·
                 <b>{if $section_data.sort_mode == 'revenue'}{$section_data.totals.pct_revenue}{else}{$section_data.totals.pct_qty}{/if}%</b>
                 {l s='du volume' mod='coolstats'} · {$section_data.totals.top_qty} {l s='u' mod='coolstats'} ·

@@ -893,28 +893,52 @@
 
             <div class="cs-panel">
                 <h3 class="cs-panel-title">Panneau du tableau de bord PrestaShop</h3>
-                <div class="cs-form-row cs-form-row--switch">
-                    <div class="cs-form-label">Afficher le panneau sur toute la largeur</div>
-                    <div class="cs-form-field">
-                        <label class="cs-switch">
-                            <input type="hidden" name="COOLSTATS_DASH_FULLWIDTH" value="0">
-                            <input type="checkbox" name="COOLSTATS_DASH_FULLWIDTH" value="1" {if $cs_config.COOLSTATS_DASH_FULLWIDTH}checked{/if}>
-                            <span class="cs-switch-slider"></span>
-                        </label>
-                    </div>
-                    <div class="cs-form-desc">Les six indicateurs du panneau tiennent sur une seule ligne quand la zone centrale occupe toute la largeur — ce que PrestaShop ne fait pas par défaut, il y réserve la place de la colonne marketplace. À activer si vous avez retiré ou masqué cette colonne : sinon elle se retrouve reléguée sous le panneau.</div>
-                </div>
 
                 <div class="cs-form-row cs-form-row--switch">
-                    <div class="cs-form-label">Afficher le dashboard complet sous le panneau</div>
+                    <div class="cs-form-label">Remplacer le tableau de bord par CoolStats</div>
                     <div class="cs-form-field">
                         <label class="cs-switch">
-                            <input type="hidden" name="COOLSTATS_DASH_EMBED" value="0">
-                            <input type="checkbox" name="COOLSTATS_DASH_EMBED" value="1" {if $cs_config.COOLSTATS_DASH_EMBED}checked{/if}>
+                            <input type="hidden" name="COOLSTATS_DASH_REPLACE" value="0">
+                            <input type="checkbox" name="COOLSTATS_DASH_REPLACE" value="1" id="cs-dash-replace" {if $cs_config.COOLSTATS_DASH_REPLACE}checked{/if}>
                             <span class="cs-switch-slider"></span>
                         </label>
                     </div>
-                    <div class="cs-form-desc">Le dashboard entier — graphiques, filtres, personnalisation — s'affiche directement sur la page d'accueil du back-office, sous les indicateurs. Le bouton « Dashboard complet » reste disponible pour l'ouvrir en pleine page. À n'activer que si le tableau de bord est votre page de travail : la page d'accueil charge alors toutes les sections à chaque visite, ce qui peut être long sur un gros catalogue. À combiner avec la pleine largeur ci-dessus.</div>
+                    <div class="cs-form-desc">La page d'accueil du back-office devient le dashboard CoolStats : calendrier, prévisions, activité et colonne marketplace de PrestaShop sont retirés, et la pleine largeur s'applique d'office. Les laisser côte à côte afficherait deux périodes concurrentes, celle du calendrier natif et celle des filtres CoolStats, donc deux chiffres pour la même boutique. Le menu et le reste du back-office ne bougent pas, et décocher l'option rétablit le tableau de bord d'origine.</div>
+                </div>
+
+                <div class="cs-form-row" {if !$cs_config.COOLSTATS_DASH_REPLACE}style="display:none"{/if} id="cs-dash-cleanup">
+                    <div class="cs-form-label">Et ensuite</div>
+                    <div class="cs-form-field">
+                        <p class="mb-2 small">Les blocs natifs sont masqués, pas arrêtés : PrestaShop continue de les calculer à chaque ouverture de la page, pour rien. Si vous ne comptez pas revenir en arrière, désinstallez-les depuis <a href="{$cs_modules_link|escape:'html':'UTF-8'}">la page Modules</a> — <code>dashactivity</code>, <code>dashtrends</code>, <code>dashgoals</code> et <code>dashproducts</code>. Autant de requêtes en moins à chaque visite, et leurs tables quittent la base.</p>
+                        <p class="mb-0 small text-muted">Les modules de statistiques de PrestaShop (<code>statsdata</code> et les <code>stats*</code>) sont indépendants : CoolStats n'en a besoin pour aucun de ses chiffres. Gardez-les seulement si vous utilisez encore les pages Statistiques natives.</p>
+                    </div>
+                </div>
+
+                {* Réglages du panneau natif : sans objet dès que CoolStats prend toute la page. *}
+                <div id="cs-dash-native-opts" {if $cs_config.COOLSTATS_DASH_REPLACE}style="display:none"{/if}>
+                    <div class="cs-form-row cs-form-row--switch">
+                        <div class="cs-form-label">Afficher la bande d'indicateurs</div>
+                        <div class="cs-form-field">
+                            <label class="cs-switch">
+                                <input type="hidden" name="COOLSTATS_DASH_KPI" value="0">
+                                <input type="checkbox" name="COOLSTATS_DASH_KPI" value="1" {if $cs_config.COOLSTATS_DASH_KPI}checked{/if}>
+                                <span class="cs-switch-slider"></span>
+                            </label>
+                        </div>
+                        <div class="cs-form-desc">Les cinq indicateurs et le bouton « Dashboard complet », dans un panneau au style PrestaShop, sur la page d'accueil du back-office. Activé par défaut.</div>
+                    </div>
+
+                    <div class="cs-form-row cs-form-row--switch">
+                        <div class="cs-form-label">Afficher le panneau sur toute la largeur</div>
+                        <div class="cs-form-field">
+                            <label class="cs-switch">
+                                <input type="hidden" name="COOLSTATS_DASH_FULLWIDTH" value="0">
+                                <input type="checkbox" name="COOLSTATS_DASH_FULLWIDTH" value="1" {if $cs_config.COOLSTATS_DASH_FULLWIDTH}checked{/if}>
+                                <span class="cs-switch-slider"></span>
+                            </label>
+                        </div>
+                        <div class="cs-form-desc">Les six indicateurs du panneau tiennent sur une seule ligne quand la zone centrale occupe toute la largeur — ce que PrestaShop ne fait pas par défaut, il y réserve la place de la colonne marketplace. À activer si vous avez retiré ou masqué cette colonne : sinon elle se retrouve reléguée sous le panneau.</div>
+                    </div>
                 </div>
             </div>
 
@@ -1159,6 +1183,17 @@
             });
         });
     });
+
+    // ── Tableau de bord : le remplacement rend les réglages du panneau natif sans objet ──
+    var dashReplace = document.getElementById('cs-dash-replace');
+    var dashNativeOpts = document.getElementById('cs-dash-native-opts');
+    var dashCleanup = document.getElementById('cs-dash-cleanup');
+    if (dashReplace) {
+        dashReplace.addEventListener('change', function () {
+            if (dashNativeOpts) dashNativeOpts.style.display = dashReplace.checked ? 'none' : '';
+            if (dashCleanup)    dashCleanup.style.display    = dashReplace.checked ? '' : 'none';
+        });
+    }
 
     // ── Provider trafic : toggle panneaux + test connexion Matomo/GA4 ──
     var providerSelect = document.getElementById('cs-traffic-provider-select');

@@ -93,8 +93,9 @@ class CoolStats extends Module
         Configuration::updateValue('COOLSTATS_AUTO_REFRESH_INTERVAL', 0);          // Minutes ; 0 = désactivé. Sinon 1, 5, 15.
         Configuration::updateValue('COOLSTATS_DEBUG', 0);                          // Mode debug : logs PHP + console JS.
         Configuration::updateValue('COOLSTATS_CSV_ENCODING', 'utf-8');             // utf-8 (default) | utf-8-bom | latin1
+        Configuration::updateValue('COOLSTATS_DASH_KPI', 1);                       // Bande d'indicateurs sur le tableau de bord natif.
         Configuration::updateValue('COOLSTATS_DASH_FULLWIDTH', 0);                 // Panneau du tableau de bord natif sur toute la largeur.
-        Configuration::updateValue('COOLSTATS_DASH_EMBED', 0);                     // Dashboard complet embarqué sous le panneau.
+        Configuration::updateValue('COOLSTATS_DASH_REPLACE', 0);                   // CoolStats à la place du tableau de bord natif.
         Configuration::updateValue('COOLSTATS_TRAFFIC_PROVIDER', 'none');          // none (défaut) | native_ps | matomo | ga4 | plausible
         Configuration::updateValue('COOLSTATS_MATOMO_URL', '');
         Configuration::updateValue('COOLSTATS_MATOMO_TOKEN', '');
@@ -255,11 +256,23 @@ class CoolStats extends Module
         // PrestaShop réserve la zone centrale à 7 ou 9 colonnes sur 12 selon la présence
         // de la zone trois (marketplace) : les six tuiles du panneau, en col-lg-2, ne
         // tiennent sur une ligne qu'en pleine largeur.
-        $css = '';
+        $rules = array();
         $controller = isset($this->context->controller) ? $this->context->controller->controller_name : '';
-        if ($controller === 'AdminDashboard' && Configuration::get('COOLSTATS_DASH_FULLWIDTH')) {
-            $css = '<style>#hookDashboardZoneTwo{width:100%!important}</style>';
+        if ($controller === 'AdminDashboard') {
+            $replace = $this->dashReplaceEnabled();
+            if ($replace || Configuration::get('COOLSTATS_DASH_FULLWIDTH')) {
+                $rules[] = '#hookDashboardZoneTwo{width:100%!important}';
+            }
+            // Remplacement : calendrier et blocs natifs retirés. Les laisser donnerait
+            // deux fenêtres de dates concurrentes sur la même page, celle du calendrier
+            // natif et celle des filtres CoolStats, avec deux chiffres pour la même
+            // boutique.
+            if ($replace) {
+                $rules[] = '#dashboard #calendar,#hookDashboardZoneOne,#hookDashboardZoneThree,'
+                    . '#hookDashboardZoneTwo>*:not(.cs-dash-panel){display:none!important}';
+            }
         }
+        $css = $rules ? '<style>' . implode('', $rules) . '</style>' : '';
 
         // Cible uniquement le lien "Dashboard" (AdminCoolStats), pas Config ni Parent.
         // Ajoute lite_display=1 et target=_blank pour ouvrir le dashboard plein écran.
@@ -281,22 +294,86 @@ class CoolStats extends Module
     }
 
     /**
+     * Remplacement du tableau de bord natif par CoolStats. Les premiers zips de
+     * la 1.0.10 nommaient l'option COOLSTATS_DASH_EMBED : on la relit si le
+     * nouveau nom n'est pas encore en base, sinon le réglage serait perdu sans
+     * qu'aucun script de mise à jour ne puisse intervenir (même numéro de version).
+     */
+    private function dashReplaceEnabled()
+    {
+        $value = Configuration::get('COOLSTATS_DASH_REPLACE');
+        if ($value === false || $value === null || $value === '') {
+            $value = Configuration::get('COOLSTATS_DASH_EMBED');
+        }
+
+        return ($value === false || $value === null || $value === '') ? 0 : (int) $value;
+    }
+
+    /**
+     * Fenêtre de dates du calendrier natif, telle que PrestaShop la passe aux
+     * hooks du tableau de bord. Repli sur le mois en cours si elle manque.
+     *
+     * @return array{from:string,to:string}
+     */
+    private function dashDateRange(array $params)
+    {
+        $isDate = function ($d) { return preg_match('/^\d{4}-\d{2}-\d{2}$/', (string) $d) === 1; };
+
+        return array(
+            'from' => isset($params['date_from']) && $isDate($params['date_from']) ? $params['date_from'] : date('Y-m-01'),
+            'to'   => isset($params['date_to'])   && $isDate($params['date_to'])   ? $params['date_to']   : date('Y-m-d'),
+        );
+    }
+
+    /**
+     * Bande d'indicateurs du tableau de bord natif : activée tant que l'option
+     * n'a pas été explicitement décochée (une installation antérieure à l'option
+     * n'a pas la valeur en base et doit garder son panneau).
+     *
+     * En mode remplacement elle n'a plus lieu d'être : le dashboard affiché juste
+     * en dessous porte les mêmes chiffres, et ses filtres de période feraient
+     * diverger les deux dès le premier changement de dates.
+     */
+    private function dashKpiEnabled()
+    {
+        if ($this->dashReplaceEnabled()) {
+            return 0;
+        }
+        $value = Configuration::get('COOLSTATS_DASH_KPI');
+        return ($value === false || $value === null || $value === '') ? 1 : (int) $value;
+    }
+
+    /**
      * Tableau de bord PrestaShop, zone centrale : les cinq indicateurs clés dans
-     * un panneau natif, avec un bouton vers le dashboard CoolStats complet.
+     * un panneau natif, avec un bouton vers le dashboard CoolStats complet, et
+     * au choix le dashboard complet à la place du tableau de bord natif.
      * Les valeurs sont rendues côté serveur pour le premier affichage, puis
      * rafraîchies en AJAX par hookDashboardData quand la période du calendrier change.
      */
     public function hookDashboardZoneTwo($params)
     {
-        $kpi = $this->getDashboardKpi($params);
+        $showKpi = $this->dashKpiEnabled();
+        $embed   = $this->dashReplaceEnabled();
+        $range   = $this->dashDateRange($params);
+        if (!$showKpi && !$embed) {
+            return '';
+        }
+
+        // Les indicateurs coûtent une requête : inutile de la jouer si la bande est masquée.
+        $kpi = $showKpi ? $this->getDashboardKpi($params) : array('data_value' => array(), 'data_trends' => array());
+
         $this->context->smarty->assign(array(
             'cs_dash_values' => $kpi['data_value'],
             'cs_dash_trends' => $kpi['data_trends'],
+            'cs_dash_kpi'    => $showKpi,
             'cs_dash_link'   => $this->context->link->getAdminLink('AdminCoolStats'),
-            // Dashboard complet sous le panneau (option) : la vue lite_display est une page
+            // Remplacement du tableau de bord (option) : la vue lite_display est une page
             // autonome sans menu ni header, donc embarquable telle quelle dans une iframe.
-            'cs_dash_embed'  => (int) Configuration::get('COOLSTATS_DASH_EMBED'),
-            'cs_dash_embed_link' => $this->context->link->getAdminLink('AdminCoolStats') . '&lite_display=1',
+            'cs_dash_embed'  => $embed,
+            // Le dashboard embarqué suit la période du calendrier natif : sans cela,
+            // deux fenêtres de dates différentes cohabiteraient sur le même écran.
+            'cs_dash_embed_link' => $this->context->link->getAdminLink('AdminCoolStats')
+                . '&lite_display=1&date_from=' . $range['from'] . '&date_to=' . $range['to'],
         ));
         return $this->display(__FILE__, 'views/templates/hook/dashboard_zone_two.tpl');
     }
@@ -307,6 +384,9 @@ class CoolStats extends Module
      */
     public function hookDashboardData($params)
     {
+        if (!$this->dashKpiEnabled()) {
+            return array('data_value' => array(), 'data_trends' => array());
+        }
         return $this->getDashboardKpi($params);
     }
 
@@ -320,9 +400,9 @@ class CoolStats extends Module
         require_once _PS_MODULE_DIR_ . 'coolstats/classes/CoolStatsContext.php';
         require_once _PS_MODULE_DIR_ . 'coolstats/sections/common/kpi/query.php';
 
-        $isDate = function ($d) { return preg_match('/^\d{4}-\d{2}-\d{2}$/', (string) $d) === 1; };
-        $from = isset($params['date_from']) && $isDate($params['date_from']) ? $params['date_from'] : date('Y-m-01');
-        $to   = isset($params['date_to'])   && $isDate($params['date_to'])   ? $params['date_to']   : date('Y-m-d');
+        $range = $this->dashDateRange($params);
+        $from = $range['from'];
+        $to   = $range['to'];
 
         $compare = (string) Configuration::get('COOLSTATS_COMPARE_DEFAULT');
         if (!in_array($compare, array('prev', 'yoy', 'none'), true)) {
@@ -392,8 +472,10 @@ class CoolStats extends Module
             Configuration::updateValue('COOLSTATS_AUTO_REFRESH_INTERVAL', (int) Tools::getValue('COOLSTATS_AUTO_REFRESH_INTERVAL'));
             Configuration::updateValue('COOLSTATS_DEBUG',          (int) Tools::getValue('COOLSTATS_DEBUG'));
             Configuration::updateValue('COOLSTATS_CSV_ENCODING',   Tools::getValue('COOLSTATS_CSV_ENCODING'));
+            Configuration::updateValue('COOLSTATS_DASH_KPI',       (int) Tools::getValue('COOLSTATS_DASH_KPI'));
             Configuration::updateValue('COOLSTATS_DASH_FULLWIDTH', (int) Tools::getValue('COOLSTATS_DASH_FULLWIDTH'));
-            Configuration::updateValue('COOLSTATS_DASH_EMBED',     (int) Tools::getValue('COOLSTATS_DASH_EMBED'));
+            Configuration::updateValue('COOLSTATS_DASH_REPLACE',   (int) Tools::getValue('COOLSTATS_DASH_REPLACE'));
+            Configuration::deleteByName('COOLSTATS_DASH_EMBED');
 
             // ZM40 Common — interrupteur réseau (toggle avec hidden=0 pour le décoché)
             Configuration::updateValue('ZM40_NET_ENABLED',         (int) Tools::getValue('ZM40_NET_ENABLED'));
@@ -480,8 +562,9 @@ class CoolStats extends Module
             'COOLSTATS_AUTO_REFRESH_INTERVAL'  => (int) Configuration::get('COOLSTATS_AUTO_REFRESH_INTERVAL'),
             'COOLSTATS_DEBUG'                  => (int) Configuration::get('COOLSTATS_DEBUG'),
             'COOLSTATS_CSV_ENCODING'           => Configuration::get('COOLSTATS_CSV_ENCODING') ?: 'utf-8',
+            'COOLSTATS_DASH_KPI'               => $this->dashKpiEnabled(),
             'COOLSTATS_DASH_FULLWIDTH'         => (int) Configuration::get('COOLSTATS_DASH_FULLWIDTH'),
-            'COOLSTATS_DASH_EMBED'             => (int) Configuration::get('COOLSTATS_DASH_EMBED'),
+            'COOLSTATS_DASH_REPLACE'           => $this->dashReplaceEnabled(),
             'COOLSTATS_TRAFFIC_PROVIDER'       => Configuration::get('COOLSTATS_TRAFFIC_PROVIDER') ?: 'none',
             'COOLSTATS_MATOMO_URL'             => (string) Configuration::get('COOLSTATS_MATOMO_URL'),
             'COOLSTATS_MATOMO_TOKEN'           => (string) Configuration::get('COOLSTATS_MATOMO_TOKEN'),
@@ -522,6 +605,7 @@ class CoolStats extends Module
             'cs_states_selected' => $statesSelected,
             'cs_config'          => $config,
             'cs_traffic_status'  => $trafficStatus,
+            'cs_modules_link'    => $this->context->link->getAdminLink('AdminModules'),
             'cs_statsdata_link'  => $this->context->link->getAdminLink('AdminModules') . '&configure=statsdata&module_name=statsdata',
             'cs_all_sections'    => $this->listAllSections(),
             'cs_multishop_ctx'   => $this->getMultishopContext(),

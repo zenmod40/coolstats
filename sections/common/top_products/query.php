@@ -39,6 +39,12 @@ function coolstats_section_top_products(CoolStatsContext $ctx, array $params)
         $limit = 25;
     }
 
+    // Vue par déclinaison (?variants=1) : une ligne par combinaison vendue.
+    // En vue produit, référence et EAN sont ceux du produit : `od.product_reference`
+    // porte la référence de la déclinaison, l'afficher en face d'une quantité qui
+    // cumule toutes les déclinaisons désignerait la mauvaise chose.
+    $variants = (int) Tools::getValue('variants', 0) ? 1 : 0;
+
     // Filtre recherche produit : ne garde que la (les) ligne(s) du produit
     // recherché (pas les co-achats). Appliqué au Top seulement — le total global
     // reste celui de la période (→ le % devient la part du produit).
@@ -49,26 +55,43 @@ function coolstats_section_top_products(CoolStatsContext $ctx, array $params)
         if ($line !== '') $productLine = ' AND ' . $line;
     }
 
-    // ── Top 100 par produit ──
+    // ── Top 100 par produit (ou par déclinaison) ──
+    if ($variants) {
+        // Un seul couple produit/déclinaison par groupe : od.product_reference et
+        // l'EAN de la combinaison décrivent exactement la ligne. Le nom enregistré
+        // par PrestaShop dans order_detail porte déjà les attributs.
+        $nameExpr = 'MAX(od.product_name)';
+        $refExpr  = "MAX(COALESCE(NULLIF(od.product_reference, ''), NULLIF(pa.reference, ''), p.reference))";
+        $eanExpr  = "MAX(COALESCE(NULLIF(pa.ean13, ''), p.ean13))";
+        $groupBy  = 'od.product_id, od.product_attribute_id';
+    } else {
+        $nameExpr = 'MAX(COALESCE(pl.name, od.product_name))';
+        $refExpr  = 'MAX(p.reference)';
+        $eanExpr  = 'MAX(p.ean13)';
+        $groupBy  = 'od.product_id';
+    }
+
     $sql = "SELECT
         od.product_id,
-        MAX(od.product_name) AS product_name,
-        MAX(od.product_reference) AS product_reference,
-        MAX(p.reference) AS p_reference,
-        MAX(p.ean13) AS ean13,
+        od.product_attribute_id,
+        {$nameExpr} AS product_name,
+        {$refExpr} AS product_reference,
+        {$eanExpr} AS ean13,
         SUM(od.product_quantity) AS total_qty,
         SUM(od.total_price_{$sfx}) AS total_revenue,
         MAX(img.id_image) AS id_image
     FROM {$p}order_detail od
     INNER JOIN {$p}orders o ON o.id_order = od.id_order
     LEFT JOIN {$p}product p ON p.id_product = od.product_id
+    LEFT JOIN {$p}product_lang pl ON pl.id_product = od.product_id AND pl.id_lang = {$idLang}
+    LEFT JOIN {$p}product_attribute pa ON pa.id_product_attribute = od.product_attribute_id
     LEFT JOIN {$p}image img ON img.id_product = od.product_id AND img.cover = 1
     {$countryJoin}
     {$channelsJoin}
     WHERE o.date_add BETWEEN '{$from}' AND '{$to}'
     AND {$valid}
     {$productLine}
-    GROUP BY od.product_id
+    GROUP BY {$groupBy}
     ORDER BY {$orderBy} DESC
     LIMIT {$limit}";
 
@@ -95,8 +118,9 @@ function coolstats_section_top_products(CoolStatsContext $ctx, array $params)
 
         $products[] = array(
             'id_product'     => $idProduct,
+            'id_product_attribute' => (int) $r['product_attribute_id'],
             'name'           => $r['product_name'],
-            'reference'      => $r['product_reference'] ?: ($r['p_reference'] ?: ''),
+            'reference'      => $r['product_reference'] ?: '',
             'ean13'          => $r['ean13'] ?: '',
             'total_qty'      => $qty,
             'total_revenue'  => $rev,
@@ -122,6 +146,7 @@ function coolstats_section_top_products(CoolStatsContext $ctx, array $params)
     return array(
         'products'  => $products,
         'sort_mode' => $sortMode,
+        'variants'  => $variants,
         'limit'     => $limit,
         'totals'    => array(
             'top_qty'        => $topQty,

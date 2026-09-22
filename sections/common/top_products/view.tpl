@@ -27,6 +27,12 @@
                 </div>
                 <span class="small {if $section_data.sort_mode == 'revenue'}fw-bold{else}text-muted{/if}">CA &euro;</span>
             </div>
+            <div class="d-flex align-items-center gap-2">
+                <div class="form-check form-switch mb-0">
+                    <input class="form-check-input cs-filter" data-filter="variants" data-on-value="1" data-off-value="" type="checkbox" id="cs-top-variants-toggle" {if $section_data.variants}checked{/if}>
+                </div>
+                <label class="small mb-0 {if $section_data.variants}fw-bold{else}text-muted{/if}" for="cs-top-variants-toggle">Par déclinaison</label>
+            </div>
             <button type="button" class="btn btn-sm btn-outline-secondary cs-export-csv-btn" id="cs-export-top-products" title="Exporter en CSV">
                 <i class="bi bi-file-earmark-spreadsheet"></i> CSV
             </button>

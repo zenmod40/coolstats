@@ -18,7 +18,8 @@
     </dl>
 {/function}
 
-<section id="coolstats" class="panel widget">
+{if $cs_dash_kpi}
+<section id="coolstats" class="panel widget cs-dash-panel">
     <header class="panel-heading">
         <i class="icon-bar-chart"></i> CoolStats
         <span class="panel-heading-action">
@@ -40,12 +41,13 @@
         </div>
     </div>
 </section>
+{/if}
 
 {if $cs_dash_embed}
-{* Dashboard complet sous le panneau. La vue lite_display se suffit à elle-même
+{* Dashboard complet à la place du tableau de bord. La vue lite_display se suffit à elle-même
    (ni menu ni header), et l'iframe garde son CSS et son JS à l'écart de ceux du
    back-office. Hauteur ajustée au contenu : même origine, donc lecture directe. *}
-<section class="panel widget" style="padding:0;overflow:hidden">
+<section class="panel widget cs-dash-panel" style="padding:0;overflow:hidden">
     <iframe id="cs-dash-frame" src="{$cs_dash_embed_link|escape:'html':'UTF-8'}"
             style="display:block;width:100%;height:900px;border:0" scrolling="no"></iframe>
 </section>
