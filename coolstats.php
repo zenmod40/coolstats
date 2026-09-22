@@ -37,7 +37,7 @@ class CoolStats extends Module
     {
         $this->name = 'coolstats';
         $this->tab = 'administration';
-        $this->version = '1.0.9';
+        $this->version = '1.0.10';
         $this->author = 'ZM40';
         $this->need_instance = 0;
         $this->bootstrap = true;
@@ -93,6 +93,8 @@ class CoolStats extends Module
         Configuration::updateValue('COOLSTATS_AUTO_REFRESH_INTERVAL', 0);          // Minutes ; 0 = désactivé. Sinon 1, 5, 15.
         Configuration::updateValue('COOLSTATS_DEBUG', 0);                          // Mode debug : logs PHP + console JS.
         Configuration::updateValue('COOLSTATS_CSV_ENCODING', 'utf-8');             // utf-8 (default) | utf-8-bom | latin1
+        Configuration::updateValue('COOLSTATS_DASH_FULLWIDTH', 0);                 // Panneau du tableau de bord natif sur toute la largeur.
+        Configuration::updateValue('COOLSTATS_DASH_EMBED', 0);                     // Dashboard complet embarqué sous le panneau.
         Configuration::updateValue('COOLSTATS_TRAFFIC_PROVIDER', 'none');          // none (défaut) | native_ps | matomo | ga4 | plausible
         Configuration::updateValue('COOLSTATS_MATOMO_URL', '');
         Configuration::updateValue('COOLSTATS_MATOMO_TOKEN', '');
@@ -249,9 +251,19 @@ class CoolStats extends Module
 
     public function hookDisplayBackOfficeHeader()
     {
+        // Panneau du tableau de bord natif sur toute la largeur (option Apparence).
+        // PrestaShop réserve la zone centrale à 7 ou 9 colonnes sur 12 selon la présence
+        // de la zone trois (marketplace) : les six tuiles du panneau, en col-lg-2, ne
+        // tiennent sur une ligne qu'en pleine largeur.
+        $css = '';
+        $controller = isset($this->context->controller) ? $this->context->controller->controller_name : '';
+        if ($controller === 'AdminDashboard' && Configuration::get('COOLSTATS_DASH_FULLWIDTH')) {
+            $css = '<style>#hookDashboardZoneTwo{width:100%!important}</style>';
+        }
+
         // Cible uniquement le lien "Dashboard" (AdminCoolStats), pas Config ni Parent.
         // Ajoute lite_display=1 et target=_blank pour ouvrir le dashboard plein écran.
-        return ''
+        return $css
             . '<script type="text/javascript">'
             . '$(document).ready(function() {'
             . '  $(\'a[href*="AdminCoolStats"]\').each(function() {'
@@ -281,6 +293,10 @@ class CoolStats extends Module
             'cs_dash_values' => $kpi['data_value'],
             'cs_dash_trends' => $kpi['data_trends'],
             'cs_dash_link'   => $this->context->link->getAdminLink('AdminCoolStats'),
+            // Dashboard complet sous le panneau (option) : la vue lite_display est une page
+            // autonome sans menu ni header, donc embarquable telle quelle dans une iframe.
+            'cs_dash_embed'  => (int) Configuration::get('COOLSTATS_DASH_EMBED'),
+            'cs_dash_embed_link' => $this->context->link->getAdminLink('AdminCoolStats') . '&lite_display=1',
         ));
         return $this->display(__FILE__, 'views/templates/hook/dashboard_zone_two.tpl');
     }
@@ -376,6 +392,8 @@ class CoolStats extends Module
             Configuration::updateValue('COOLSTATS_AUTO_REFRESH_INTERVAL', (int) Tools::getValue('COOLSTATS_AUTO_REFRESH_INTERVAL'));
             Configuration::updateValue('COOLSTATS_DEBUG',          (int) Tools::getValue('COOLSTATS_DEBUG'));
             Configuration::updateValue('COOLSTATS_CSV_ENCODING',   Tools::getValue('COOLSTATS_CSV_ENCODING'));
+            Configuration::updateValue('COOLSTATS_DASH_FULLWIDTH', (int) Tools::getValue('COOLSTATS_DASH_FULLWIDTH'));
+            Configuration::updateValue('COOLSTATS_DASH_EMBED',     (int) Tools::getValue('COOLSTATS_DASH_EMBED'));
 
             // ZM40 Common — interrupteur réseau (toggle avec hidden=0 pour le décoché)
             Configuration::updateValue('ZM40_NET_ENABLED',         (int) Tools::getValue('ZM40_NET_ENABLED'));
@@ -462,6 +480,8 @@ class CoolStats extends Module
             'COOLSTATS_AUTO_REFRESH_INTERVAL'  => (int) Configuration::get('COOLSTATS_AUTO_REFRESH_INTERVAL'),
             'COOLSTATS_DEBUG'                  => (int) Configuration::get('COOLSTATS_DEBUG'),
             'COOLSTATS_CSV_ENCODING'           => Configuration::get('COOLSTATS_CSV_ENCODING') ?: 'utf-8',
+            'COOLSTATS_DASH_FULLWIDTH'         => (int) Configuration::get('COOLSTATS_DASH_FULLWIDTH'),
+            'COOLSTATS_DASH_EMBED'             => (int) Configuration::get('COOLSTATS_DASH_EMBED'),
             'COOLSTATS_TRAFFIC_PROVIDER'       => Configuration::get('COOLSTATS_TRAFFIC_PROVIDER') ?: 'none',
             'COOLSTATS_MATOMO_URL'             => (string) Configuration::get('COOLSTATS_MATOMO_URL'),
             'COOLSTATS_MATOMO_TOKEN'           => (string) Configuration::get('COOLSTATS_MATOMO_TOKEN'),

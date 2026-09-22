@@ -40,3 +40,32 @@
         </div>
     </div>
 </section>
+
+{if $cs_dash_embed}
+{* Dashboard complet sous le panneau. La vue lite_display se suffit à elle-même
+   (ni menu ni header), et l'iframe garde son CSS et son JS à l'écart de ceux du
+   back-office. Hauteur ajustée au contenu : même origine, donc lecture directe. *}
+<section class="panel widget" style="padding:0;overflow:hidden">
+    <iframe id="cs-dash-frame" src="{$cs_dash_embed_link|escape:'html':'UTF-8'}"
+            style="display:block;width:100%;height:900px;border:0" scrolling="no"></iframe>
+</section>
+<script type="text/javascript">
+(function () {
+    var frame = document.getElementById('cs-dash-frame');
+    if (!frame) { return; }
+    frame.addEventListener('load', function () {
+        var doc;
+        try { doc = frame.contentDocument; } catch (e) { return; }
+        if (!doc || !doc.body) { return; }
+        // Le dashboard occupe toute la hauteur de la fenêtre quand il est seul sur
+        // sa page ; embarqué, cette contrainte ferait grandir l'iframe sans fin.
+        doc.body.style.minHeight = '0';
+        var app = doc.getElementById('cs-app');
+        if (app) { app.style.minHeight = '0'; }
+        var fit = function () { frame.style.height = doc.body.scrollHeight + 'px'; };
+        fit();
+        if (window.ResizeObserver) { new ResizeObserver(fit).observe(doc.body); }
+    });
+})();
+</script>
+{/if}

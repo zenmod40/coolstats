@@ -790,11 +790,13 @@
 
             <div class="cs-panel">
                 <h3 class="cs-panel-title">État technique (diagnostic)</h3>
-                <p class="cs-panel-desc">Pour information uniquement — peut servir à un dev pour comprendre l'état de la base.</p>
+                <p class="cs-panel-desc">Pour information uniquement — peut servir à un dev pour comprendre l'état de la base. Ces lignes ne concernent que la source « PrestaShop natif » : <strong>CoolStats n'a jamais besoin de <code>statsdata</code></strong> pour les commandes, le CA, les clients ou les produits.</p>
                 <div class="cs-traffic-diag">
                     <div class="cs-traffic-diag-row">
                         <span>Module <code>statsdata</code></span>
-                        {if $cs_traffic_status.statsdata_active}
+                        {if $tp != 'native_ps'}
+                            <span class="text-muted">Non requis avec cette source</span>
+                        {elseif $cs_traffic_status.statsdata_active}
                             <span class="cs-diag-ok"><i class="icon-check"></i> Installé et actif</span>
                         {elseif $cs_traffic_status.statsdata_installed}
                             <span class="cs-diag-warn"><i class="icon-exclamation-triangle"></i> Installé mais inactif</span>
@@ -886,6 +888,33 @@
                             </div>
                         </label>
                     {/foreach}
+                </div>
+            </div>
+
+            <div class="cs-panel">
+                <h3 class="cs-panel-title">Panneau du tableau de bord PrestaShop</h3>
+                <div class="cs-form-row cs-form-row--switch">
+                    <div class="cs-form-label">Afficher le panneau sur toute la largeur</div>
+                    <div class="cs-form-field">
+                        <label class="cs-switch">
+                            <input type="hidden" name="COOLSTATS_DASH_FULLWIDTH" value="0">
+                            <input type="checkbox" name="COOLSTATS_DASH_FULLWIDTH" value="1" {if $cs_config.COOLSTATS_DASH_FULLWIDTH}checked{/if}>
+                            <span class="cs-switch-slider"></span>
+                        </label>
+                    </div>
+                    <div class="cs-form-desc">Les six indicateurs du panneau tiennent sur une seule ligne quand la zone centrale occupe toute la largeur — ce que PrestaShop ne fait pas par défaut, il y réserve la place de la colonne marketplace. À activer si vous avez retiré ou masqué cette colonne : sinon elle se retrouve reléguée sous le panneau.</div>
+                </div>
+
+                <div class="cs-form-row cs-form-row--switch">
+                    <div class="cs-form-label">Afficher le dashboard complet sous le panneau</div>
+                    <div class="cs-form-field">
+                        <label class="cs-switch">
+                            <input type="hidden" name="COOLSTATS_DASH_EMBED" value="0">
+                            <input type="checkbox" name="COOLSTATS_DASH_EMBED" value="1" {if $cs_config.COOLSTATS_DASH_EMBED}checked{/if}>
+                            <span class="cs-switch-slider"></span>
+                        </label>
+                    </div>
+                    <div class="cs-form-desc">Le dashboard entier — graphiques, filtres, personnalisation — s'affiche directement sur la page d'accueil du back-office, sous les indicateurs. Le bouton « Dashboard complet » reste disponible pour l'ouvrir en pleine page. À n'activer que si le tableau de bord est votre page de travail : la page d'accueil charge alors toutes les sections à chaque visite, ce qui peut être long sur un gros catalogue. À combiner avec la pleine largeur ci-dessus.</div>
                 </div>
             </div>
 

@@ -3,6 +3,17 @@
 Toutes les évolutions notables du module sont listées ici.
 Format inspiré de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/), versions [SemVer](https://semver.org/lang/fr/).
 
+## [1.0.10] — 2026-09-22
+
+### Ajouté
+
+- **Le panneau du tableau de bord PrestaShop peut occuper toute la largeur.** Ses six indicateurs sont dessinés pour tenir sur une seule ligne, ce que PrestaShop ne permet pas par défaut : il réserve une partie de la zone centrale à la colonne marketplace, et les tuiles se tassent. Une option dans l'onglet Apparence élargit la zone à toute la page, pour les boutiques qui ont retiré cette colonne. Désactivée par défaut, le tableau de bord reste inchangé tant qu'on n'y touche pas.
+- **Le dashboard complet peut s'afficher directement sur la page d'accueil du back-office.** Une seconde option, elle aussi dans Apparence, ajoute le dashboard entier sous les indicateurs — graphiques, filtres et personnalisation compris — pour ceux qui veulent en faire leur page de travail plutôt que de l'ouvrir dans un onglet. Le bouton « Dashboard complet » reste là pour la pleine page. Désactivée par défaut : la page d'accueil charge alors toutes les sections à chaque visite.
+
+### Modifié
+
+- **Le diagnostic de trafic laissait croire que le module `statsdata` était nécessaire.** Il affichait « Installé mais inactif » en orange même quand la source de trafic sélectionnée n'était pas celle de PrestaShop — un avertissement sans objet, puisque les commandes, le chiffre d'affaires, les clients et les produits ne dépendent jamais de ce module. La ligne reste neutre tant que la source native n'est pas retenue, et le panneau dit désormais à quoi ces informations se rapportent.
+
 ## [1.0.9] — 2026-09-02
 
 ### Ajouté
