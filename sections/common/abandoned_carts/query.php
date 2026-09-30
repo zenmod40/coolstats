@@ -55,7 +55,7 @@ function coolstats_section_abandoned_carts(CoolStatsContext $ctx, array $params)
     INNER JOIN ({$cartValueSub}) cpv ON cpv.id_cart = c.id_cart AND cpv.qty > 0
     LEFT JOIN {$p}orders o ON o.id_cart = c.id_cart
     WHERE c.date_add BETWEEN '{$from}' AND '{$to}'
-    AND c.date_add < DATE_SUB(NOW(), INTERVAL 2 HOUR)
+    AND c.date_add < DATE_SUB(NOW(), INTERVAL 2 HOUR)" . CoolStatsHelpers::shopRestriction('c') . "
     AND o.id_order IS NULL");
 
     $nbAbandoned   = (int) ($kpi['nb_abandoned'] ?? 0);
@@ -67,7 +67,7 @@ function coolstats_section_abandoned_carts(CoolStatsContext $ctx, array $params)
     $valid = CoolStatsHelpers::getOrderStateCondition('valid', 'o');
     $nbOrders = (int) $db->getValue("SELECT COUNT(o.id_order)
         FROM {$p}orders o
-        WHERE o.date_add BETWEEN '{$from}' AND '{$to}'
+        WHERE o.date_add BETWEEN '{$from}' AND '{$to}'" . CoolStatsHelpers::shopRestriction('o') . "
         AND {$valid}");
     $abandonRate = ($nbAbandoned + $nbOrders) > 0
         ? round(($nbAbandoned / ($nbAbandoned + $nbOrders)) * 100, 1)
@@ -87,7 +87,7 @@ function coolstats_section_abandoned_carts(CoolStatsContext $ctx, array $params)
     LEFT JOIN {$p}orders o ON o.id_cart = c.id_cart
     LEFT JOIN {$p}customer cu ON cu.id_customer = c.id_customer
     WHERE c.date_add BETWEEN '{$from}' AND '{$to}'
-    AND c.date_add < DATE_SUB(NOW(), INTERVAL 2 HOUR)
+    AND c.date_add < DATE_SUB(NOW(), INTERVAL 2 HOUR)" . CoolStatsHelpers::shopRestriction('c') . "
     AND o.id_order IS NULL
     ORDER BY cpv.value_ht DESC
     LIMIT 5");

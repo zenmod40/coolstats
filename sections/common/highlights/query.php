@@ -69,10 +69,11 @@ function coolstats_highlights_star(array $params)
     $channelsJoin = CoolStatsHelpers::getChannelsJoin($channels, 'o');
 
     $product = isset($params['product']) ? $params['product'] : null;
-    $productWhere = '';
+    // CST-04 : boutiques du contexte de l'employé, complété du filtre produit.
+    $productWhere = CoolStatsHelpers::shopRestriction('o');
     if ($product) {
         $pf = CoolStatsHelpers::getProductFilterWhereSQL($product, 'o');
-        if ($pf !== '') $productWhere = ' AND ' . $pf;
+        if ($pf !== '') $productWhere .= ' AND ' . $pf;
     }
 
     $qN = $db->executeS("SELECT od.product_id, SUM(od.product_quantity) AS qty
@@ -132,10 +133,11 @@ function coolstats_highlights_watch(array $params)
     $channelsJoin = CoolStatsHelpers::getChannelsJoin($channels, 'o');
 
     $product = isset($params['product']) ? $params['product'] : null;
-    $productWhere = '';
+    // CST-04 : boutiques du contexte de l'employé, complété du filtre produit.
+    $productWhere = CoolStatsHelpers::shopRestriction('o');
     if ($product) {
         $pf = CoolStatsHelpers::getProductFilterWhereSQL($product, 'o');
-        if ($pf !== '') $productWhere = ' AND ' . $pf;
+        if ($pf !== '') $productWhere .= ' AND ' . $pf;
     }
 
     $rN = $db->executeS("SELECT od.product_id,
@@ -200,10 +202,11 @@ function coolstats_highlights_pairs(array $params)
     $channelsJoin = CoolStatsHelpers::getChannelsJoin($channels, 'o');
 
     $product = isset($params['product']) ? $params['product'] : null;
-    $productWhere = '';
+    // CST-04 : boutiques du contexte de l'employé, complété du filtre produit.
+    $productWhere = CoolStatsHelpers::shopRestriction('o');
     if ($product) {
         $pf = CoolStatsHelpers::getProductFilterWhereSQL($product, 'o');
-        if ($pf !== '') $productWhere = ' AND ' . $pf;
+        if ($pf !== '') $productWhere .= ' AND ' . $pf;
     }
 
     // Db::getRow ajoute LIMIT 1 automatiquement → ne pas en mettre ici.

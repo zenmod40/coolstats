@@ -643,6 +643,9 @@ class AdminCoolStatsController extends ModuleAdminController
     private function ajaxSetVisualTheme()
     {
         header('Content-Type: application/json');
+        if (!$this->checkAjaxAccess('edit')) {
+            die();
+        }
         $theme = (string) Tools::getValue('theme');
         $allowed = array('cozy', 'aurora', 'editorial', 'brutalist', 'terminal');
         if (!in_array($theme, $allowed, true)) {
@@ -652,6 +655,22 @@ class AdminCoolStatsController extends ModuleAdminController
         Configuration::updateValue('COOLSTATS_VISUAL_THEME', $theme);
         echo json_encode(array('ok' => true, 'theme' => $theme));
         die();
+    }
+
+    /**
+     * Le jeton de l'onglet et le droit « lecture » suffisent à atteindre le
+     * routeur AJAX : les actions qui écrivent ou appellent un serveur tiers
+     * exigent en plus le droit adéquat sur l'onglet (CST-02, CST-03).
+     * Répond 403 en JSON et renvoie false si le droit manque.
+     */
+    private function checkAjaxAccess($perm)
+    {
+        if ($this->access($perm)) {
+            return true;
+        }
+        http_response_code(403);
+        echo json_encode(array('ok' => false, 'success' => false, 'error' => 'Accès refusé', 'message' => 'Accès refusé'));
+        return false;
     }
 
     /**
@@ -742,7 +761,8 @@ class AdminCoolStatsController extends ModuleAdminController
         $countryJoin = CoolStatsHelpers::getCountryJoin($this->country, 'o');
         $channelsJoin = CoolStatsHelpers::getChannelsJoin($this->channels, 'o');
         $sfx         = CoolStatsHelpers::taxSuffix();
-        $validWhere  = $valid ? (' AND ' . $valid) : '';
+        // CST-04 : restreint aussi aux boutiques du contexte de l'employé.
+        $validWhere  = ($valid ? (' AND ' . $valid) : '') . CoolStatsHelpers::shopRestriction('o');
 
         // Filtre produit : appliqué au Top 10 (n'affiche que la catégorie du
         // produit recherché), PAS au total global → le % reste « part du total ».
@@ -855,10 +875,11 @@ class AdminCoolStatsController extends ModuleAdminController
         $imageJoin = CoolStatsHelpers::getProductImageJoin('od.product_id', 'imgc');
         $sfx = CoolStatsHelpers::taxSuffix();
 
-        $productWhere = '';
+        // CST-04 : boutiques du contexte de l'employé, complété du filtre produit.
+        $productWhere = CoolStatsHelpers::shopRestriction('o');
         if ($this->product) {
             $pf = CoolStatsHelpers::getProductFilterWhereSQL($this->product, 'o');
-            if ($pf !== '') $productWhere = ' AND ' . $pf;
+            if ($pf !== '') $productWhere .= ' AND ' . $pf;
         }
 
         $rows = $db->executeS("SELECT
@@ -1021,6 +1042,9 @@ class AdminCoolStatsController extends ModuleAdminController
             echo json_encode(array('success' => false, 'message' => 'POST requis'));
             return;
         }
+        if (!$this->checkAjaxAccess('delete')) {
+            return;
+        }
 
         $idCart = (int) Tools::getValue('id_cart', 0);
         if ($idCart <= 0) {
@@ -1038,7 +1062,7 @@ class AdminCoolStatsController extends ModuleAdminController
         $check = $db->getRow("SELECT c.id_cart, c.date_add,
                 COALESCE((SELECT COUNT(*) FROM {$p}orders o WHERE o.id_cart = c.id_cart), 0) AS nb_orders
             FROM {$p}cart c
-            WHERE c.id_cart = " . $idCart);
+            WHERE c.id_cart = " . $idCart . CoolStatsHelpers::shopRestriction('c'));
 
         if (!$check) {
             http_response_code(404);
@@ -1080,6 +1104,9 @@ class AdminCoolStatsController extends ModuleAdminController
     private function ajaxTestMatomo()
     {
         header('Content-Type: application/json');
+        if (!$this->checkAjaxAccess('edit')) {
+            return;
+        }
         $url     = rtrim(trim((string) Tools::getValue('matomo_url')), '/');
         $token   = trim((string) Tools::getValue('matomo_token'));
         $siteId  = (int) Tools::getValue('matomo_site');
@@ -1090,6 +1117,22 @@ class AdminCoolStatsController extends ModuleAdminController
         }
         if (!preg_match('#^https?://#i', $url)) {
             echo json_encode(array('ok' => false, 'error' => 'URL invalide (doit commencer par http:// ou https://)'));
+            return;
+        }
+        // CST-02 : pas d'appel vers le réseau interne. Toutes les adresses de
+        // l'hôte doivent être publiques (ni privée, ni loopback, ni link-local).
+        // ponytail: IPv4 seulement et contrôle avant la requête (rebinding DNS
+        // possible) ; épingler l'IP résolue si le risque le justifie un jour.
+        $host = (string) parse_url($url, PHP_URL_HOST);
+        $ips  = $host !== '' ? gethostbynamel($host) : false;
+        $public = is_array($ips);
+        foreach ((array) $ips as $ip) {
+            if (!filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
+                $public = false;
+            }
+        }
+        if (!$public) {
+            echo json_encode(array('ok' => false, 'error' => 'URL refusée : l\'hôte doit être une adresse publique résolue en IPv4'));
             return;
         }
 
@@ -1107,6 +1150,7 @@ class AdminCoolStatsController extends ModuleAdminController
                     'header'        => "Content-Type: application/x-www-form-urlencoded\r\n",
                     'content'       => $body,
                     'timeout'       => 6,
+                    'follow_location' => 0, // CST-02 : pas de rebond vers un hôte non contrôlé
                     'ignore_errors' => true,
                     'user_agent'    => 'CoolStats/1.0 PrestaShop module',
                 ),
@@ -1139,6 +1183,9 @@ class AdminCoolStatsController extends ModuleAdminController
     private function ajaxTestGA4()
     {
         header('Content-Type: application/json');
+        if (!$this->checkAjaxAccess('edit')) {
+            return;
+        }
         require_once _PS_MODULE_DIR_ . 'coolstats/classes/traffic/CoolStatsGA4TrafficProvider.php';
         $provider = new CoolStatsGA4TrafficProvider();
 
@@ -1224,7 +1271,7 @@ class AdminCoolStatsController extends ModuleAdminController
             GROUP BY oh.id_order
         ) oh_min ON oh_min.id_order = o.id_order
         {$countryJoin}
-        WHERE o.date_add BETWEEN '{$from}' AND '{$to}'
+        WHERE o.date_add BETWEEN '{$from}' AND '{$to}'" . CoolStatsHelpers::shopRestriction('o') . "
         AND {$valid}
         GROUP BY o.id_carrier, carrier_name
         ORDER BY total_orders DESC");

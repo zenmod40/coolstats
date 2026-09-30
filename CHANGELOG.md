@@ -3,6 +3,15 @@
 Toutes les évolutions notables du module sont listées ici.
 Format inspiré de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/), versions [SemVer](https://semver.org/lang/fr/).
 
+## [1.0.11] — 2026-09-30
+
+### Sécurité
+
+- **Correctif de sécurité, mise à jour recommandée.** Les libellés de trafic venus de Google Analytics 4 et de Matomo (sources, titres de pages) étaient affichés sans être neutralisés dans le tableau de bord : un visiteur pouvait y faire apparaître du code exécuté dans le navigateur des employés. Ils sont désormais échappés, comme les résultats des boutons « Tester la connexion ». Le détail sera publié ultérieurement dans une note de sécurité.
+- **Droits des employés.** Tester une connexion Matomo ou GA4 et changer le thème visuel exigent le droit de modification sur l'onglet CoolStats ; supprimer un panier abandonné, le droit de suppression. Le simple droit de consultation suffisait jusqu'ici.
+- **Test Matomo.** L'adresse testée doit être en http(s) et pointer vers un serveur public : les adresses locales ou de réseau interne sont refusées, et les redirections ne sont plus suivies.
+- **Multiboutique.** Un employé limité à certaines boutiques ne voit plus que leurs statistiques, clients et paniers ; il voyait jusqu'ici ceux de toutes les boutiques.
+
 ## [1.0.10] — 2026-09-22
 
 ### Ajouté

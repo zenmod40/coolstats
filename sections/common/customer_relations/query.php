@@ -42,7 +42,7 @@ function coolstats_section_customer_relations(CoolStatsContext $ctx, array $para
         $tEsc = pSQL($t) . ' 23:59:59';
         $orders = (int) $db->getValue("SELECT COUNT(o.id_order)
             FROM {$p}orders o {$countryJoin} {$channelsJoin}
-            WHERE {$valid} AND o.date_add BETWEEN '{$fEsc}' AND '{$tEsc}'");
+            WHERE {$valid} AND o.date_add BETWEEN '{$fEsc}' AND '{$tEsc}'" . CoolStatsHelpers::shopRestriction('o'));
         $sav = (int) $db->getValue("SELECT COUNT(*)
             FROM {$p}customer_thread ct
             WHERE ct.date_add BETWEEN '{$fEsc}' AND '{$tEsc}'" . ($idShop ? " AND ct.id_shop = {$idShop}" : ''));
@@ -50,7 +50,7 @@ function coolstats_section_customer_relations(CoolStatsContext $ctx, array $para
         if ($hasRetract) {
             $retract = (int) $db->getValue("SELECT COUNT(*)
                 FROM {$p}retractation_request rr
-                WHERE rr.date_add BETWEEN '{$fEsc}' AND '{$tEsc}'");
+                WHERE rr.date_add BETWEEN '{$fEsc}' AND '{$tEsc}'" . CoolStatsHelpers::shopRestriction('rr'));
         }
         return array('orders' => $orders, 'sav' => $sav, 'retract' => $retract);
     };

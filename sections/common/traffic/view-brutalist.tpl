@@ -3,7 +3,7 @@
     <div class="cs-brutal-colored-title">
         <div class="cs-brutal-colored-t">📡 {l s='Trafic & visiteurs' mod='coolstats'}</div>
         {if $section_data.available && $section_data.provider_label}
-        <span class="cs-brutal-tag cs-brutal-tag-yellow">{$section_data.provider_label}</span>
+        <span class="cs-brutal-tag cs-brutal-tag-yellow">{$section_data.provider_label|escape:'html':'UTF-8'}</span>
         {else}
         <span class="cs-brutal-tag cs-brutal-tag-yellow">{l s='Setup' mod='coolstats'}</span>
         {/if}

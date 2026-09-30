@@ -32,10 +32,11 @@ function coolstats_section_customers(CoolStatsContext $ctx, array $params)
     $revenueExprO2 = CoolStatsHelpers::getRevenueExpression('o2');
 
     $product = isset($params['product']) ? $params['product'] : null;
-    $productWhere = '';
+    // CST-04 : boutiques du contexte de l'employé, complété du filtre produit.
+    $productWhere = CoolStatsHelpers::shopRestriction('o');
     if ($product) {
         $pf = CoolStatsHelpers::getProductFilterWhereSQL($product, 'o');
-        if ($pf !== '') $productWhere = ' AND ' . $pf;
+        if ($pf !== '') $productWhere .= ' AND ' . $pf;
     }
 
     // ── Période N : clients distincts + leurs commandes valides ──
@@ -83,7 +84,7 @@ function coolstats_section_customers(CoolStatsContext $ctx, array $params)
         AND o2.current_state IN (
             SELECT id_order_state FROM {$p}order_state WHERE deleted = 0
         )
-        AND o2.id_customer > 0
+        AND o2.id_customer > 0" . CoolStatsHelpers::shopRestriction('o2') . "
         GROUP BY o2.id_customer
     ) ltv_sub");
     // Note : on filtre les annulés directement via le sous-query plus simple.

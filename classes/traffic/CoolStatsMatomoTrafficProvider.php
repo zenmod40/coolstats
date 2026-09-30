@@ -154,7 +154,7 @@ class CoolStatsMatomoTrafficProvider implements CoolStatsTrafficProvider
         $db = Db::getInstance(_PS_USE_SQL_SLAVE_);
         $p = _DB_PREFIX_;
         $orders = (int) $db->getValue("SELECT COUNT(*) FROM {$p}orders o
-            WHERE o.date_add BETWEEN '{$f}' AND '{$t}' AND {$valid}");
+            WHERE o.date_add BETWEEN '{$f}' AND '{$t}' AND {$valid}" . CoolStatsHelpers::shopRestriction('o'));
         $conv = $unique > 0 ? round(($orders / $unique) * 100, 2) : 0;
 
         return array(
@@ -178,7 +178,9 @@ class CoolStatsMatomoTrafficProvider implements CoolStatsTrafficProvider
             foreach ($r as $row) {
                 if (!is_array($row)) continue;
                 $result[] = array(
-                    'label' => isset($row['label']) ? (string) $row['label'] : '—',
+                    // Matomo renvoie ses libellés encodés en HTML : on les décode,
+                    // l'échappement se fait à l'affichage dans le template (CST-01).
+                    'label' => isset($row['label']) ? html_entity_decode((string) $row['label'], ENT_QUOTES, 'UTF-8') : '—',
                     'views' => (int) ($row['nb_hits'] ?? $row['nb_visits'] ?? 0),
                 );
             }
@@ -220,7 +222,7 @@ class CoolStatsMatomoTrafficProvider implements CoolStatsTrafficProvider
             foreach ($sites as $row) {
                 if (!is_array($row)) continue;
                 $result[] = array(
-                    'source' => (string) ($row['label'] ?? '—'),
+                    'source' => html_entity_decode((string) ($row['label'] ?? '—'), ENT_QUOTES, 'UTF-8'),
                     'hits'   => (int) ($row['nb_visits'] ?? 0),
                 );
             }
@@ -235,7 +237,7 @@ class CoolStatsMatomoTrafficProvider implements CoolStatsTrafficProvider
             foreach ($search as $row) {
                 if (!is_array($row)) continue;
                 $result[] = array(
-                    'source' => (string) ($row['label'] ?? '—'),
+                    'source' => html_entity_decode((string) ($row['label'] ?? '—'), ENT_QUOTES, 'UTF-8'),
                     'hits'   => (int) ($row['nb_visits'] ?? 0),
                 );
             }

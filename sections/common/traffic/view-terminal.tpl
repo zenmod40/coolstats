@@ -5,7 +5,7 @@
     <div class="cs-section-header">
         <span>📡 {l s='Trafic & visiteurs' mod='coolstats'}</span>
         {if $section_data.available && $section_data.provider_label}
-        <span class="cs-traffic-term-badge cs-traffic-term-badge--ok">{$section_data.provider_label}</span>
+        <span class="cs-traffic-term-badge cs-traffic-term-badge--ok">{$section_data.provider_label|escape:'html':'UTF-8'}</span>
         {else}
         <span class="cs-traffic-term-badge">{l s='Setup' mod='coolstats'}</span>
         {/if}

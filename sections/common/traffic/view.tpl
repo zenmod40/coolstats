@@ -14,7 +14,7 @@
     <div class="cs-section-header">
         <span><i class="bi bi-graph-up-arrow"></i> {$section.title}</span>
         {if $section_data.available && $section_data.provider_label}
-            <span class="badge cs-badge-accent" title="Source des données"><i class="bi bi-bar-chart-line me-1"></i>{$section_data.provider_label}</span>
+            <span class="badge cs-badge-accent" title="Source des données"><i class="bi bi-bar-chart-line me-1"></i>{$section_data.provider_label|escape:'html':'UTF-8'}</span>
         {/if}
     </div>
 
@@ -105,7 +105,7 @@
                     {if $section_data.top_pages}
                         <ul class="cs-traffic-list">
                             {foreach from=$section_data.top_pages item=p}
-                            <li><span class="cs-traffic-list-label">{$p.label}</span><span class="cs-traffic-list-value">{$p.views|number_format:0:',':' '}</span></li>
+                            <li><span class="cs-traffic-list-label">{$p.label|escape:'html':'UTF-8'}</span><span class="cs-traffic-list-value">{$p.views|number_format:0:',':' '}</span></li>
                             {/foreach}
                         </ul>
                     {else}
@@ -119,7 +119,7 @@
                     {if $section_data.top_sources}
                         <ul class="cs-traffic-list">
                             {foreach from=$section_data.top_sources item=s}
-                            <li><span class="cs-traffic-list-label">{$s.source}</span><span class="cs-traffic-list-value">{$s.hits|number_format:0:',':' '}</span></li>
+                            <li><span class="cs-traffic-list-label">{$s.source|escape:'html':'UTF-8'}</span><span class="cs-traffic-list-value">{$s.hits|number_format:0:',':' '}</span></li>
                             {/foreach}
                         </ul>
                     {else}

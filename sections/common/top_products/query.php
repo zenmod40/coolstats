@@ -29,6 +29,7 @@ function coolstats_section_top_products(CoolStatsContext $ctx, array $params)
     $channelsJoin = CoolStatsHelpers::getChannelsJoin($channels, 'o');
     $valid       = CoolStatsHelpers::getOrderStateCondition('valid', 'o');
     $sfx         = CoolStatsHelpers::taxSuffix();
+    $shopWhere   = CoolStatsHelpers::shopRestriction('o'); // CST-04
 
     $sortMode = (string) Tools::getValue('sort', 'qty');
     $sortMode = in_array($sortMode, array('qty', 'revenue'), true) ? $sortMode : 'qty';
@@ -88,7 +89,7 @@ function coolstats_section_top_products(CoolStatsContext $ctx, array $params)
     LEFT JOIN {$p}image img ON img.id_product = od.product_id AND img.cover = 1
     {$countryJoin}
     {$channelsJoin}
-    WHERE o.date_add BETWEEN '{$from}' AND '{$to}'
+    WHERE o.date_add BETWEEN '{$from}' AND '{$to}'{$shopWhere}
     AND {$valid}
     {$productLine}
     GROUP BY {$groupBy}
@@ -137,7 +138,7 @@ function coolstats_section_top_products(CoolStatsContext $ctx, array $params)
     INNER JOIN {$p}orders o ON o.id_order = od.id_order
     {$countryJoin}
     {$channelsJoin}
-    WHERE o.date_add BETWEEN '{$from}' AND '{$to}'
+    WHERE o.date_add BETWEEN '{$from}' AND '{$to}'{$shopWhere}
     AND {$valid}");
 
     $globalQty = (int) ($globalRow['qty'] ?? 0);

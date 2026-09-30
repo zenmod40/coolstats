@@ -199,7 +199,7 @@ class CoolStatsGA4TrafficProvider implements CoolStatsTrafficProvider
         $db = Db::getInstance(_PS_USE_SQL_SLAVE_);
         $p = _DB_PREFIX_;
         $orders = (int) $db->getValue("SELECT COUNT(*) FROM {$p}orders o
-            WHERE o.date_add BETWEEN '{$f}' AND '{$t}' AND {$valid}");
+            WHERE o.date_add BETWEEN '{$f}' AND '{$t}' AND {$valid}" . CoolStatsHelpers::shopRestriction('o'));
         $conv = $unique > 0 ? round(($orders / $unique) * 100, 2) : 0;
 
         return array(

@@ -1160,6 +1160,8 @@
 </div>
 
 <script>
+    // Texte venu d'un serveur tiers (GA4, Matomo) : jamais inséré comme HTML.
+    function csEsc(s) { var d = document.createElement('div'); d.textContent = (s === null || s === undefined) ? '' : String(s); return d.innerHTML; }
 (function () {
     // ── Tabs ──
     var tabs = document.querySelectorAll('.coolstats-admin .cs-tab');
@@ -1223,10 +1225,10 @@
                     var data = null;
                     try { data = JSON.parse(res.body); } catch (e) {}
                     if (data && data.ok) {
-                        var detail = data.property_id ? ' (Property ID : ' + data.property_id + ')' : '';
+                        var detail = data.property_id ? ' (Property ID : ' + csEsc(data.property_id) + ')' : '';
                         resultEl.innerHTML = '<span class="cs-diag-ok"><i class="icon-check"></i> Connexion réussie' + detail + '</span>';
                     } else if (data && data.error) {
-                        resultEl.innerHTML = '<span class="text-danger"><i class="icon-times"></i> ' + data.error + '</span>';
+                        resultEl.innerHTML = '<span class="text-danger"><i class="icon-times"></i> ' + csEsc(data.error) + '</span>';
                     } else {
                         resultEl.innerHTML = '<span class="text-danger">HTTP ' + res.status + ' — réponse non JSON. F12 console pour détails.</span>';
                         console.error('[CoolStats] GA4 test response:', res);
@@ -1234,7 +1236,7 @@
                 })
                 .catch(function (err) {
                     ga4TestBtn.disabled = false;
-                    resultEl.innerHTML = '<span class="text-danger">Erreur réseau : ' + (err && err.message ? err.message : 'inconnue') + '</span>';
+                    resultEl.innerHTML = '<span class="text-danger">Erreur réseau : ' + (err && err.message ? csEsc(err.message) : 'inconnue') + '</span>';
                 });
         });
     }
@@ -1273,10 +1275,10 @@
                     var data = null;
                     try { data = JSON.parse(res.body); } catch (e) {}
                     if (data && data.ok) {
-                        var details = data.matomo_version ? ' (Matomo v' + data.matomo_version + (data.site_name ? ', site "' + data.site_name + '"' : '') + ')' : '';
+                        var details = data.matomo_version ? ' (Matomo v' + csEsc(data.matomo_version) + (data.site_name ? ', site "' + csEsc(data.site_name) + '"' : '') + ')' : '';
                         resultEl.innerHTML = '<span class="cs-diag-ok"><i class="icon-check"></i> Connexion réussie' + details + '</span>';
                     } else if (data && data.error) {
-                        resultEl.innerHTML = '<span class="text-danger"><i class="icon-times"></i> ' + data.error + '</span>';
+                        resultEl.innerHTML = '<span class="text-danger"><i class="icon-times"></i> ' + csEsc(data.error) + '</span>';
                     } else {
                         var preview = (res.body || '').substring(0, 200).replace(/</g, '&lt;');
                         resultEl.innerHTML = '<span class="text-danger">HTTP ' + res.status + ' — réponse non JSON. F12 console pour détails.</span><pre style="background:#fff;padding:8px;border:1px solid #ddd;border-radius:4px;font-size:11px;margin-top:6px;overflow:auto;max-height:200px">' + preview + '</pre>';
@@ -1285,7 +1287,7 @@
                 .catch(function (err) {
                     matomoTestBtn.disabled = false;
                     console.error('[CoolStats] fetch failed:', err);
-                    resultEl.innerHTML = '<span class="text-danger">Erreur réseau : ' + (err && err.message ? err.message : 'inconnue') + ' (F12 → Network pour détails)</span>';
+                    resultEl.innerHTML = '<span class="text-danger">Erreur réseau : ' + (err && err.message ? csEsc(err.message) : 'inconnue') + ' (F12 → Network pour détails)</span>';
                 });
         });
     }

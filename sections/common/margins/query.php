@@ -36,10 +36,11 @@ function coolstats_section_margins(CoolStatsContext $ctx, array $params)
     $valid       = CoolStatsHelpers::getOrderStateCondition('valid', 'o');
 
     $product = isset($params['product']) ? $params['product'] : null;
-    $productWhere = '';
+    // CST-04 : boutiques du contexte de l'employé, complété du filtre produit.
+    $productWhere = CoolStatsHelpers::shopRestriction('o');
     if ($product) {
         $pf = CoolStatsHelpers::getProductFilterWhereSQL($product, 'o');
-        if ($pf !== '') $productWhere = ' AND ' . $pf;
+        if ($pf !== '') $productWhere .= ' AND ' . $pf;
     }
 
     // ── Calcul global sur la période (commandes valides) ──

@@ -40,10 +40,10 @@ function coolstats_section_signups(CoolStatsContext $ctx, array $params)
     LEFT JOIN (
         SELECT o.id_customer, MIN(o.date_add) AS first_order_date
         FROM {$p}orders o
-        WHERE {$valid}
+        WHERE {$valid}" . CoolStatsHelpers::shopRestriction('o') . "
         GROUP BY o.id_customer
     ) first_order ON first_order.id_customer = c.id_customer
-    WHERE c.date_add BETWEEN '{$from}' AND '{$to}'");
+    WHERE c.date_add BETWEEN '{$from}' AND '{$to}'" . CoolStatsHelpers::shopRestriction('c'));
 
     $totalCreated = (int) ($row['total_created'] ?? 0);
     $withOrder    = (int) ($row['with_order'] ?? 0);

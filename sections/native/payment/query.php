@@ -22,10 +22,11 @@ function coolstats_section_native_payment(CoolStatsContext $ctx, array $params)
     $revenueExpr = CoolStatsHelpers::getRevenueExpression('o');
 
     $product = isset($params['product']) ? $params['product'] : null;
-    $productWhere = '';
+    // CST-04 : boutiques du contexte de l'employé, complété du filtre produit.
+    $productWhere = CoolStatsHelpers::shopRestriction('o');
     if ($product) {
         $pf = CoolStatsHelpers::getProductFilterWhereSQL($product, 'o');
-        if ($pf !== '') $productWhere = ' AND ' . $pf;
+        if ($pf !== '') $productWhere .= ' AND ' . $pf;
     }
 
     // GROUP BY sur l'expression directement (pas l'alias) pour compat MariaDB strict.

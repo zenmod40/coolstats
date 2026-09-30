@@ -18,6 +18,7 @@ if (!defined('_PS_VERSION_')) {
 }
 
 require_once _PS_MODULE_DIR_ . 'coolstats/classes/traffic/CoolStatsTrafficProvider.php';
+require_once _PS_MODULE_DIR_ . 'coolstats/classes/CoolStatsHelpers.php';
 
 class CoolStatsNativeTrafficProvider implements CoolStatsTrafficProvider
 {
@@ -89,7 +90,8 @@ class CoolStatsNativeTrafficProvider implements CoolStatsTrafficProvider
         $p = _DB_PREFIX_;
         $f = pSQL($from) . ' 00:00:00';
         $t = pSQL($to)   . ' 23:59:59';
-        $ipFilter = $this->getIpExclusionWhere('c');
+        // CST-04 : visites des seules boutiques du contexte de l'employé.
+        $ipFilter = $this->getIpExclusionWhere('c') . CoolStatsHelpers::shopRestriction('c');
 
         $sessions = (int) $db->getValue("SELECT COUNT(*) FROM {$p}connections c
             WHERE c.date_add BETWEEN '{$f}' AND '{$t}' {$ipFilter}");
@@ -124,7 +126,7 @@ class CoolStatsNativeTrafficProvider implements CoolStatsTrafficProvider
         }
         $valid = CoolStatsHelpers::getOrderStateCondition('valid', 'o');
         $orders = (int) $db->getValue("SELECT COUNT(*) FROM {$p}orders o
-            WHERE o.date_add BETWEEN '{$f}' AND '{$t}'
+            WHERE o.date_add BETWEEN '{$f}' AND '{$t}'" . CoolStatsHelpers::shopRestriction('o') . "
             AND {$valid}");
         $conv = $unique > 0 ? round(($orders / $unique) * 100, 2) : 0;
 
@@ -146,7 +148,8 @@ class CoolStatsNativeTrafficProvider implements CoolStatsTrafficProvider
         $t = pSQL($to)   . ' 23:59:59';
         $limit = max(1, (int) $limit);
 
-        $ipFilter = $this->getIpExclusionWhere('c');
+        // CST-04 : visites des seules boutiques du contexte de l'employé.
+        $ipFilter = $this->getIpExclusionWhere('c') . CoolStatsHelpers::shopRestriction('c');
         $rows = $db->executeS("SELECT pt.name AS label, COUNT(*) AS views
             FROM {$p}connections_page cp
             INNER JOIN {$p}connections c ON c.id_connections = cp.id_connections
@@ -173,7 +176,8 @@ class CoolStatsNativeTrafficProvider implements CoolStatsTrafficProvider
         $t = pSQL($to)   . ' 23:59:59';
         $limit = max(1, (int) $limit);
 
-        $ipFilter = $this->getIpExclusionWhere('c');
+        // CST-04 : visites des seules boutiques du contexte de l'employé.
+        $ipFilter = $this->getIpExclusionWhere('c') . CoolStatsHelpers::shopRestriction('c');
         $referers = $db->executeS("SELECT c.http_referer, COUNT(*) AS hits
             FROM {$p}connections c
             WHERE c.date_add BETWEEN '{$f}' AND '{$t}' {$ipFilter}
@@ -217,7 +221,8 @@ class CoolStatsNativeTrafficProvider implements CoolStatsTrafficProvider
         $f = pSQL($from) . ' 00:00:00';
         $t = pSQL($to)   . ' 23:59:59';
 
-        $ipFilter = $this->getIpExclusionWhere('c');
+        // CST-04 : visites des seules boutiques du contexte de l'employé.
+        $ipFilter = $this->getIpExclusionWhere('c') . CoolStatsHelpers::shopRestriction('c');
         $row = $db->getRow("SELECT
             SUM(CASE WHEN g.mobile_theme = 1 THEN 1 ELSE 0 END) AS mobile_count,
             SUM(CASE WHEN g.mobile_theme = 0 THEN 1 ELSE 0 END) AS desktop_count

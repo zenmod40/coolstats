@@ -22,6 +22,23 @@ if (!defined('_PS_VERSION_')) {
 class CoolStatsHelpers
 {
     /**
+     * Restreint une table portant id_shop (orders, cart, customer…) aux boutiques
+     * du contexte de l'employé (CST-04). Sans multiboutique : aucune restriction,
+     * le comportement historique est inchangé.
+     *
+     * @param string $alias Alias de la table dans la requête (ex: 'o')
+     * @return string Fragment " AND alias.id_shop IN (...)" ou ''
+     */
+    public static function shopRestriction($alias)
+    {
+        if (!Shop::isFeatureActive()) {
+            return '';
+        }
+        $ids = array_map('intval', Shop::getContextListShopID());
+        return ' AND ' . $alias . '.id_shop IN (' . ($ids ? implode(',', $ids) : '0') . ')';
+    }
+
+    /**
      * Retourne la condition SQL "o.date_add BETWEEN '...' AND '...'".
      *
      * @param string $alias  Alias de la table orders (ex: 'o')
