@@ -60,6 +60,10 @@
                 {/foreach}
             </div>
         </div>
+{else}
+        <div class="cs-panel">
+            <p class="cs-panel-desc" style="margin:0">Aucun module à afficher pour le moment.</p>
+        </div>
 {/if}
 
             <div class="cs-panel">
