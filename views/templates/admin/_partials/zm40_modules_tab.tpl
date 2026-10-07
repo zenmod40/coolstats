@@ -1,9 +1,10 @@
 {* ZM40 Common — panneau d'onglet « Modules ZM40 » (écosystème).
    Réutilisable : alimenté par $zm40_modules (Zm40CommonCst::modulesFeed du module courant,
-   module courant exclu, fail-silent). Rendu UNIQUEMENT si le feed renvoie des modules
-   (sinon ni onglet ni panneau — cf. garde identique sur le bouton dans configure.tpl).
+   module courant exclu, fail-silent). L'onglet est toujours affiché : la liste si le feed
+   renvoie des modules, puis l'interrupteur réseau, en bas comme sur tous les modules ZM40.
    S'appuie sur les classes d'onglet existantes (.cs-tab-content) + .cs-panel.
    v1.3 : badge + pitch + CTA dynamiques selon le type (open_source / pro / pro subscription). *}
+<div class="cs-tab-content" data-tab-content="modules">
 {if isset($zm40_modules) && $zm40_modules|@count}
 {* Compte rapide OS vs Pro pour adapter le pitch *}
 {assign var=zm40_count_os value=0}
@@ -13,7 +14,6 @@
     {elseif $m.is_pro}{assign var=zm40_count_pro value=$zm40_count_pro+1}
     {/if}
 {/foreach}
-    <div class="cs-tab-content" data-tab-content="modules">
         <div class="cs-panel">
             <h3 class="cs-panel-title">L'écosystème ZM40</h3>
             <p class="cs-panel-desc">
@@ -60,5 +60,21 @@
                 {/foreach}
             </div>
         </div>
-    </div>
 {/if}
+
+            <div class="cs-panel">
+                <h3 class="cs-panel-title">Mises à jour & autres modules (ZM40)</h3>
+                <p class="cs-panel-desc">Vérification une fois par jour au maximum de la disponibilité d'une nouvelle version, via l'API publique de GitHub, et mise à jour de la liste des modules ZM40 depuis zm40.com. Ces requêtes sont <strong>anonymes</strong> : aucune donnée de votre boutique n'est transmise. Décochez pour tout désactiver ; la liste reste affichée telle quelle.</p>
+                <div class="cs-form-row cs-form-row--switch">
+                    <div class="cs-form-label">Vérifier les mises à jour</div>
+                    <div class="cs-form-field">
+                        <label class="cs-switch">
+                            <input type="hidden" name="ZM40_NET_ENABLED" value="0">
+                            <input type="checkbox" name="ZM40_NET_ENABLED" value="1" {if $zm40_net_enabled}checked{/if}>
+                            <span class="cs-switch-slider"></span>
+                        </label>
+                    </div>
+                    <div class="cs-form-desc">Activé par défaut. Si désactivé : aucun appel réseau, la liste ci-dessus reste celle du dernier rafraîchissement.</div>
+                </div>
+            </div>
+</div>

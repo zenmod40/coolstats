@@ -585,7 +585,7 @@
         <button type="button" class="cs-tab" data-tab="states"><i class="icon-list-ul"></i> États de commande</button>
         <button type="button" class="cs-tab" data-tab="traffic"><i class="icon-bar-chart"></i> Trafic & visiteurs</button>
         <button type="button" class="cs-tab" data-tab="advanced"><i class="icon-wrench"></i> Avancé</button>
-        {if isset($zm40_modules) && $zm40_modules|@count}<button type="button" class="cs-tab" data-tab="modules"><i class="icon-th-large"></i> Modules ZM40</button>{/if}
+        <button type="button" class="cs-tab" data-tab="modules"><i class="icon-th-large"></i> Modules ZM40</button>
     </div>
 
     {* novalidate : le formulaire couvre plusieurs onglets masqués (display:none).
@@ -1115,22 +1115,6 @@
                         </label>
                     </div>
                     <div class="cs-form-desc">Activez uniquement pour diagnostiquer un problème. Désactivez après.</div>
-                </div>
-            </div>
-
-            <div class="cs-panel">
-                <h3 class="cs-panel-title">Mises à jour & autres modules (ZM40)</h3>
-                <p class="cs-panel-desc">Vérification une fois par jour au maximum de la disponibilité d'une nouvelle version, via l'API publique de GitHub, et affichage des autres modules ZM40 depuis zm40.com. Ces requêtes sont <strong>anonymes</strong> : aucune donnée de votre boutique n'est transmise. Décochez pour tout désactiver.</p>
-                <div class="cs-form-row cs-form-row--switch">
-                    <div class="cs-form-label">Vérifier les mises à jour</div>
-                    <div class="cs-form-field">
-                        <label class="cs-switch">
-                            <input type="hidden" name="ZM40_NET_ENABLED" value="0">
-                            <input type="checkbox" name="ZM40_NET_ENABLED" value="1" {if $zm40_net_enabled}checked{/if}>
-                            <span class="cs-switch-slider"></span>
-                        </label>
-                    </div>
-                    <div class="cs-form-desc">Activé par défaut. Si désactivé : aucun appel réseau (le footer d'attribution reste, il n'appelle rien).</div>
                 </div>
             </div>
 
