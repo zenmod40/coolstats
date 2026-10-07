@@ -199,7 +199,10 @@ class Zm40CommonCst
             } elseif (isset($m['module']) && $m['module'] !== '') {
                 $slug = (string) $m['module'];
             }
-            if ($slug === '' || $slug === $excludeSlug) {
+            // Le module courant est exclu par slug du site OU par nom technique :
+            // les deux diffèrent pour certains modules (faq-avancee / advancedfaq).
+            if ($slug === '' || $slug === $excludeSlug
+                || (isset($m['module']) && $m['module'] === $excludeSlug)) {
                 continue;
             }
             // v1 rétro-compat : 'url'. v2 : 'landing_url' (canonique). Privilégie v2.
