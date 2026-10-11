@@ -28,9 +28,16 @@
             </a>
         </span>
     </header>
+    {if $cs_dash_kerawen_alert}
+    <div class="alert alert-danger" style="margin:0 0 10px">
+        <strong>Incohérence détectée dans les données caisse Kerawen.</strong>
+        <a href="{$cs_dash_link|escape:'html':'UTF-8'}&amp;lite_display=1#cs-kerawen-check" target="_blank">Voir le contrôle</a>
+    </div>
+    {/if}
     <div class="row">
         {cs_dash_tile id='cs_dash_orders'  label='Commandes'          trend=$cs_dash_trends.cs_dash_orders_trend}
-        {cs_dash_tile id='cs_dash_revenue' label="Chiffre d'affaires" trend=$cs_dash_trends.cs_dash_revenue_trend}
+        {if $cs_dash_has_kerawen}{assign var=cs_dash_ca_label value='CA commandes'}{else}{assign var=cs_dash_ca_label value="Chiffre d'affaires"}{/if}
+        {cs_dash_tile id='cs_dash_revenue' label=$cs_dash_ca_label trend=$cs_dash_trends.cs_dash_revenue_trend}
         {cs_dash_tile id='cs_dash_items'   label='Articles / panier'  trend=$cs_dash_trends.cs_dash_items_trend}
         {cs_dash_tile id='cs_dash_basket'  label='Panier moyen'       trend=$cs_dash_trends.cs_dash_basket_trend}
         {cs_dash_tile id='cs_dash_returns' label='Taux de retour'}

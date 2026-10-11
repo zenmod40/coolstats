@@ -1,0 +1,7 @@
+{
+    "id": "kerawen_sales",
+    "title": "CA fiscal caisse",
+    "order": 10.4,
+    "context": "kerawen_only",
+    "enabled": true
+}

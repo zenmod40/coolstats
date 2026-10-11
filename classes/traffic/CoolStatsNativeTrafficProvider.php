@@ -120,15 +120,11 @@ class CoolStatsNativeTrafficProvider implements CoolStatsTrafficProvider
         ) sub");
         $avgDuration = $avgDur && isset($avgDur['avg_dur']) ? (int) round((float) $avgDur['avg_dur']) : 0;
 
-        // Taux de conversion = orders valides / visiteurs uniques
+        // Taux de conversion = commandes en ligne valides / visiteurs uniques
         if (!class_exists('CoolStatsHelpers')) {
             require_once _PS_MODULE_DIR_ . 'coolstats/classes/CoolStatsHelpers.php';
         }
-        $valid = CoolStatsHelpers::getOrderStateCondition('valid', 'o');
-        $orders = (int) $db->getValue("SELECT COUNT(*) FROM {$p}orders o
-            WHERE o.date_add BETWEEN '{$f}' AND '{$t}'" . CoolStatsHelpers::shopRestriction('o') . "
-            AND {$valid}");
-        $conv = $unique > 0 ? round(($orders / $unique) * 100, 2) : 0;
+        $conv = CoolStatsHelpers::conversionRate($from, $to, $unique);
 
         return array(
             'unique_visitors'   => $unique,

@@ -3,12 +3,15 @@
  * Section common/kpi — 5 KPI universels avec comparaison N-1 et évolution %.
  *
  * KPIs :
- *   1. total_orders       — nombre de commandes (toutes)
+ *   1. total_orders       — nombre de commandes (états valides, comme le CA)
  *   2. total_revenue      — CA TTC (états valides uniquement)
  *   3. avg_items          — articles par panier (commandes valides)
  *   4. avg_basket         — panier moyen (commandes valides)
- *   5. return_rate        — taux de retour (remboursées état 7 / total) en %
- *                           (les annulations état 6 ne comptent PAS comme retour)
+ *   5. return_rate        — taux de retour en % : remboursées / (valides + remboursées).
+ *                           Une commande remboursée a d'abord été une vente : elle
+ *                           compte au dénominateur. Les annulées et non payées n'y
+ *                           sont pas (elles ne sont pas des ventes). Les annulations
+ *                           (état 6) ne comptent PAS comme retour.
  *
  * Tendances calculées vs période N-1 (immédiatement précédente, mode 'prev')
  * ou même période N-1 année précédente (mode 'yoy'), selon ?compare_with=.
@@ -50,10 +53,11 @@ function coolstats_section_kpi(CoolStatsContext $ctx, array $params)
 
     // ── Bloc principal : total / CA / panier moyen / nb retours ──
     $row = $db->getRow("SELECT
-        COUNT(o.id_order) AS total_orders,
+        COALESCE(SUM(CASE WHEN {$valid} THEN 1 ELSE 0 END), 0) AS total_orders,
         COALESCE(SUM(CASE WHEN {$valid} THEN {$revenueExpr} ELSE 0 END), 0) AS total_revenue,
         COALESCE(AVG(CASE WHEN {$valid} THEN {$revenueExpr} END), 0) AS avg_basket,
-        SUM(CASE WHEN {$refunded} THEN 1 ELSE 0 END) AS refunded_count
+        COALESCE(SUM(CASE WHEN {$refunded} THEN 1 ELSE 0 END), 0) AS refunded_count,
+        COALESCE(SUM(CASE WHEN ({$valid}) OR ({$refunded}) THEN 1 ELSE 0 END), 0) AS sold_count
     FROM {$p}orders o
     {$countryJoin}
     {$channelsJoin}
@@ -63,7 +67,8 @@ function coolstats_section_kpi(CoolStatsContext $ctx, array $params)
     $totalRevenue  = (float) $row['total_revenue'];
     $avgBasket     = (float) $row['avg_basket'];
     $refundedCnt   = (int) $row['refunded_count'];
-    $returnRate    = $totalOrders > 0 ? round(($refundedCnt / $totalOrders) * 100, 1) : 0.0;
+    $soldCnt       = (int) $row['sold_count'];
+    $returnRate    = $soldCnt > 0 ? round(($refundedCnt / $soldCnt) * 100, 1) : 0.0;
 
     // ── Articles / panier (sub-query par commande, sur valides uniquement) ──
     $avgItems = (float) $db->getValue("SELECT AVG(qty) FROM (
@@ -95,7 +100,7 @@ function coolstats_section_kpi(CoolStatsContext $ctx, array $params)
         $dateWherePrev = CoolStatsHelpers::getDateRangeFilter('o', $cFrom, $cTo);
 
         $rowPrev = $db->getRow("SELECT
-            COUNT(o.id_order) AS total_orders,
+            COALESCE(SUM(CASE WHEN {$valid} THEN 1 ELSE 0 END), 0) AS total_orders,
             COALESCE(SUM(CASE WHEN {$valid} THEN {$revenueExpr} ELSE 0 END), 0) AS total_revenue,
             COALESCE(AVG(CASE WHEN {$valid} THEN {$revenueExpr} END), 0) AS avg_basket
         FROM {$p}orders o
@@ -250,6 +255,9 @@ function coolstats_section_kpi(CoolStatsContext $ctx, array $params)
     }
 
     return array(
+        // Avec Kerawen, le CA du bandeau s'appelle « CA commandes » : il ne se
+        // confond pas avec le CA fiscal de la caisse affiché plus bas.
+        'has_kerawen'    => $ctx->hasKerawen(),
         'total_orders'   => $totalOrders,
         'total_revenue'  => round($totalRevenue, 2),
         'avg_items'      => round($avgItems, 2),

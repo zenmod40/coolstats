@@ -37,7 +37,7 @@ class CoolStats extends Module
     {
         $this->name = 'coolstats';
         $this->tab = 'administration';
-        $this->version = '1.0.12';
+        $this->version = '1.1.0';
         $this->author = 'ZM40';
         $this->need_instance = 0;
         $this->bootstrap = true;
@@ -96,7 +96,7 @@ class CoolStats extends Module
         Configuration::updateValue('COOLSTATS_DASH_KPI', 1);                       // Bande d'indicateurs sur le tableau de bord natif.
         Configuration::updateValue('COOLSTATS_DASH_FULLWIDTH', 0);                 // Panneau du tableau de bord natif sur toute la largeur.
         Configuration::updateValue('COOLSTATS_DASH_REPLACE', 0);                   // CoolStats à la place du tableau de bord natif.
-        Configuration::updateValue('COOLSTATS_TRAFFIC_PROVIDER', 'none');          // none (défaut) | native_ps | matomo | ga4 | plausible
+        Configuration::updateValue('COOLSTATS_TRAFFIC_PROVIDER', 'none');          // none (défaut) | native_ps | matomo | ga4
         Configuration::updateValue('COOLSTATS_MATOMO_URL', '');
         Configuration::updateValue('COOLSTATS_MATOMO_TOKEN', '');
         Configuration::updateValue('COOLSTATS_MATOMO_SITE_ID', 0);
@@ -106,6 +106,9 @@ class CoolStats extends Module
         // Objectifs mensuels (V1.1)
         Configuration::updateValue('COOLSTATS_GOAL_REVENUE', 0);                   // CA cible mensuel (€). 0 = pas d'objectif → section masquée.
         Configuration::updateValue('COOLSTATS_GOAL_ORDERS', 0);                    // Nb commandes cible mensuelles. 0 = pas d'objectif.
+
+        // Caisse Kerawen : jours sans vente au-delà desquels le journal est signalé (contrôle 4).
+        Configuration::updateValue('COOLSTATS_KERAWEN_GAP_DAYS', 7);
 
         return true;
     }
@@ -362,11 +365,18 @@ class CoolStats extends Module
         // Les indicateurs coûtent une requête : inutile de la jouer si la bande est masquée.
         $kpi = $showKpi ? $this->getDashboardKpi($params) : array('data_value' => array(), 'data_trends' => array());
 
+        // Données caisse Kerawen incohérentes : alerte dans le panneau (statut recalculé au plus une fois par heure).
+        require_once _PS_MODULE_DIR_ . 'coolstats/classes/CoolStatsKerawen.php';
+        $hasKerawen = CoolStatsKerawen::isAvailable();
+        $kerawenAlert = $showKpi && $hasKerawen && CoolStatsKerawen::alertCount() > 0;
+
         $this->context->smarty->assign(array(
             'cs_dash_values' => $kpi['data_value'],
             'cs_dash_trends' => $kpi['data_trends'],
             'cs_dash_kpi'    => $showKpi,
             'cs_dash_link'   => $this->context->link->getAdminLink('AdminCoolStats'),
+            'cs_dash_kerawen_alert' => $kerawenAlert,
+            'cs_dash_has_kerawen'   => $hasKerawen,
             // Remplacement du tableau de bord (option) : la vue lite_display est une page
             // autonome sans menu ni header, donc embarquable telle quelle dans une iframe.
             'cs_dash_embed'  => $embed,
@@ -482,9 +492,9 @@ class CoolStats extends Module
             // Sauvegarde = rafraîchir le feed ZM40 (refetch au prochain rendu)
             Zm40CommonCst::clearFeedCache();
 
-            // Provider trafic (whitelist : none, native_ps, matomo, ga4, plausible)
+            // Provider trafic (whitelist : none, native_ps, matomo, ga4)
             $tp = (string) Tools::getValue('COOLSTATS_TRAFFIC_PROVIDER');
-            if (!in_array($tp, array('none', 'native_ps', 'matomo', 'ga4', 'plausible'), true)) {
+            if (!in_array($tp, array('none', 'native_ps', 'matomo', 'ga4'), true)) {
                 $tp = 'none';
             }
             Configuration::updateValue('COOLSTATS_TRAFFIC_PROVIDER', $tp);
@@ -506,6 +516,12 @@ class CoolStats extends Module
             // Objectifs mensuels
             Configuration::updateValue('COOLSTATS_GOAL_REVENUE', max(0, (float) Tools::getValue('COOLSTATS_GOAL_REVENUE')));
             Configuration::updateValue('COOLSTATS_GOAL_ORDERS',  max(0, (int)   Tools::getValue('COOLSTATS_GOAL_ORDERS')));
+            $excluded = array_unique(array_filter(array_map('intval', explode(',', (string) Tools::getValue('COOLSTATS_EXCLUDED_PRODUCTS')))));
+            Configuration::updateValue('COOLSTATS_EXCLUDED_PRODUCTS', implode(',', $excluded));
+            if (Tools::getIsset('COOLSTATS_KERAWEN_GAP_DAYS')) {
+                Configuration::updateValue('COOLSTATS_KERAWEN_GAP_DAYS', max(1, (int) Tools::getValue('COOLSTATS_KERAWEN_GAP_DAYS')));
+                Configuration::deleteByName('COOLSTATS_KERAWEN_ALERT'); // le nouveau seuil s'applique à l'alerte sans attendre l'heure
+            }
 
             // Sections incluses dans l'export PDF (whitelist, vide = tout)
             $pdfSections = Tools::getValue('COOLSTATS_PDF_SECTIONS');
@@ -574,7 +590,18 @@ class CoolStats extends Module
             'COOLSTATS_GOAL_REVENUE'           => (float) Configuration::get('COOLSTATS_GOAL_REVENUE'),
             'COOLSTATS_GOAL_ORDERS'            => (int)   Configuration::get('COOLSTATS_GOAL_ORDERS'),
             'COOLSTATS_VISUAL_THEME'           => Configuration::get('COOLSTATS_VISUAL_THEME') ?: 'aurora',
+            'COOLSTATS_KERAWEN_GAP_DAYS'       => (int) Configuration::get('COOLSTATS_KERAWEN_GAP_DAYS') ?: 7,
         );
+
+        // Matomo : adresse et site repris de CoolTrack tant que CoolStats n'a pas les siens.
+        require_once _PS_MODULE_DIR_ . 'coolstats/classes/traffic/CoolStatsTrafficFactory.php';
+        $coolTrack = CoolStatsMatomoTrafficProvider::coolTrackSettings();
+        if ($coolTrack && $config['COOLSTATS_MATOMO_URL'] === '') {
+            $config['COOLSTATS_MATOMO_URL'] = $coolTrack['url'];
+        }
+        if ($coolTrack && $config['COOLSTATS_MATOMO_SITE_ID'] <= 0) {
+            $config['COOLSTATS_MATOMO_SITE_ID'] = $coolTrack['site_id'];
+        }
 
         // ── Diagnostic trafic ──
         $trafficStatus = $this->getTrafficStatus();
@@ -598,6 +625,10 @@ class CoolStats extends Module
             'cs_version'         => $this->version,
             'cs_mkp_modules'     => $ctx->getActiveMarketplaceModules(),
             'cs_mkp_modules_str' => implode(', ', $ctx->getActiveMarketplaceModules()),
+            'cs_has_kerawen'     => $ctx->hasKerawen(),
+            'cs_cooltrack'       => $coolTrack !== null,
+            'cs_excluded_products' => $this->getExcludedProducts(),
+            'cs_paid_not_counted'  => $this->getPaidStatesNotCounted(),
             'cs_ps_version'      => _PS_VERSION_,
             'cs_state_groups'    => $stateGroups,
             'cs_order_states'    => $this->getOrderStatesForSelect(),
@@ -798,6 +829,58 @@ class CoolStats extends Module
             }
         }
         return $list;
+    }
+
+    /**
+     * États marqués « payé » dans PrestaShop mais absents des états valides :
+     * leurs commandes manquent au CA. Simple signalement, la configuration n'est
+     * jamais modifiée d'office. Sans liste d'états valides (repli « tout sauf
+     * annulés »), il n'y a rien à signaler.
+     *
+     * @return array<int,array{id:int,name:string}>
+     */
+    private function getPaidStatesNotCounted()
+    {
+        $valid = $this->csvToArray(Configuration::get('COOLSTATS_VALID_STATES'));
+        if (!$valid) {
+            return array();
+        }
+        $rows = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS('SELECT os.id_order_state, osl.name
+            FROM ' . _DB_PREFIX_ . 'order_state os
+            LEFT JOIN ' . _DB_PREFIX_ . 'order_state_lang osl ON osl.id_order_state = os.id_order_state AND osl.id_lang = ' . (int) $this->context->language->id . '
+            WHERE os.paid = 1 AND os.deleted = 0 AND os.id_order_state NOT IN (' . implode(',', $valid) . ')
+            ORDER BY os.id_order_state');
+        $out = array();
+        foreach (is_array($rows) ? $rows : array() as $r) {
+            $out[] = array('id' => (int) $r['id_order_state'], 'name' => (string) $r['name']);
+        }
+        return $out;
+    }
+
+    /**
+     * Produits exclus des classements, avec leur nom, pour les étiquettes de la
+     * page de configuration. Un produit supprimé depuis garde son identifiant.
+     *
+     * @return array<int,array{id:int,name:string}>
+     */
+    private function getExcludedProducts()
+    {
+        $ids = array_values(array_unique(array_filter(array_map('intval', explode(',', (string) Configuration::get('COOLSTATS_EXCLUDED_PRODUCTS'))))));
+        if (!$ids) {
+            return array();
+        }
+        $names = array();
+        $rows = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS('SELECT id_product, name FROM ' . _DB_PREFIX_ . 'product_lang
+            WHERE id_lang = ' . (int) $this->context->language->id . ' AND id_shop = ' . (int) $this->context->shop->id . '
+            AND id_product IN (' . implode(',', $ids) . ')');
+        foreach (is_array($rows) ? $rows : array() as $r) {
+            $names[(int) $r['id_product']] = $r['name'];
+        }
+        $out = array();
+        foreach ($ids as $id) {
+            $out[] = array('id' => $id, 'name' => isset($names[$id]) ? $names[$id] : $this->l('Produit supprimé') . ' #' . $id);
+        }
+        return $out;
     }
 
     private function csvToArray($csv)

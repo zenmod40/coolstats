@@ -1,5 +1,5 @@
 <div class="cs-section cs-activity-section" data-cs-section="recent_activity">
-    <div class="cs-section-header"><i class="bi bi-bell"></i> {$section.title}</div>
+    <div class="cs-section-header"><span><i class="bi bi-bell"></i> {$section.title}<span class="cs-live ms-2" title="{l s='Derniers mouvements de commandes, quelle que soit la période choisie' mod='coolstats'}"><span class="cs-live-dot"></span>{l s='En direct' mod='coolstats'}</span></span></div>
     {if $section_data.items|@count}
     <div class="cs-activity-list">
         {foreach from=$section_data.items item=act name=actloop}
@@ -21,6 +21,6 @@
     </div>
     {/if}
     {else}
-    <div class="text-center text-muted small p-3"><i class="bi bi-inbox d-block mb-2"></i>Aucune activité sur cette période</div>
+    <div class="text-center text-muted small p-3"><i class="bi bi-inbox d-block mb-2"></i>Aucun mouvement de commande pour l'instant</div>
     {/if}
 </div>

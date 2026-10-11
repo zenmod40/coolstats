@@ -15,9 +15,9 @@
     {if $cs_visual_theme == 'editorial'}<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">{/if}
     {if $cs_visual_theme == 'brutalist'}<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Anton&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">{/if}
     {if $cs_visual_theme == 'terminal'}<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">{/if}
-    <link rel="stylesheet" href="{$cs_module_path}views/css/coolstats.css?v={$cs_version|escape:'url'}">
-    <link rel="stylesheet" href="{$cs_module_path}views/css/themes/_shared.css?v={$cs_version|escape:'url'}">
-    <link rel="stylesheet" href="{$cs_module_path}views/css/themes/{$cs_visual_theme}.css?v={$cs_version|escape:'url'}">
+    <link rel="stylesheet" href="{$cs_module_path}views/css/coolstats.css?v={$cs_asset_ver|escape:'url'}">
+    <link rel="stylesheet" href="{$cs_module_path}views/css/themes/_shared.css?v={$cs_asset_ver|escape:'url'}">
+    <link rel="stylesheet" href="{$cs_module_path}views/css/themes/{$cs_visual_theme}.css?v={$cs_asset_ver|escape:'url'}">
     <script>(function(){ldelim}
         var NATIVE_MODE = {ldelim} aurora:'dark', cozy:'light', editorial:'light', brutalist:'light', terminal:'dark' {rdelim};
         var theme = '{$cs_visual_theme}';
@@ -351,7 +351,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
 {/if}
-<script src="{$cs_module_path}views/js/coolstats.js?v={$cs_version|escape:'url'}"></script>
+<script src="{$cs_module_path}views/js/coolstats.js?v={$cs_asset_ver|escape:'url'}"></script>
 {if isset($cs_lite_display) && $cs_lite_display}
 </body>
 </html>

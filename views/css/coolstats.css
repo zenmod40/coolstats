@@ -673,6 +673,36 @@
     opacity: 0.65;
 }
 
+/* Contrôle des données caisse Kerawen : vert, rouge, ou orange si un contrôle n'a pas pu tourner.
+   Bouton à pastille dans l'en-tête « Caisse Kerawen », détail dans une fenêtre. */
+.cs-kerawen--ok    { --cs-kerawen-color: var(--cs-success); }
+.cs-kerawen--ko    { --cs-kerawen-color: var(--cs-danger); }
+.cs-kerawen--error { --cs-kerawen-color: var(--cs-warning); }
+.cs-kerawen-check-btn { display: inline-flex; align-items: center; gap: 6px; margin-left: auto; }
+.cs-kerawen-check-btn.cs-kerawen--ko { border-color: var(--cs-danger); color: var(--cs-danger); }
+.cs-kerawen-status {
+    padding: 10px 14px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    font-weight: 600;
+    border-left: 4px solid var(--cs-kerawen-color);
+    background: rgba(127, 127, 127, .08);
+    color: var(--cs-kerawen-color);
+}
+.cs-kerawen-check { padding: 8px 4px; border-bottom: 1px solid var(--cs-border); }
+.cs-kerawen-check:last-child { border-bottom: none; }
+.cs-kerawen-check-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; color: var(--cs-text); }
+.cs-kerawen-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--cs-kerawen-color); flex: none; }
+.cs-kerawen-figures { margin-left: auto; color: var(--cs-kerawen-color); font-weight: 600; }
+.cs-kerawen-check-text { font-size: 13px; color: var(--cs-text-muted, #8a8f99); margin: 2px 0 0 18px; }
+.cs-kerawen-details { font-size: 12px; margin: 4px 0 0 18px; padding-left: 16px; color: var(--cs-text); }
+
+.cs-kerawen-reconcile { margin-top: 10px; font-size: 13px; color: var(--cs-text); }
+.cs-kerawen-reconcile summary { cursor: pointer; }
+.cs-kerawen-reconcile-hint { color: var(--cs-text-muted, #8a8f99); }
+.cs-kerawen-reconcile ul { margin: 6px 0 4px; padding-left: 20px; }
+.cs-kerawen-reconcile p { margin: 0; font-size: 12px; color: var(--cs-text-muted, #8a8f99); }
+
 /* Sélecteur de type de graphe (barres V / barres H / donut) */
 .cs-chart-type-switch {
     display: inline-flex;
@@ -964,6 +994,13 @@
 }
 .cs-country-filter-badge:hover { filter: brightness(1.2); }
 
+/* Pastille « en direct » (visiteurs Matomo, activité récente) et erreur de l'API Matomo */
+.cs-live { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+.cs-live-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--cs-success); animation: cs-live-pulse 2s infinite; }
+@keyframes cs-live-pulse { 0% { box-shadow: 0 0 0 0 rgba(16,185,129,.6); } 70% { box-shadow: 0 0 0 6px rgba(16,185,129,0); } 100% { box-shadow: 0 0 0 0 rgba(16,185,129,0); } }
+@media (prefers-reduced-motion: reduce) { .cs-live-dot { animation: none; } }
+.cs-traffic-api-error { margin: 0 0 12px; padding: 8px 12px; border-left: 4px solid var(--cs-warning); background: rgba(245,158,11,.1); font-size: 13px; color: var(--cs-text); }
+
 .cs-badge-accent {
     background: rgba(var(--cs-accent-rgb), 0.18);
     color: var(--cs-accent-text);
@@ -1187,6 +1224,15 @@
     line-height: 1.2;
 }
 .cs-trend i { font-size: 13px; vertical-align: middle; }
+/* Dans une tuile (Caisse Kerawen, Relation client) : le badge suit la valeur au lieu de se poser par-dessus */
+.cs-customer-stat-value .cs-trend {
+    position: static;
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 4px;
+    font-family: var(--cs-font-sans, inherit);
+    white-space: nowrap;
+}
 .cs-trend-up      { background: rgba(16,185,129,.15); color: var(--cs-success); }
 .cs-trend-down    { background: rgba(239,68,68,.15);  color: var(--cs-danger); }
 .cs-trend-neutral { background: rgba(148,152,168,.12); color: var(--cs-text-muted); }

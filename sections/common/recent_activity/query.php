@@ -3,7 +3,9 @@
  * Section common/recent_activity — derniers changements de statut sur les commandes.
  *
  * Lit `ps_order_history` joint à `ps_orders` + `ps_order_state_lang` pour les noms.
- * Limité aux 20 dernières activités sur la période courante.
+ * Toujours en direct : les 20 derniers mouvements, quelle que soit la période ou
+ * le filtre pays / produit du dashboard (seule la boutique de l'employé compte).
+ * Sur un mois passé, « activité récente » doit rester ce qui se passe maintenant.
  */
 
 if (!defined('_PS_VERSION_')) {
@@ -20,17 +22,6 @@ function coolstats_section_recent_activity(CoolStatsContext $ctx, array $params)
     $p = _DB_PREFIX_;
     $idLang = (int) Context::getContext()->language->id;
 
-    $from = pSQL($params['date_from']) . ' 00:00:00';
-    $to   = pSQL($params['date_to']) . ' 23:59:59';
-    $countryJoin = CoolStatsHelpers::getCountryJoin(isset($params['country']) ? $params['country'] : null, 'o');
-
-    $product = isset($params['product']) ? $params['product'] : null;
-    // CST-04 : boutiques du contexte de l'employé, complété du filtre produit.
-    $productWhere = CoolStatsHelpers::shopRestriction('o');
-    if ($product) {
-        $pf = CoolStatsHelpers::getProductFilterWhereSQL($product, 'o');
-        if ($pf !== '') $productWhere .= ' AND ' . $pf;
-    }
 
     $rows = $db->executeS("SELECT
         oh.id_order_history,
@@ -47,10 +38,11 @@ function coolstats_section_recent_activity(CoolStatsContext $ctx, array $params)
     LEFT JOIN {$p}order_state os ON os.id_order_state = oh.id_order_state
     LEFT JOIN {$p}order_state_lang osl ON osl.id_order_state = oh.id_order_state AND osl.id_lang = {$idLang}
     LEFT JOIN {$p}customer c ON c.id_customer = o.id_customer
-    {$countryJoin}
-    WHERE oh.date_add BETWEEN '{$from}' AND '{$to}'{$productWhere}
-    ORDER BY oh.date_add DESC
+    WHERE 1" . CoolStatsHelpers::shopRestriction('o') . "
+    ORDER BY oh.id_order_history DESC
     LIMIT 20");
+    // Tri sur la clé (ordre d'enregistrement) : sans filtre de date, trier tout
+    // l'historique par date_add, non indexée, coûterait cher à chaque affichage.
     $rows = is_array($rows) ? $rows : array();
 
     $cancelledStateId = (int) Configuration::get('PS_OS_CANCELED');

@@ -2,6 +2,7 @@
 <div class="cs-section cs-activity-section cs-activity-brutal" data-cs-section="recent_activity">
     <div class="cs-brutal-titlebar">
         <span class="cs-brutal-tag cs-brutal-tag-dark">⏱ {l s='Activité récente' mod='coolstats'}</span>
+        <span class="cs-live ms-2" title="{l s='Derniers mouvements de commandes, quelle que soit la période choisie' mod='coolstats'}"><span class="cs-live-dot"></span>{l s='En direct' mod='coolstats'}</span>
         <div class="cs-brutal-rule"></div>
     </div>
 
@@ -21,6 +22,6 @@
     <button type="button" class="cs-activity-brutal-more cs-activity-toggle">▾ <span>{l s='Voir plus' mod='coolstats'}</span></button>
     {/if}
     {else}
-    <div class="cs-brutal-empty">{l s='Aucune activité sur cette période' mod='coolstats'}</div>
+    <div class="cs-brutal-empty">{l s='Aucun mouvement de commande pour l\'instant' mod='coolstats'}</div>
     {/if}
 </div>

@@ -247,6 +247,15 @@
     box-shadow: 0 0 0 2px rgba(var(--cs-accent-rgb),0.15);
 }
 .cs-input-sm { max-width: 120px; }
+.cs-excl-results { position: absolute; z-index: 20; top: 40px; left: 0; width: 100%; max-width: 400px; background: #fff; border: 1px solid #c9cccf; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,.08); max-height: 260px; overflow: auto; }
+.cs-excl-results button { display: block; width: 100%; text-align: left; padding: 7px 12px; border: 0; background: none; font-size: 13px; color: #202223; cursor: pointer; }
+.cs-excl-results button:hover { background: #f1f3f9; }
+.cs-excl-results small { color: #6d7175; margin-left: 6px; }
+.cs-excl-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.cs-excl-chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 6px 4px 10px; background: #f1f3f9; border: 1px solid #c9cccf; border-radius: 999px; font-size: 13px; color: #202223; }
+.cs-excl-remove { border: 0; background: none; font-size: 16px; line-height: 1; color: #6d7175; cursor: pointer; padding: 0 2px; }
+.cs-excl-remove:hover { color: #d72c0d; }
+.cs-excl-empty { margin-top: 8px; font-size: 13px; color: #6d7175; }
 .cs-select-multi { min-height: 140px; max-width: 480px; }
 .cs-select-multi option { padding: 4px 8px; }
 
@@ -609,6 +618,15 @@
                     </div>
                 </div>
 
+                {if $cs_paid_not_counted|@count}
+                <div class="cs-multishop-banner cs-multishop-banner-warn">
+                    <i class="icon-warning-sign"></i>
+                    <div><strong>États payés non comptés dans le CA :</strong>
+                        {foreach from=$cs_paid_not_counted item=ps name=pnc}#{$ps.id} {$ps.name|escape:'html':'UTF-8'}{if !$smarty.foreach.pnc.last}, {/if}{/foreach}.
+                        PrestaShop les considère comme payés, mais ils ne sont pas cochés dans la colonne « Validé / CA » : leurs commandes manquent au chiffre d'affaires. Cochez-les si elles doivent compter.</div>
+                </div>
+                {/if}
+
                 <div class="cs-states-summary">
                     <div class="cs-stat"><strong id="cs-states-mapped">0</strong><span>états mappés</span></div>
                     <div class="cs-stat"><strong id="cs-states-ignored">0</strong><span>états ignorés</span></div>
@@ -671,7 +689,6 @@
                             <option value="matomo"    {if $tp == 'matomo'}selected{/if}>Matomo (recommandé)</option>
                             <option value="ga4"       {if $tp == 'ga4'}selected{/if}>Google Analytics 4</option>
                             <option value="native_ps" {if $tp == 'native_ps'}selected{/if}>PrestaShop natif (statsdata) — non recommandé</option>
-                            <option value="plausible" disabled>Plausible (bientôt)</option>
                         </select>
                     </div>
                 </div>
@@ -697,6 +714,12 @@
                     </div>
                     {/if}
                 {/if}
+                {if $cs_cooltrack}
+                <div class="cs-multishop-banner cs-multishop-banner-info">
+                    <i class="icon-info-sign"></i>
+                    <div>CoolTrack est installé : l'adresse de Matomo et le numéro du site sont repris de sa configuration. Il ne reste qu'à coller un jeton d'authentification Matomo, puis à tester la connexion.</div>
+                </div>
+                {/if}
                 <div class="cs-form-row">
                     <div class="cs-form-label">URL Matomo<small>Sans slash final, ex: https://analytics.example.com</small></div>
                     <div class="cs-form-field">
@@ -704,13 +727,13 @@
                     </div>
                 </div>
                 <div class="cs-form-row">
-                    <div class="cs-form-label">Token d'authentification<small>Créé dans Matomo → Préférences personnelles → Tokens de sécurité</small></div>
+                    <div class="cs-form-label">Token d'authentification<small>Dans Matomo : roue dentée → Personnel → Sécurité → Jetons d'authentification → Créer un nouveau jeton</small></div>
                     <div class="cs-form-field">
                         <input type="password" name="COOLSTATS_MATOMO_TOKEN" value="{$cs_config.COOLSTATS_MATOMO_TOKEN|escape:'html'}" class="cs-input" autocomplete="off" style="max-width:420px;font-family:monospace">
                     </div>
                 </div>
                 <div class="cs-form-row">
-                    <div class="cs-form-label">ID du site<small>Visible dans Matomo → Administration → Sites</small></div>
+                    <div class="cs-form-label">ID du site<small>Dans Matomo : roue dentée → Sites web → Gérer, colonne ID</small></div>
                     <div class="cs-form-field">
                         <input type="number" name="COOLSTATS_MATOMO_SITE_ID" value="{$cs_config.COOLSTATS_MATOMO_SITE_ID|escape:'html'}" class="cs-input cs-input-sm">
                     </div>
@@ -822,8 +845,7 @@
                 <ul class="cs-traffic-info">
                     <li><i class="icon-shield"></i> <strong>Aucun tracking custom</strong> — aucun cookie ni script de tracking n'est ajouté sur votre boutique.</li>
                     <li><i class="icon-bolt"></i> <strong>Aucun impact sur la performance front</strong> — pas de JS supplémentaire, pas de requête bloquante.</li>
-                    <li><i class="icon-check-circle"></i> <strong>Pas de doublon RGPD</strong> — vous gardez votre solution analytics existante (Matomo, GA4, Plausible…) sans interférence.</li>
-                    <li><i class="icon-arrow-right"></i> <strong>V2 prévue</strong> — connecteurs Matomo / Plausible / GA4 pour des données fiables avec filtrage bots, détection device, etc.</li>
+                    <li><i class="icon-check-circle"></i> <strong>Pas de doublon RGPD</strong> — CoolStats lit les statistiques de votre outil (Matomo ou Google Analytics 4) sans rien ajouter à sa collecte.</li>
                 </ul>
             </div>
         </div>
@@ -1053,6 +1075,38 @@
                 </div>
             </div>
 
+            <div class="cs-panel">
+                <h3 class="cs-panel-title">Produits exclus des classements</h3>
+                <p class="cs-panel-desc">Les produits techniques vendus comme des articles (frais de port, emballage, carte cadeau…) faussent les meilleures ventes et le produit star. Ceux que vous ajoutez ici sont retirés des classements de produits (meilleures ventes, catégories, produits remarquables, meilleures marges). Les chiffres d'affaires, totaux et pourcentages ne changent pas.</p>
+                <div class="cs-form-row">
+                    <div class="cs-form-label">Ajouter un produit <small>nom, référence ou EAN</small></div>
+                    <div class="cs-form-field" style="position:relative">
+                        <input type="text" id="cs-excl-search" class="cs-input" autocomplete="off" placeholder="Rechercher un produit…">
+                        <div id="cs-excl-results" class="cs-excl-results" hidden></div>
+                        <input type="hidden" name="COOLSTATS_EXCLUDED_PRODUCTS" id="cs-excl-value" value="{foreach from=$cs_excluded_products item=xp name=xl}{$xp.id|intval}{if !$smarty.foreach.xl.last},{/if}{/foreach}">
+                        <div id="cs-excl-chips" class="cs-excl-chips">
+                            {foreach from=$cs_excluded_products item=xp}
+                            <span class="cs-excl-chip" data-id="{$xp.id|intval}">{$xp.name|escape:'html':'UTF-8'} <button type="button" class="cs-excl-remove" title="Retirer">&times;</button></span>
+                            {/foreach}
+                        </div>
+                        <div class="cs-excl-empty"{if $cs_excluded_products|@count} hidden{/if}>Aucun produit exclu.</div>
+                    </div>
+                </div>
+            </div>
+
+            {if $cs_has_kerawen}
+            <div class="cs-panel">
+                <h3 class="cs-panel-title">Caisse Kerawen</h3>
+                <p class="cs-panel-desc">Le contrôle des données caisse signale un trou dans le journal des ventes Kerawen quand aucune vente n'y est enregistrée pendant plus de ce nombre de jours, alors que PrestaShop reçoit des commandes. Augmentez-le si le magasin ferme régulièrement plus longtemps.</p>
+                <div class="cs-form-row">
+                    <div class="cs-form-label">Jours sans vente avant alerte</div>
+                    <div class="cs-form-field">
+                        <input type="number" name="COOLSTATS_KERAWEN_GAP_DAYS" value="{$cs_config.COOLSTATS_KERAWEN_GAP_DAYS|escape:'html'}" class="cs-input cs-input-sm" min="1" max="365">
+                    </div>
+                </div>
+            </div>
+            {/if}
+
         </div>
 
         {* === ONGLET AVANCÉ === *}
@@ -1222,6 +1276,69 @@
                     ga4TestBtn.disabled = false;
                     resultEl.innerHTML = '<span class="text-danger">Erreur réseau : ' + (err && err.message ? csEsc(err.message) : 'inconnue') + '</span>';
                 });
+        });
+    }
+
+    // ── Produits exclus des classements : recherche (même point d'entrée que la
+    // barre du dashboard), étiquettes retirables, identifiants dans le champ caché ──
+    var exclSearch = document.getElementById('cs-excl-search');
+    if (exclSearch) {
+        var exclValue = document.getElementById('cs-excl-value');
+        var exclChips = document.getElementById('cs-excl-chips');
+        var exclResults = document.getElementById('cs-excl-results');
+        var exclEmpty = document.querySelector('.cs-excl-empty');
+        var exclTimer = null;
+        var exclSync = function () {
+            var ids = [];
+            exclChips.querySelectorAll('.cs-excl-chip').forEach(function (c) { ids.push(c.getAttribute('data-id')); });
+            exclValue.value = ids.join(',');
+            exclEmpty.hidden = ids.length > 0;
+        };
+        var exclAdd = function (id, name) {
+            if (exclChips.querySelector('.cs-excl-chip[data-id="' + id + '"]')) return;
+            var chip = document.createElement('span');
+            chip.className = 'cs-excl-chip';
+            chip.setAttribute('data-id', id);
+            chip.innerHTML = csEsc(name) + ' <button type="button" class="cs-excl-remove" title="Retirer">&times;</button>';
+            exclChips.appendChild(chip);
+            exclSync();
+        };
+        exclChips.addEventListener('click', function (e) {
+            var btn = e.target.closest('.cs-excl-remove');
+            if (!btn) return;
+            btn.parentNode.remove();
+            exclSync();
+        });
+        exclSearch.addEventListener('input', function () {
+            clearTimeout(exclTimer);
+            var q = exclSearch.value.trim();
+            if (q.length < 2) { exclResults.hidden = true; return; }
+            exclTimer = setTimeout(function () {
+                fetch('{$cs_ajax_link nofilter}&action=searchProducts&q=' + encodeURIComponent(q), { credentials: 'same-origin' })
+                    .then(function (r) { return r.json(); })
+                    .then(function (data) {
+                        var list = (data && data.products) || [];
+                        exclResults.innerHTML = list.length ? '' : '<div style="padding:8px 12px;color:#6d7175;font-size:13px">Aucun produit trouvé</div>';
+                        list.forEach(function (pr) {
+                            var b = document.createElement('button');
+                            b.type = 'button';
+                            b.innerHTML = csEsc(pr.name) + (pr.reference ? '<small>' + csEsc(pr.reference) + '</small>' : '');
+                            b.addEventListener('click', function () {
+                                exclAdd(pr.id_product, pr.name);
+                                exclResults.hidden = true;
+                                exclSearch.value = '';
+                            });
+                            exclResults.appendChild(b);
+                        });
+                        exclResults.hidden = false;
+                    })
+                    .catch(function () { exclResults.hidden = true; });
+            }, 250);
+        });
+        // Entrée dans la recherche ne doit pas enregistrer le formulaire.
+        exclSearch.addEventListener('keydown', function (e) { if (e.key === 'Enter') e.preventDefault(); });
+        document.addEventListener('click', function (e) {
+            if (!e.target.closest('#cs-excl-results') && e.target !== exclSearch) exclResults.hidden = true;
         });
     }
 

@@ -2,6 +2,7 @@
 <div class="cs-section cs-activity-section cs-activity-term" data-cs-section="recent_activity">
     <div class="cs-section-header">
         <span>⏱ {l s='Activité récente' mod='coolstats'}</span>
+        <span class="cs-live ms-2" title="{l s='Derniers mouvements de commandes, quelle que soit la période choisie' mod='coolstats'}"><span class="cs-live-dot"></span>{l s='En direct' mod='coolstats'}</span>
     </div>
     {if $section_data.items|@count}
     <div class="cs-activity-term-body">
@@ -22,6 +23,6 @@
         {/if}
     </div>
     {else}
-    <div class="cs-term-empty">{l s='Aucune activité sur cette période' mod='coolstats'}</div>
+    <div class="cs-term-empty">{l s='Aucun mouvement de commande pour l\'instant' mod='coolstats'}</div>
     {/if}
 </div>

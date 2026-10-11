@@ -31,8 +31,8 @@
     {* ─── HERO : Chiffre d'affaires en immense ─── *}
     <div class="cs-kpi-hero cs-kpi-clickable" data-stat="revenue" data-drill="revenue">
         <div class="cs-kpi-hero-content">
-            <div class="cs-kpi-hero-kicker">
-                CHIFFRE D'AFFAIRES{if $section_data.compare} · {if $section_data.compare.mode == 'yoy'}N-1{else}vs période précédente{/if}{/if}
+            <div class="cs-kpi-hero-kicker"{if $section_data.has_kerawen} title="{l s='Commandes passées sur la période, à leur montant actuel' mod='coolstats'}"{/if}>
+                {if $section_data.has_kerawen}{l s='CA COMMANDES' mod='coolstats'}{else}CHIFFRE D'AFFAIRES{/if}{if $section_data.compare} · {if $section_data.compare.mode == 'yoy'}N-1{else}vs période précédente{/if}{/if}
             </div>
             <div class="cs-kpi-hero-value-row">
                 <div class="cs-kpi-hero-value">{$section_data.total_revenue|number_format:0:',':' '} €</div>

@@ -1,0 +1,7 @@
+{
+    "id": "kerawen_vat",
+    "title": "TVA caisse par mois",
+    "order": 41,
+    "context": "kerawen_only",
+    "enabled": true
+}

@@ -3,26 +3,19 @@
     <div class="cs-brutal-colored-title">
         <div class="cs-brutal-colored-t">📡 {l s='Trafic & visiteurs' mod='coolstats'}</div>
         {if $section_data.available && $section_data.provider_label}
+        {if $section_data.live}<span class="cs-brutal-tag cs-brutal-tag-yellow cs-live" title="{l s='Visiteurs sur le site ces 30 dernières minutes' mod='coolstats'}"><span class="cs-live-dot"></span>{$section_data.live.visitors} {if $section_data.live.visitors > 1}{l s='visiteurs' mod='coolstats'}{else}{l s='visiteur' mod='coolstats'}{/if} · 30 min</span>{/if}
         <span class="cs-brutal-tag cs-brutal-tag-yellow">{$section_data.provider_label|escape:'html':'UTF-8'}</span>
         {else}
         <span class="cs-brutal-tag cs-brutal-tag-yellow">{l s='Setup' mod='coolstats'}</span>
         {/if}
     </div>
 
+{if $section_data.available && $section_data.api_error}<div class="cs-traffic-api-error">{l s='Matomo a renvoyé une erreur, les chiffres ci-dessous peuvent être faux :' mod='coolstats'} {$section_data.api_error|escape:'html':'UTF-8'}</div>{/if}
     {if !$section_data.available}
     <div class="cs-traffic-brutal-empty">
-        <div class="cs-traffic-brutal-h">{l s='Aucune source configurée' mod='coolstats'}</div>
-        <div class="cs-traffic-brutal-s">{l s='Branchez Matomo ou GA4 pour activer cette section' mod='coolstats'}</div>
-        <div class="cs-traffic-brutal-providers">
-            <div class="cs-traffic-brutal-provider">
-                <div class="cs-traffic-brutal-provider-n">{l s='Matomo' mod='coolstats'}</div>
-                <div class="cs-traffic-brutal-provider-d">{l s='RGPD-friendly' mod='coolstats'}</div>
-            </div>
-            <div class="cs-traffic-brutal-provider">
-                <div class="cs-traffic-brutal-provider-n">{l s='GA4' mod='coolstats'}</div>
-                <div class="cs-traffic-brutal-provider-d">{l s='Google Analytics' mod='coolstats'}</div>
-            </div>
-        </div>
+        <div class="cs-traffic-brutal-h">{if $section_data.reason == 'provider_unavailable'}{$section_data.provider_label|escape:'html':'UTF-8'} {l s='ne répond pas' mod='coolstats'}{else}{l s='Aucune source de trafic configurée' mod='coolstats'}{/if}</div>
+        <div class="cs-traffic-brutal-s">{if $section_data.reason == 'provider_unavailable'}{$section_data.error|escape:'html':'UTF-8'}{elseif $section_data.cooltrack}{l s='CoolTrack envoie déjà vos visites à Matomo : il ne manque que le jeton qui permet de les lire.' mod='coolstats'}{else}{l s='Branchez Matomo ou Google Analytics 4 pour activer cette section.' mod='coolstats'}{/if}</div>
+        {if $section_data.config_link}<a class="btn btn-sm btn-primary mt-3" href="{$section_data.config_link|escape:'html':'UTF-8'}" target="_top"><i class="bi bi-gear"></i> {l s='Configurer la source de trafic' mod='coolstats'}</a>{/if}
     </div>
     {else}
     <div class="cs-traffic-brutal-grid">

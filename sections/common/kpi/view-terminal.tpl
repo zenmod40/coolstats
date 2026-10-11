@@ -28,7 +28,7 @@
         <div class="col-xl col-md-4 col-sm-6">
             <div class="cs-kpi-card cs-kpi-clickable" data-stat="revenue" data-drill="revenue">
                 <div class="cs-kpi-body">
-                    <div class="cs-kpi-label">{l s='Chiffre d\'affaires' mod='coolstats'}</div>
+                    <div class="cs-kpi-label"{if $section_data.has_kerawen} title="{l s='Commandes passées sur la période, à leur montant actuel' mod='coolstats'}"{/if}>{if $section_data.has_kerawen}{l s='CA commandes' mod='coolstats'}{else}{l s='Chiffre d\'affaires' mod='coolstats'}{/if}</div>
                     <div class="cs-kpi-value">{$section_data.total_revenue|number_format:0:',':' '}&euro;</div>
                 </div>
                 {cs_term_trend val=$section_data.trends.revenue}

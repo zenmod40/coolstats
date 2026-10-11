@@ -91,7 +91,7 @@ function coolstats_section_top_products(CoolStatsContext $ctx, array $params)
     {$channelsJoin}
     WHERE o.date_add BETWEEN '{$from}' AND '{$to}'{$shopWhere}
     AND {$valid}
-    {$productLine}
+    {$productLine}" . CoolStatsHelpers::excludedProductsWhere('od') . "
     GROUP BY {$groupBy}
     ORDER BY {$orderBy} DESC
     LIMIT {$limit}";

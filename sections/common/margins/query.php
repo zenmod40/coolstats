@@ -85,7 +85,7 @@ function coolstats_section_margins(CoolStatsContext $ctx, array $params)
     {$channelsJoin}
     WHERE {$dateWhere}
     AND {$valid}{$productWhere}
-    AND COALESCE(NULLIF(od.purchase_supplier_price, 0), p.wholesale_price, 0) > 0
+    AND COALESCE(NULLIF(od.purchase_supplier_price, 0), p.wholesale_price, 0) > 0" . CoolStatsHelpers::excludedProductsWhere('od') . "
     GROUP BY od.product_id
     ORDER BY margin DESC
     LIMIT 5");

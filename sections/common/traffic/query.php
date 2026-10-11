@@ -3,8 +3,8 @@
  * Section common/traffic — KPI trafic + top pages + sources + devices.
  *
  * Source des données : déléguée à un `CoolStatsTrafficProvider` choisi via
- * `CoolStatsTrafficFactory::getActive()`. V1 : provider natif PS uniquement.
- * V2 : Matomo / GA4 / Plausible se branchent sans toucher à cette section.
+ * la configuration (COOLSTATS_TRAFFIC_PROVIDER). Sans source, ou si la source
+ * choisie ne répond pas, la section dit pourquoi et renvoie vers la configuration.
  */
 
 if (!defined('_PS_VERSION_')) {
@@ -15,13 +15,33 @@ require_once _PS_MODULE_DIR_ . 'coolstats/classes/traffic/CoolStatsTrafficFactor
 
 function coolstats_section_traffic(CoolStatsContext $ctx, array $params)
 {
-    $provider = CoolStatsTrafficFactory::getActive();
+    $wanted = (string) Configuration::get('COOLSTATS_TRAFFIC_PROVIDER');
+    $provider = ($wanted !== '' && $wanted !== 'none') ? CoolStatsTrafficFactory::getById($wanted) : null;
 
-    if (!$provider) {
+    if (!$provider || !$provider->isAvailable()) {
+        $errors = array(
+            'misconfigured'           => 'Réglages incomplets : URL, jeton ou identifiant manquant.',
+            'invalid_url'             => 'L\'adresse du serveur doit commencer par http:// ou https://.',
+            'unreachable'             => 'Le serveur ne répond pas : adresse, pare-feu ou délai dépassé.',
+            'auth_error'              => 'Accès refusé : jeton invalide ou sans droit sur ce site.',
+            'invalid_service_account' => 'Le fichier JSON du compte de service est invalide.',
+            'auth_failed'             => 'Google refuse l\'authentification du compte de service.',
+            'no_table'                => 'Les tables de statistiques de PrestaShop sont absentes.',
+            'no_data'                 => 'Aucune visite enregistrée par PrestaShop pour l\'instant.',
+        );
+        $reason = $provider ? (string) $provider->getUnavailableReason() : '';
+        // Bouton vers la configuration : seulement pour qui a le droit de la modifier.
+        $context = Context::getContext();
+        $module = Module::getInstanceByName('coolstats');
+        $canConfigure = $module && $context->employee && $module->getPermission('configure', $context->employee);
         return array(
-            'available'        => false,
-            'reason'           => 'no_provider_configured',
-            'provider_id'      => null,
+            'available'      => false,
+            'reason'         => $provider ? 'provider_unavailable' : 'no_provider_configured',
+            'provider_id'    => $provider ? $provider->getId() : null,
+            'provider_label' => $provider ? $provider->getLabel() : null,
+            'error'          => isset($errors[$reason]) ? $errors[$reason] : '',
+            'config_link'    => $canConfigure ? $context->link->getAdminLink('AdminCoolStatsConfig') : '',
+            'cooltrack'      => CoolStatsMatomoTrafficProvider::coolTrackSettings() !== null,
         );
     }
 
@@ -45,5 +65,8 @@ function coolstats_section_traffic(CoolStatsContext $ctx, array $params)
         'top_pages'    => $topPages,
         'top_sources'  => $sources,
         'devices'      => $devices,
+        'live'         => method_exists($provider, 'getLiveCounters') ? $provider->getLiveCounters(30) : null,
+        // Après tous les appels : une erreur de l'API ne doit pas passer pour des zéros.
+        'api_error'    => method_exists($provider, 'getLastError') ? $provider->getLastError() : null,
     );
 }

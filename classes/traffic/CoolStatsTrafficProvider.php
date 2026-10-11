@@ -6,7 +6,6 @@
  * doit implémenter pour alimenter la section "Trafic & visiteurs".
  *
  * V1 : seul `CoolStatsNativeTrafficProvider` (lecture de ps_connections).
- * V2 : Matomo / GA4 / Plausible viendront se greffer sans toucher à la section view.
  *
  * @author    ZM40 — Nicolas Michaud (Magic Garden)
  * @copyright 2026 Nicolas Michaud — ZM40 / Magic Garden

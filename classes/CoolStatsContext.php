@@ -103,6 +103,17 @@ class CoolStatsContext
     }
 
     /**
+     * Caisse Kerawen (tables NF525) présente : active les sections kerawen_only.
+     */
+    public function hasKerawen()
+    {
+        if (!class_exists('CoolStatsKerawen')) {
+            require_once _PS_MODULE_DIR_ . 'coolstats/classes/CoolStatsKerawen.php';
+        }
+        return CoolStatsKerawen::isAvailable();
+    }
+
+    /**
      * Décide quelles sections sont actives selon le contexte.
      *
      * @return array<string,bool> id_section → enabled
@@ -133,6 +144,8 @@ class CoolStatsContext
                 return !$this->hasMarketplaces();
             case 'marketplace_only':
                 return $this->hasMarketplaces();
+            case 'kerawen_only':
+                return $this->hasKerawen();
             case 'always':
             default:
                 return true;
@@ -148,6 +161,7 @@ class CoolStatsContext
             'detected_modules'     => $this->getActiveMarketplaceModules(),
             'has_marketplaces'     => $this->hasMarketplaces(),
             'has_mkp_tables'       => $this->hasMarketplaceDataInTables(),
+            'has_kerawen'          => $this->hasKerawen(),
             'ps_version'           => _PS_VERSION_,
         );
     }

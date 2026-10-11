@@ -5,11 +5,10 @@
  *
  * Ordre d'enregistrement = ordre de priorité.
  * V1 : seul le provider natif PS est enregistré.
- * V2 : Matomo / GA4 / Plausible ajoutés via `register()`.
  *
  * Utilisation :
- *   $provider = CoolStatsTrafficFactory::getActive();
- *   if ($provider) { $kpi = $provider->getKpi($from, $to); }
+ *   $provider = CoolStatsTrafficFactory::getById(Configuration::get('COOLSTATS_TRAFFIC_PROVIDER'));
+ *   if ($provider && $provider->isAvailable()) { $kpi = $provider->getKpi($from, $to); }
  *
  * @author    ZM40 — Nicolas Michaud (Magic Garden)
  * @copyright 2026 Nicolas Michaud — ZM40 / Magic Garden
@@ -47,32 +46,9 @@ class CoolStatsTrafficFactory
                 new CoolStatsMatomoTrafficProvider(),
                 new CoolStatsGA4TrafficProvider(),
                 new CoolStatsNativeTrafficProvider(),
-                // V3 : new CoolStatsPlausibleTrafficProvider(),
             );
         }
         return self::$providers;
-    }
-
-    /**
-     * Provider explicitement sélectionné par l'utilisateur (config).
-     * Pas de fallback automatique : le provider natif PrestaShop (statsdata) est trop peu fiable
-     * (champ mobile_theme déprécié, OS lookup obsolète, pas de filtrage bots) pour être utilisé
-     * par défaut. Le client doit explicitement opter pour un provider via la config BO.
-     *
-     * @return CoolStatsTrafficProvider|null null tant que rien n'est explicitement configuré.
-     */
-    public static function getActive()
-    {
-        $preferredId = (string) Configuration::get('COOLSTATS_TRAFFIC_PROVIDER');
-        if ($preferredId === '' || $preferredId === 'none') {
-            return null;
-        }
-        foreach (self::getProviders() as $p) {
-            if ($p->getId() === $preferredId && $p->isAvailable()) {
-                return $p;
-            }
-        }
-        return null;
     }
 
     /**

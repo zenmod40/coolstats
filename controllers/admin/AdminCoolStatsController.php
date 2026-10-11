@@ -150,6 +150,7 @@ class AdminCoolStatsController extends ModuleAdminController
             'cs_current_date'  => $this->formatFrenchDate(),
             'cs_current_date_numeric' => date('d.m.y') . ' · ' . date('H:i'),
             'cs_version'       => $this->module->version,
+            'cs_asset_ver'     => $this->getAssetVersion(),
             'cs_context'         => $this->ctx->debug(),
             'cs_sections_html'   => $sectionsHtml,
             'cs_required_sections'   => json_encode($requiredIds),
@@ -201,6 +202,19 @@ class AdminCoolStatsController extends ModuleAdminController
             'terminal'  => 'logo-terminal-light-64.png',
         );
         return isset($map[$theme]) ? $map[$theme] : 'logo-aurora-64.png';
+    }
+
+    /**
+     * Clé de cache des CSS/JS : version + date du fichier le plus récent. Un zip
+     * reconstruit sous le même numéro de version est ainsi rechargé par le
+     * navigateur, sans vider son cache.
+     */
+    private function getAssetVersion()
+    {
+        $dir = _PS_MODULE_DIR_ . 'coolstats/views/';
+        $files = array_merge(glob($dir . 'css/*.css') ?: array(), glob($dir . 'css/themes/*.css') ?: array(), glob($dir . 'js/*.js') ?: array());
+        $latest = $files ? max(array_map('filemtime', $files)) : 0;
+        return $this->module->version . '-' . $latest;
     }
 
     private function getPdfSectionsJson(array $sectionsMeta)
@@ -797,7 +811,7 @@ class AdminCoolStatsController extends ModuleAdminController
         WHERE {$dateWhere}
         {$validWhere}
         AND pr.id_category_default > 0
-        {$productWhere}
+        {$productWhere}" . CoolStatsHelpers::excludedProductsWhere('od') . "
         GROUP BY pr.id_category_default
         ORDER BY {$orderBy} DESC
         LIMIT 10");

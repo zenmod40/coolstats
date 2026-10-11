@@ -14,8 +14,8 @@
     <div class="cs-ed-kpi-grid">
         {* ─── Gauche : Hero CA ─── *}
         <div class="cs-ed-hero cs-kpi-clickable" data-stat="revenue" data-drill="revenue">
-            <div class="cs-ed-kicker">
-                CHIFFRE D'AFFAIRES{if $section_data.compare} · {if $section_data.compare.mode == 'yoy'}N-1{else}T-1{/if}{/if}
+            <div class="cs-ed-kicker"{if $section_data.has_kerawen} title="{l s='Commandes passées sur la période, à leur montant actuel' mod='coolstats'}"{/if}>
+                {if $section_data.has_kerawen}{l s='CA COMMANDES' mod='coolstats'}{else}CHIFFRE D'AFFAIRES{/if}{if $section_data.compare} · {if $section_data.compare.mode == 'yoy'}N-1{else}T-1{/if}{/if}
             </div>
             <div class="cs-ed-hero-value">
                 {$section_data.total_revenue|number_format:0:',':' '}<span class="cs-ed-hero-currency">€</span>

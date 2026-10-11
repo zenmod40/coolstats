@@ -193,14 +193,7 @@ class CoolStatsGA4TrafficProvider implements CoolStatsTrafficProvider
         if (!class_exists('CoolStatsHelpers')) {
             require_once _PS_MODULE_DIR_ . 'coolstats/classes/CoolStatsHelpers.php';
         }
-        $valid = CoolStatsHelpers::getOrderStateCondition('valid', 'o');
-        $f = pSQL($from) . ' 00:00:00';
-        $t = pSQL($to)   . ' 23:59:59';
-        $db = Db::getInstance(_PS_USE_SQL_SLAVE_);
-        $p = _DB_PREFIX_;
-        $orders = (int) $db->getValue("SELECT COUNT(*) FROM {$p}orders o
-            WHERE o.date_add BETWEEN '{$f}' AND '{$t}' AND {$valid}" . CoolStatsHelpers::shopRestriction('o'));
-        $conv = $unique > 0 ? round(($orders / $unique) * 100, 2) : 0;
+        $conv = CoolStatsHelpers::conversionRate($from, $to, $unique);
 
         return array(
             'unique_visitors'   => $unique,

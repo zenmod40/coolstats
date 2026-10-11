@@ -3,6 +3,38 @@
 Toutes les évolutions notables du module sont listées ici.
 Format inspiré de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/), versions [SemVer](https://semver.org/lang/fr/).
 
+## [1.1.0] — 2026-10-11
+
+### Ajouté
+
+- **Caisse Kerawen dans le dashboard.** Sur une boutique équipée de la caisse Kerawen, deux sections apparaissent d'elles-mêmes ; sans Kerawen, rien ne change. Les chiffres sont recalculés à partir des écritures de vente fiscales (NF525) enregistrées par Kerawen, et non repris des totaux qu'affiche son interface.
+- **Section « CA fiscal caisse ».** CA total, magasin et web, TVA collectée, nombre de ventes et panier moyen magasin, en HT ou en TTC selon le réglage du module, avec la tendance par rapport à la période de comparaison. Une ligne par caisse et une courbe magasin / web. Ce sont les ventes, avoirs et corrections enregistrés par la caisse sur la période : la référence pour la comptabilité et la TVA.
+- **Section « TVA caisse par mois ».** Total HT, TVA et TTC par mois et par taux, avec la part du magasin et celle du web. L'export CSV donne une ligne par mois et par taux, montants à la virgule, prêt à transmettre au comptable.
+- **Contrôle des données caisse.** Un bouton « Contrôle caisse » dans l'en-tête de la section CA fiscal caisse, avec une pastille verte ou rouge, ouvre le détail de quatre contrôles menés sur tout l'historique : des lignes d'articles rattachées à la vente d'une autre commande, un total de vente qui ne correspond pas à ses lignes, des ventes caisse validées dans PrestaShop absentes du journal Kerawen, et un trou dans le journal pendant que la boutique reçoit des commandes. Chaque anomalie est affichée avec son nombre de cas et le montant concerné. Une incohérence de ce type peut fausser le CA affiché par Kerawen pendant des mois sans le moindre signal.
+- **Alerte sur le tableau de bord PrestaShop.** Si un contrôle est en rouge, le panneau CoolStats de la page d'accueil du back-office l'indique, avec un lien qui ouvre le détail. Le statut est recalculé au plus une fois par heure.
+- **Réglage du seuil de trou dans le journal**, dans l'onglet Comportement (7 jours par défaut), affiché seulement quand Kerawen est installé.
+- **Produits exclus des classements.** Un produit technique vendu comme un article, des frais de port facturés en caisse par exemple, pouvait sortir en tête des meilleures ventes ou devenir le produit star. Un réglage de l'onglet Comportement permet de le retirer des classements (meilleures ventes, catégories, produits remarquables, meilleures marges) : on le cherche par nom, référence ou EAN. Les chiffres d'affaires, les totaux et les pourcentages ne changent pas.
+- **Trafic : un bouton vers la configuration et la vraie raison d'une panne.** Sans source de trafic, la section propose d'aller la configurer, pour les employés qui en ont le droit. Si Matomo ou Google Analytics est choisi mais ne répond pas, elle indique pourquoi (serveur injoignable, jeton refusé, réglages incomplets) au lieu d'annoncer qu'aucune source n'est configurée. Matomo et Google Analytics n'y sont plus marqués « bientôt ».
+- **Matomo reprend les réglages de CoolTrack.** Si le module CoolTrack envoie déjà les visites à Matomo, l'adresse du serveur et le numéro du site sont repris de sa configuration : il ne reste qu'à coller un jeton de lecture.
+- **Matomo : visiteurs en direct et erreurs affichées.** L'en-tête de la section Trafic indique les visiteurs des 30 dernières minutes, lus en direct dans Matomo : on voit tout de suite si le suivi fonctionne, sans attendre le calcul des rapports. Si Matomo répond par une erreur (droit manquant sur le site, par exemple), le message s'affiche au-dessus des chiffres au lieu de zéros sans explication.
+- **CA commandes et CA fiscal caisse, côte à côte et expliqués.** Avec Kerawen, le chiffre d'affaires du bandeau s'appelle « CA commandes » (les commandes passées sur la période, à leur montant actuel) et le bloc Kerawen « CA fiscal caisse » (les ventes, avoirs et corrections enregistrés par la caisse, la référence pour la comptabilité et la TVA). L'écart entre les deux s'affiche dans le bloc Kerawen et se détaille au clic : avoirs et corrections sur des commandes d'autres périodes, commandes dans un état non compté par CoolStats, commandes sans écriture fiscale, autres écarts. Sans Kerawen, les libellés ne changent pas.
+- **États payés non comptés.** L'onglet États de la configuration signale les états que PrestaShop considère comme payés mais qui ne sont pas cochés comme valides : leurs commandes manquent au chiffre d'affaires. CoolStats ne coche rien à votre place.
+
+CoolStats ne fait que lire les tables de Kerawen : aucune écriture, aucune correction.
+
+### Modifié
+
+- **Le nombre de commandes ne compte plus que les commandes valides**, comme le chiffre d'affaires et le panier moyen. Il comptait jusqu'ici toutes les commandes de la période, annulées et non payées comprises, si bien qu'il ne correspondait pas au CA affiché à côté. Le chiffre baisse donc sur la plupart des boutiques, de même que sa tendance, le texte d'accroche des thèmes Cozy et Editorial et le panneau du tableau de bord PrestaShop.
+- **Taux de retour** : les commandes remboursées sont rapportées aux commandes valides plus les remboursées, c'est-à-dire aux ventes réellement conclues. Les commandes annulées ou jamais payées ne gonflent plus le dénominateur.
+- **Taux de conversion du trafic.** Seules les commandes passées en ligne sont rapportées aux visiteurs : les ventes de la caisse Kerawen en magasin, sans visite du site derrière elles, le faisaient dépasser 100 %. Avec Matomo, il ne compte aussi les commandes qu'à partir du premier jour où des visites sont enregistrées : un suivi installé en cours de période ne rapporte plus toutes les commandes à quelques jours de visites.
+- **Activité récente toujours en direct.** Le bloc montre les derniers mouvements de commandes au moment où on le consulte, quelle que soit la période choisie : sur un mois passé, il affichait les mouvements du dernier jour de ce mois.
+
+### Corrigé
+
+- **Matomo : sources de trafic de nouveau remplies.** Le connecteur appelait une méthode de l'API Matomo renommée depuis Matomo 4 (`Referrers.getRefererType`) : l'erreur passait inaperçue et les entrées directes manquaient aux sources de trafic. Elle appelle désormais `Referrers.getReferrerType`.
+- **Badge de tendance dans les tuiles.** Dans les sections Relation client et CA fiscal caisse, le pourcentage d'évolution se posait par-dessus le montant au lieu de le suivre.
+- **Feuilles de style et scripts après une mise à jour.** Ils sont désormais rechargés dès qu'ils changent : il n'est plus nécessaire de vider le cache du navigateur pour voir le dashboard à jour.
+
 ## [1.0.12] — 2026-10-07
 
 ### Modifié

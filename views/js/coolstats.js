@@ -14,6 +14,8 @@
         initCountryFilterBadge();
         initLineChart();
         initSavChart();
+        initKerawenChart();
+        initKerawenCheck();
         initBarChart();
         initCustomize();
         initCollapsibles();
@@ -38,6 +40,7 @@
             if (e.detail.id === 'country_map')        initCountryMap();
             if (e.detail.id === 'orders_chart')       initLineChart();
             if (e.detail.id === 'sav_chart')          initSavChart();
+            if (e.detail.id === 'kerawen_sales')      initKerawenChart();
             if (e.detail.id === 'payment_breakdown')  initBarChart();
             if (e.detail.id === 'country_map' || e.detail.id === 'payment_breakdown') initBrutalistPairs();
             // top_products re-rendu (ex: changement tri/limit) → restaure l'onglet actif.
@@ -752,6 +755,7 @@
     var csChartLine = null;
     var csChartBar = null;
     var csChartSav = null;
+    var csChartKerawen = null;
 
     function initLineChart() {
         if (typeof Chart === 'undefined') return;
@@ -843,6 +847,58 @@
             data: { labels: labels, datasets: datasets },
             options: opts
         });
+    }
+
+    // Caisse Kerawen : CA magasin et CA web, deux courbes avec légende
+    function initKerawenChart() {
+        if (typeof Chart === 'undefined') return;
+        var section = document.querySelector('[data-cs-section="kerawen_sales"]');
+        var canvas = document.getElementById('cs-chart-kerawen');
+        if (!section || !canvas) return;
+        var isDark = (document.documentElement.getAttribute('data-bs-theme') || 'dark') === 'dark';
+        var theme = document.documentElement.getAttribute('data-cs-theme');
+        var gridColor = theme === 'brutalist' ? 'rgba(13,13,13,0.25)' : (theme === 'terminal' ? 'rgba(168,255,96,0.15)' : (isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)'));
+        var tickColor = theme === 'brutalist' ? '#0d0d0d' : (theme === 'terminal' ? '#5a6b5a' : (isDark ? '#9498a8' : '#6b7280'));
+        if (csChartKerawen) csChartKerawen.destroy();
+        var opts = chartCommonOptions(gridColor, tickColor, 'revenue');
+        opts.plugins.legend = { display: true, labels: { color: tickColor, boxWidth: 14 } };
+        var web = buildLineDataset(parseDataAttr(section, 'data-chart-web', []), 'Web', '#F59E0B');
+        web.borderColor = '#F59E0B';
+        web.pointBackgroundColor = '#F59E0B';
+        web.pointBorderColor = '#F59E0B';
+        web.backgroundColor = 'transparent';
+        csChartKerawen = new Chart(canvas.getContext('2d'), {
+            type: 'line',
+            data: {
+                labels: parseDataAttr(section, 'data-chart-labels', []),
+                datasets: [buildLineDataset(parseDataAttr(section, 'data-chart-store', []), 'Magasin', getAccentColor()), web]
+            },
+            options: opts
+        });
+    }
+
+    // Contrôle caisse Kerawen : la fenêtre est rendue dans la section (statut à jour à
+    // chaque rafraîchissement) puis déplacée sous <body> à l'ouverture, pour échapper
+    // aux overflow/transform des cartes. #cs-kerawen-check dans l'URL l'ouvre d'office
+    // (lien de l'alerte du tableau de bord PrestaShop).
+    function initKerawenCheck() {
+        document.addEventListener('click', function (e) {
+            if (e.target.closest && e.target.closest('[data-cs-kerawen-check]')) {
+                e.preventDefault();
+                openKerawenCheck();
+            }
+        });
+        if (window.location.hash === '#cs-kerawen-check') openKerawenCheck();
+    }
+    function openKerawenCheck() {
+        if (!window.bootstrap) return;
+        var fresh = document.querySelector('[data-cs-section="kerawen_sales"] .cs-kerawen-modal');
+        if (fresh) {
+            document.querySelectorAll('body > .cs-kerawen-modal').forEach(function (old) { old.remove(); });
+            document.body.appendChild(fresh);
+        }
+        var modal = document.querySelector('body > .cs-kerawen-modal');
+        if (modal) window.bootstrap.Modal.getOrCreateInstance(modal).show();
     }
 
     // Type de graphe paiements choisi par l'utilisateur (mémorisé par personne)
@@ -1976,6 +2032,8 @@
     }
 
     function csCsvCell(cell) {
+        // data-csv : valeur brute fournie par le gabarit (montant sans séparateur de milliers…)
+        if (cell.hasAttribute('data-csv')) return cell.getAttribute('data-csv');
         var t = (cell.textContent || "").replace(/\s+/g, " ").trim();
         return t.replace(/\s*€$/, "").trim();
     }

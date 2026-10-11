@@ -24,7 +24,7 @@
                 <div class="cs-kpi-icon cs-kpi-icon-revenue"><i class="bi bi-currency-euro"></i></div>
                 <div class="cs-kpi-body">
                     <div class="cs-kpi-value">{$section_data.total_revenue|number_format:0:',':' '}&euro;</div>
-                    <div class="cs-kpi-label">Chiffre d'affaires</div>
+                    <div class="cs-kpi-label"{if $section_data.has_kerawen} title="{l s='Commandes passées sur la période, à leur montant actuel' mod='coolstats'}"{/if}>{if $section_data.has_kerawen}{l s='CA commandes' mod='coolstats'}{else}{l s='Chiffre d\'affaires' mod='coolstats'}{/if}</div>
                 </div>
                 {cs_trend val=$section_data.trends.revenue}
                 <div class="cs-drill-overlay"><i class="bi bi-arrow-down-circle"></i><span>Voir les commandes valides</span></div>

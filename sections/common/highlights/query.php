@@ -75,6 +75,7 @@ function coolstats_highlights_star(array $params)
         $pf = CoolStatsHelpers::getProductFilterWhereSQL($product, 'o');
         if ($pf !== '') $productWhere .= ' AND ' . $pf;
     }
+    $productWhere .= CoolStatsHelpers::excludedProductsWhere('od');
 
     $qN = $db->executeS("SELECT od.product_id, SUM(od.product_quantity) AS qty
         FROM {$p}order_detail od
@@ -139,6 +140,7 @@ function coolstats_highlights_watch(array $params)
         $pf = CoolStatsHelpers::getProductFilterWhereSQL($product, 'o');
         if ($pf !== '') $productWhere .= ' AND ' . $pf;
     }
+    $productWhere .= CoolStatsHelpers::excludedProductsWhere('od');
 
     $rN = $db->executeS("SELECT od.product_id,
             SUM(CASE WHEN {$valid} THEN od.product_quantity ELSE 0 END) AS qty_ok,
@@ -208,6 +210,7 @@ function coolstats_highlights_pairs(array $params)
         $pf = CoolStatsHelpers::getProductFilterWhereSQL($product, 'o');
         if ($pf !== '') $productWhere .= ' AND ' . $pf;
     }
+    $productWhere .= CoolStatsHelpers::excludedProductsWhere('od1') . CoolStatsHelpers::excludedProductsWhere('od2');
 
     // Db::getRow ajoute LIMIT 1 automatiquement → ne pas en mettre ici.
     $row = $db->getRow("SELECT od1.product_id AS p1, od2.product_id AS p2, COUNT(DISTINCT o.id_order) AS cnt

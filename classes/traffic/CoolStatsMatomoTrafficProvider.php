@@ -32,16 +32,41 @@ class CoolStatsMatomoTrafficProvider implements CoolStatsTrafficProvider
     /** @var string|null */
     private $unavailableReason = null;
 
+    /** @var string|null Premier message d'erreur renvoyé par l'API (droit manquant…), affiché au lieu de zéros muets */
+    private $lastError = null;
+
     public function getId() { return 'matomo'; }
     public function getLabel() { return 'Matomo'; }
 
     private function getConfig()
     {
+        // Adresse et site laissés vides : repris de CoolTrack s'il envoie déjà les
+        // visites à Matomo. Le jeton, lui, reste propre à CoolStats.
+        $ct = self::coolTrackSettings();
+        $url = rtrim((string) Configuration::get('COOLSTATS_MATOMO_URL'), '/');
+        $siteId = (int) Configuration::get('COOLSTATS_MATOMO_SITE_ID');
         return array(
-            'url'     => rtrim((string) Configuration::get('COOLSTATS_MATOMO_URL'), '/'),
+            'url'     => $url !== '' || !$ct ? $url : $ct['url'],
             'token'   => (string) Configuration::get('COOLSTATS_MATOMO_TOKEN'),
-            'site_id' => (int) Configuration::get('COOLSTATS_MATOMO_SITE_ID'),
+            'site_id' => $siteId > 0 || !$ct ? $siteId : $ct['site_id'],
         );
+    }
+
+    /**
+     * Réglages du module CoolTrack (suivi Matomo de ZM40) s'il est actif et
+     * configuré : adresse du serveur et numéro du site. CoolTrack n'a pas de
+     * jeton (l'envoi des visites n'en demande pas, leur lecture si).
+     *
+     * @return array{url:string,site_id:int}|null
+     */
+    public static function coolTrackSettings()
+    {
+        if (!Module::isEnabled('cooltrack')) {
+            return null;
+        }
+        $url = rtrim((string) Configuration::get('COOLTRACK_URL'), '/');
+        $siteId = (int) Configuration::get('COOLTRACK_SITE_ID');
+        return ($url !== '' && $siteId > 0) ? array('url' => $url, 'site_id' => $siteId) : null;
     }
 
     public function isAvailable()
@@ -102,7 +127,33 @@ class CoolStatsMatomoTrafficProvider implements CoolStatsTrafficProvider
         $raw = @file_get_contents($cfg['url'] . '/index.php', false, $ctx);
         if ($raw === false) return null;
         $decoded = json_decode($raw, true);
+        if (is_array($decoded) && isset($decoded['result']) && $decoded['result'] === 'error' && $this->lastError === null) {
+            $this->lastError = isset($decoded['message']) ? strip_tags((string) $decoded['message']) : 'erreur inconnue';
+        }
         return is_array($decoded) ? $decoded : null;
+    }
+
+    public function getLastError() { return $this->lastError; }
+
+    /**
+     * Visiteurs des dernières minutes (Live.getCounters). Lu sur le journal brut
+     * des visites, sans attendre le calcul des rapports : montre tout de suite si
+     * le suivi fonctionne.
+     *
+     * @return array{visitors:int,visits:int,actions:int,minutes:int}|null
+     */
+    public function getLiveCounters($minutes = 30)
+    {
+        $r = $this->callApi('Live.getCounters', array('lastMinutes' => (int) $minutes));
+        if (!is_array($r) || !isset($r[0]['visitors'])) {
+            return null;
+        }
+        return array(
+            'visitors' => (int) $r[0]['visitors'],
+            'visits'   => (int) $r[0]['visits'],
+            'actions'  => (int) $r[0]['actions'],
+            'minutes'  => (int) $minutes,
+        );
     }
 
     /**
@@ -130,32 +181,34 @@ class CoolStatsMatomoTrafficProvider implements CoolStatsTrafficProvider
         $views    = (int) ($r['nb_actions'] ?? 0);
         $avgDur   = (int) ($r['avg_time_on_site'] ?? 0);
 
-        // Fallback : si Matomo ne calcule pas les uniques pour period=range
-        // (option serveur enable_processing_unique_visitors_year désactivée par défaut),
-        // on agrège jour par jour. Note : overcount possible (visiteur revenu plusieurs jours).
-        if ($unique === 0 && $sessions > 0) {
+        // Matomo ne calcule pas les uniques pour period=range (option serveur
+        // enable_processing_unique_visitors_range désactivée par défaut) : on agrège
+        // jour par jour. Note : overcount possible (visiteur revenu plusieurs jours).
+        // Le même détail donne le premier jour suivi : la conversion ne compte les
+        // commandes qu'à partir de lui, sinon un suivi posé en cours de période
+        // rapporterait toutes les commandes à une fraction des visites.
+        $tracked = $from;
+        if ($sessions > 0) {
             $daily = $this->callApi('VisitsSummary.get', array('period' => 'day', 'date' => $from . ',' . $to));
+            $dailyUnique = 0;
+            $first = null;
             if (is_array($daily)) {
-                foreach ($daily as $day) {
-                    if (is_array($day) && isset($day['nb_uniq_visitors'])) {
-                        $unique += (int) $day['nb_uniq_visitors'];
-                    }
+                ksort($daily);
+                foreach ($daily as $date => $day) {
+                    if (!is_array($day) || empty($day['nb_visits'])) continue;
+                    $dailyUnique += (int) ($day['nb_uniq_visitors'] ?? 0);
+                    if ($first === null) $first = (string) $date;
                 }
             }
+            if ($unique === 0) $unique = $dailyUnique;
+            if ($first !== null && $first > $from) $tracked = $first;
         }
 
         // Conversion : calculé côté CoolStats (orders / unique_visitors) pour cohérence avec les KPI dashboard.
         if (!class_exists('CoolStatsHelpers')) {
             require_once _PS_MODULE_DIR_ . 'coolstats/classes/CoolStatsHelpers.php';
         }
-        $valid = CoolStatsHelpers::getOrderStateCondition('valid', 'o');
-        $f = pSQL($from) . ' 00:00:00';
-        $t = pSQL($to)   . ' 23:59:59';
-        $db = Db::getInstance(_PS_USE_SQL_SLAVE_);
-        $p = _DB_PREFIX_;
-        $orders = (int) $db->getValue("SELECT COUNT(*) FROM {$p}orders o
-            WHERE o.date_add BETWEEN '{$f}' AND '{$t}' AND {$valid}" . CoolStatsHelpers::shopRestriction('o'));
-        $conv = $unique > 0 ? round(($orders / $unique) * 100, 2) : 0;
+        $conv = CoolStatsHelpers::conversionRate($tracked, $to, $unique);
 
         return array(
             'unique_visitors'   => $unique,
@@ -193,8 +246,9 @@ class CoolStatsMatomoTrafficProvider implements CoolStatsTrafficProvider
         // On combine direct/inconnu + top hostnames (cohérent avec l'UX historique).
         $result = array();
 
-        // 1) Direct / inconnu via getRefererType
-        $types = $this->callApi('Referrers.getRefererType', array_merge(
+        // 1) Direct / inconnu via getReferrerType (l'ancien nom getRefererType
+        //    n'existe plus dans Matomo 4 et suivants)
+        $types = $this->callApi('Referrers.getReferrerType', array_merge(
             $this->periodParams($from, $to),
             array('filter_limit' => 10)
         ));
@@ -203,8 +257,9 @@ class CoolStatsMatomoTrafficProvider implements CoolStatsTrafficProvider
             foreach ($types as $row) {
                 if (!is_array($row)) continue;
                 $label = strtolower((string) ($row['label'] ?? ''));
-                // Direct Entry / "Entrées directes" → Matomo localise selon la langue
-                if (strpos($label, 'direct') !== false || (isset($row['referer_type']) && (int) $row['referer_type'] === 1)) {
+                // Le segment ne dépend pas de la langue ; le libellé (« Entrées directes ») en repli.
+                $segment = (string) ($row['segment'] ?? '');
+                if (strpos($segment, 'referrerType==direct') !== false || strpos($label, 'direct') !== false) {
                     $directHits += (int) ($row['nb_visits'] ?? 0);
                 }
             }

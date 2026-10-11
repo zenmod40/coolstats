@@ -14,41 +14,20 @@
     <div class="cs-section-header">
         <span><i class="bi bi-graph-up-arrow"></i> {$section.title}</span>
         {if $section_data.available && $section_data.provider_label}
+            <span class="ms-auto d-inline-flex gap-2 align-items-center">
+            {if $section_data.live}<span class="cs-live" title="{l s='Visiteurs sur le site ces 30 dernières minutes' mod='coolstats'}"><span class="cs-live-dot"></span>{$section_data.live.visitors} {if $section_data.live.visitors > 1}{l s='visiteurs' mod='coolstats'}{else}{l s='visiteur' mod='coolstats'}{/if} · 30 min</span>{/if}
             <span class="badge cs-badge-accent" title="Source des données"><i class="bi bi-bar-chart-line me-1"></i>{$section_data.provider_label|escape:'html':'UTF-8'}</span>
+            </span>
         {/if}
     </div>
+    {if $section_data.available && $section_data.api_error}<div class="cs-traffic-api-error">{l s='Matomo a renvoyé une erreur, les chiffres ci-dessous peuvent être faux :' mod='coolstats'} {$section_data.api_error|escape:'html':'UTF-8'}</div>{/if}
 
     {if !$section_data.available}
         <div class="cs-traffic-empty">
             <i class="bi bi-bar-chart-line"></i>
-            <h4 class="mt-3 mb-2">Aucune source de trafic configurée</h4>
-            <p class="text-muted small mb-3">
-                Branchez Matomo, Google Analytics ou Plausible pour activer cette section.
-            </p>
-            <div class="cs-traffic-providers-grid">
-                <div class="cs-traffic-provider cs-traffic-provider-soon">
-                    <i class="bi bi-bar-chart-fill"></i>
-                    <strong>Matomo</strong>
-                    <small>Open-source, RGPD-friendly</small>
-                    <span class="cs-soon-badge">Bientôt</span>
-                </div>
-                <div class="cs-traffic-provider cs-traffic-provider-soon">
-                    <i class="bi bi-google"></i>
-                    <strong>Google Analytics 4</strong>
-                    <small>Tracking par défaut Google</small>
-                    <span class="cs-soon-badge">Bientôt</span>
-                </div>
-                <div class="cs-traffic-provider cs-traffic-provider-soon">
-                    <i class="bi bi-shield-check"></i>
-                    <strong>Plausible</strong>
-                    <small>Simple, sans cookies</small>
-                    <span class="cs-soon-badge">Bientôt</span>
-                </div>
-            </div>
-            <p class="small text-muted mt-3 mb-0">
-                <i class="bi bi-info-circle"></i> Le tracking natif PrestaShop (statsdata) n'est pas utilisé :
-                détection mobile peu fiable, pas de filtrage des robots, systèmes d'exploitation reconnus limités.
-            </p>
+            <h4 class="mt-3 mb-2">{if $section_data.reason == 'provider_unavailable'}{$section_data.provider_label|escape:'html':'UTF-8'} {l s='ne répond pas' mod='coolstats'}{else}{l s='Aucune source de trafic configurée' mod='coolstats'}{/if}</h4>
+            <p class="text-muted small mb-0">{if $section_data.reason == 'provider_unavailable'}{$section_data.error|escape:'html':'UTF-8'}{elseif $section_data.cooltrack}{l s='CoolTrack envoie déjà vos visites à Matomo : il ne manque que le jeton qui permet de les lire.' mod='coolstats'}{else}{l s='Branchez Matomo ou Google Analytics 4 pour activer cette section.' mod='coolstats'}{/if}</p>
+            {if $section_data.config_link}<a class="btn btn-sm btn-primary mt-3" href="{$section_data.config_link|escape:'html':'UTF-8'}" target="_top"><i class="bi bi-gear"></i> {l s='Configurer la source de trafic' mod='coolstats'}</a>{/if}
         </div>
     {else}
         {* ── KPI principaux ── *}

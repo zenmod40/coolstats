@@ -39,6 +39,29 @@ class CoolStatsHelpers
     }
 
     /**
+     * Produits exclus des classements (réglage COOLSTATS_EXCLUDED_PRODUCTS) : frais
+     * de port vendus comme un produit, emballage, carte cadeau… Ils sortent des
+     * listes et classements (top produits, top catégories, produits remarquables,
+     * top marges) et de rien d'autre : aucun total ni chiffre d'affaires ne change.
+     *
+     * @return int[]
+     */
+    public static function excludedProductIds()
+    {
+        return array_values(array_unique(array_filter(array_map('intval', explode(',', (string) Configuration::get('COOLSTATS_EXCLUDED_PRODUCTS'))))));
+    }
+
+    /**
+     * @param string $odAlias Alias de la table order_detail dans la requête appelante
+     * @return string Fragment " AND alias.product_id NOT IN (...)" ou ''
+     */
+    public static function excludedProductsWhere($odAlias = 'od')
+    {
+        $ids = self::excludedProductIds();
+        return $ids ? ' AND ' . $odAlias . '.product_id NOT IN (' . implode(',', $ids) . ')' : '';
+    }
+
+    /**
      * Retourne la condition SQL "o.date_add BETWEEN '...' AND '...'".
      *
      * @param string $alias  Alias de la table orders (ex: 'o')
@@ -561,6 +584,29 @@ class CoolStatsHelpers
             );
         }
         return self::getCompareRange($from, $to);
+    }
+
+    /**
+     * Taux de conversion du trafic : commandes valides passées en ligne sur la
+     * période, rapportées aux visiteurs uniques. Les ventes de la caisse en
+     * magasin (module kerawen) n'ont aucune visite du site derrière elles : les
+     * compter gonflait le taux au-delà de 100 %.
+     *
+     * @param string $from     Date Y-m-d du premier jour compté
+     * @param string $to       Date Y-m-d du dernier jour compté
+     * @param int    $visitors Visiteurs uniques sur ces mêmes jours
+     * @return float Taux en %, 0 sans visiteur
+     */
+    public static function conversionRate($from, $to, $visitors)
+    {
+        if ($visitors <= 0) {
+            return 0.0;
+        }
+        $valid = self::getOrderStateCondition('valid', 'o');
+        $orders = (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue('SELECT COUNT(*) FROM ' . _DB_PREFIX_ . 'orders o
+            WHERE ' . self::getDateRangeFilter('o', $from, $to) . " AND o.module <> 'kerawen'"
+            . ($valid ? ' AND ' . $valid : '') . self::shopRestriction('o'));
+        return round($orders / $visitors * 100, 2);
     }
 
     /**
